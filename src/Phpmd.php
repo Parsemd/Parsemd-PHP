@@ -33,14 +33,14 @@ function elementsEcho(array $Elements, string $indent = '')
             })()
             .":\n";
 
-        if ( ! $Element instanceof InlineElement)
+        if (! $Element instanceof InlineElement)
         {
             foreach ($Element->getContent() as $Line)
             {
                 echo $subIndent.$Line."\n";
             }
         }
-        else
+        elseif ($Element->getContent()->count() > 0)
         {
             echo $subIndent.$Element->getContent()->current()."\n";
         }
@@ -60,7 +60,8 @@ class Phpmd
     );
 
     private $InlineHandlers = array(
-        'Aidantwoods\Phpmd\Inlines\Code'
+        'Aidantwoods\Phpmd\Inlines\Code',
+        'Aidantwoods\Phpmd\Inlines\Link'
     );
 
     private $BlockMarkerRegister = array();
@@ -98,7 +99,7 @@ class Phpmd
         }
     }
 
-    private function findNewBlock(string $marker, Lines $Lines) : ?Block
+    private function findNewBlock(string $marker, Lines $Lines) : Block
     {
         if (array_key_exists($marker, $this->BlockMarkerRegister))
         {
@@ -157,13 +158,14 @@ class Phpmd
 
     private function parseInlines(
         Line $Line,
-        ?string $mask = null,
         ?array $restrictions = null
     ) : array
     {
         $Elements = array();
 
-        $mask = $mask ?? implode('', array_keys($this->InlineMarkerRegister));
+        $Inlines = array();
+
+        $mask = implode('', array_keys($this->InlineMarkerRegister));
 
         $restrictions = $restrictions ?? array();
 
@@ -181,49 +183,55 @@ class Phpmd
                     {
                         unset($Inline);
 
-                        break;
+                        continue 2;
                     }
                 }
             }
 
-            if ( ! isset($Inline))
+            if (isset($Inline))
             {
-                $textStart = $Line->key();
-
-                continue;
-            }
-            else
-            {
-                if (isset($textStart) and $textStart < $Line->key())
-                {
-                    $text = Text::parse(
-                        $Line->subset($textStart, $Line->key())
-                    );
-
-                    $Elements[] = $text->getElement();
-
-                    unset($textStart, $text);
-                }
-                else
-                {
-                    unset($textStart);
-                }
-
-                $Elements[] = $Inline->getElement();
-
-                $Line->jump($Line->key() + $Inline->getWidth());
-
-                $textStart = $Line->key();
+                $Inlines[] = array(
+                    'start'
+                        => $Line->key(),
+                    'end'
+                        => $Line->key() + $Inline->getWidth(),
+                    'textEnd'
+                        => $Line->key() + $Inline->getTextStart() + $Inline->getTextWidth(),
+                    'textStart'
+                        => $Line->key() + $Inline->getTextStart(),
+                    'inline'
+                        => $Inline
+                );
 
                 continue;
             }
         }
 
-        if (isset($textStart) and $textStart < $Line->key())
+        $Inlines = InlineResolver::resolve($Inlines);
+
+        $blank = 0;
+
+        foreach ($Inlines as $data)
         {
-            $text = Text::parse(
-                $Line->subset($textStart, $Line->key())
-            );
+            if ($data['start'] > $blank)
+            {
+                $text = $Line->subset($blank, $data['start']);
+
+                $text = Text::parse($text);
+
+                $Elements[] = $text->getElement();
+            }
+
+            $blank = $data['end'];
+
+            $Elements[] = $data['inline']->getElement();
+        }
+
+        if ($Line->count() > $blank)
+        {
+            $text = $Line->subset($blank, $Line->count());
+
+            $text = Text::parse($text);
 
             $Elements[] = $text->getElement();
         }
@@ -336,7 +344,6 @@ class Phpmd
 
     private function inlineElement(
         Element $Element,
-        ?string $mask = null,
         ?array $restrictions = null
     ) {
         if ( ! $Element instanceof InlineElement)
@@ -355,7 +362,7 @@ class Phpmd
                 }
 
                 $Element->appendElements(
-                    $this->inlineLine($Line, $mask, $restrictions)
+                    $this->inlineLine($Line, $restrictions)
                 );
             }
         }
@@ -374,7 +381,7 @@ class Phpmd
             }
 
             $Element->appendElements(
-                $this->inlineLine($Content, $mask, $restrictions)
+                $this->inlineLine($Content, $restrictions)
             );
         }
 
@@ -389,11 +396,10 @@ class Phpmd
 
     private function inlineLine(
         Line $Line,
-        ?string $mask = null,
         ?array $restrictions = null
     ) : array
     {
-        $Elements = $this->parseInlines($Line, $mask, $restrictions);
+        $Elements = $this->parseInlines($Line, $restrictions);
 
         foreach ($Elements as $Element)
         {
@@ -404,101 +410,6 @@ class Phpmd
         }
 
         return $Elements;
-    }
-
-    private function squashInlines(Element $Element, array $squashes) : array
-    {
-        $squashed = array();
-
-        $Elements = $Element->getElements();
-
-        $Element->dumpElements();
-
-        foreach ($Elements as $SubElement)
-        {
-            if (
-                $SubElement instanceof InlineElement
-                and ! $SubElement->isInlinable()
-            ) {
-                if ( ! in_array($SubElement->getType(), $squashes))
-                {
-                    $Element->appendContent(
-                        $SubElement->getContent()->pop()->current(),
-                        true,
-                        false
-                    );
-                }
-                else
-                {
-                    $Element->appendContent("\0", true, false);
-
-                    $squashed[] = $SubElement;
-                }
-            }
-            elseif ($SubElement->isInlinable())
-            {
-                foreach ($SubElement->getElements() as $SubSubElement)
-                {
-                    $squashed = array_merge(
-                        $squashed,
-                        $this->squashInlines($SubSubElement, $squashes)
-                    );
-                }
-            }
-        }
-
-        return $squashed;
-    }
-
-    private function unsquashInlines(Element $Element, array &$squashed)
-    {
-        if (empty($squashed))
-        {
-            return;
-        }
-
-        $Elements = $Element->getElements();
-
-        $Element->dumpElements();
-
-        foreach ($Elements as $SubElement)
-        {
-            if ($SubElement instanceof InlineElement)
-            {
-                $content = $SubElement->getContent()->pop();
-
-                while (
-                    $content->valid()
-                    and ($n = strpos($content->current(), "\0")) !== false
-                ) {
-                    $text = new InlineElement('text');
-
-                    $text->appendContent($content->subset(0, $n)->current());
-
-                    $content = $content->subset($n + 1, $content->count());
-
-                    $Element->appendElement($text);
-
-                    $Element->appendElement(array_shift($squashed));
-                }
-
-                if ($content->valid())
-                {
-                    $text = new InlineElement('text');
-
-                    $text->appendContent($content->current());
-
-                    $Element->appendElement($text);
-                }
-            }
-            else
-            {
-                $Element->appendElement($SubElement);
-
-                $this->unsquashInlines($SubElement, $squashed);
-            }
-        }
-
     }
 
     private function elements(Lines $Lines) : array
@@ -514,25 +425,7 @@ class Phpmd
 
             if ($Element->isInlinable())
             {
-                # we must first parse inline code elements because they
-                # take special precedence over all other inline elements
-
-                $this->inlineElement($Element, '`');
-
-                # next we squash these structures into their parents
-                # reperesenting the inline code structures by ordered
-                # null characters (these are disallowed in markdown
-                # so no danger of collision)
-
-                $squashed = $this->squashInlines($Element, ['code']);
-
-                # next we inline the remaining elements
-
                 $this->inlineElement($Element);
-
-                # now unsquash the null characters back into inline code
-
-                $this->unsquashInlines($Element, $squashed);
             }
         }
 

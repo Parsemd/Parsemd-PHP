@@ -8,13 +8,15 @@ use Aidantwoods\Phpmd\InlineElement;
 
 use Aidantwoods\Phpmd\Lines\Line;
 
-class Code extends AbstractInline implements Inline
+class Link extends AbstractInline implements Inline
 {
     private $Element,
-            $width;
+            $width,
+            $textWidth,
+            $textStart;
 
     protected static $markers = array(
-        '`'
+        '['
     );
 
     public function getElement() : Element
@@ -27,11 +29,28 @@ class Code extends AbstractInline implements Inline
         return $this->width;
     }
 
+    public function getTextWidth() : int
+    {
+        return $this->textWidth;
+    }
+
+    public function getTextStart() : int
+    {
+        return $this->textStart;
+    }
+
     public static function parse(Line $Line) : ?Inline
     {
         if ($data = self::parseText($Line->current()))
         {
-            return new static($data['width'], $data['text']);
+            return new static(
+                $data['width'],
+                $data['textWidth'],
+                $data['textStart'],
+                $data['text'],
+                $data['href'],
+                $data['title']
+            );
         }
 
         return null;
@@ -41,28 +60,47 @@ class Code extends AbstractInline implements Inline
     {
         if (
             preg_match(
-                '/^([`]++)(.*?[^`\0])\1(?=[^`]|$)/',
+                '/^\[((?:[\\\]\]|[^]])++)\][(]\s*+((?:[\\\][)]|[^ )])++)(?:\s*+([\'"])((?:[\\\]\3|(?!\3).)++)\3)?\s*+[)]/',
                 $text,
                 $matches
             )
         ) {
             return array(
-                'text'   => $matches[2],
-                'width' => strlen($matches[0])
+                'text'      => $matches[1],
+                'textWidth' => strlen($matches[1]),
+                'textStart' => 1,
+                'width'     => strlen($matches[0]),
+                'href'      => $matches[2],
+                'title'     => $matches[4] ?? null
             );
         }
 
         return null;
     }
 
-    private function __construct(int $width, string $text)
-    {
-        $this->width = $width;
+    private function __construct(
+        int $width,
+        int $textWidth,
+        int $textStart,
+        string $text,
+        string $href,
+        ?string $title = null
+    ) {
+        $this->width     = $width;
+        $this->textWidth = $textWidth;
+        $this->textStart = $textStart;
 
         $this->Element = new InlineElement('a');
 
         $this->Element->setNonNestables(['a']);
 
         $this->Element->appendContent($text);
+
+        $this->Element->setAttribute('href', $href);
+
+        if (isset($title))
+        {
+            $this->Element->setAttribute('title', $title);
+        }
     }
 }

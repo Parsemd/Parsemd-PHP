@@ -11,7 +11,9 @@ use Aidantwoods\Phpmd\Lines\Line;
 class Text extends AbstractInline implements Inline
 {
     private $Element,
-            $width;
+            $width,
+            $textWidth,
+            $textStart;
 
     protected static $markers = array();
 
@@ -23,6 +25,16 @@ class Text extends AbstractInline implements Inline
     public function getWidth() : int
     {
         return $this->width;
+    }
+
+    public function getTextWidth() : int
+    {
+        return $this->textWidth;
+    }
+
+    public function getTextStart() : int
+    {
+        return $this->textStart;
     }
 
     // public function append(string $text)
@@ -39,7 +51,9 @@ class Text extends AbstractInline implements Inline
 
     private function __construct(string $text)
     {
-        $this->width = strlen($text);
+        $this->textWidth = $this->width = strlen($text);
+
+        $this->textStart = 0;
 
         $this->Element = new InlineElement('text');
 
