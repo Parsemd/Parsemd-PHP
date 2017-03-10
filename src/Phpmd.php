@@ -1,53 +1,13 @@
 <?php
-
+# this file is a testing environment that ties the application together and is
+# very much incomplete and too dense
 namespace Aidantwoods\Phpmd;
-
-require_once(__DIR__.'/../vendor/autoload.php');
-
-include('../parsedown/Parsedown.php');
 
 use Aidantwoods\Phpmd\Lines\Line;
 use Aidantwoods\Phpmd\Lines\Lines;
 
 use Aidantwoods\Phpmd\Blocks\Paragraph;
 use Aidantwoods\Phpmd\Inlines\Text;
-
-function elementsEcho(array $Elements, string $indent = '')
-{
-    $subIndent = "  $indent";
-
-    foreach ($Elements as $Element)
-    {
-        echo (empty($indent) ? "\n" : '')
-            .$indent.$Element->getType().
-            (function () use ($Element)
-            {
-                $texts = array();
-
-                foreach ($Element->getAttributes() as $key => $value)
-                {
-                    $texts[] = "$key=\"$value\"";
-                }
-
-                return (empty($texts) ? '' : ' '.implode(' ', $texts));
-            })()
-            .":\n";
-
-        if (! $Element instanceof InlineElement)
-        {
-            foreach ($Element->getContent() as $Line)
-            {
-                echo $subIndent.$Line."\n";
-            }
-        }
-        elseif ($Element->getContent()->count() > 0)
-        {
-            echo $subIndent.$Element->getContent()->current()."\n";
-        }
-
-        elementsEcho($Element->getElements(), $subIndent);
-    }
-}
 
 class Phpmd
 {
@@ -446,33 +406,3 @@ class Phpmd
     }
 
 }
-
-$text = file_get_contents(
-    '/Users/Aidan/GitHub/SecureHeaders/docs/generated/apply.md'
-);
-
-// var_dump($Lines);
-
-$Phpmd = new Phpmd();
-
-$t2 = microtime(true);
-
-$Elements = $Phpmd->parse($text);
-
-$t3 = microtime(true);
-
-elementsEcho($Elements);
-
-// var_dump($Elements);
-
-$Parsedown = new \Parsedown;
-
-$t0 = microtime(true);
-
-$out = $Parsedown->text($text);
-
-$t1 = microtime(true);
-
-echo "\n\n".round(1000*($t1 - $t0), 1)."ms";
-
-echo "\n".round(1000*($t3 - $t2), 1)."ms\n";
