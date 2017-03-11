@@ -12,7 +12,6 @@ class Code extends AbstractInline implements Inline
 {
     private $Element,
             $width,
-            $textWidth,
             $textStart;
 
     protected static $markers = array(
@@ -29,11 +28,6 @@ class Code extends AbstractInline implements Inline
         return $this->width;
     }
 
-    public function getTextWidth() : int
-    {
-        return $this->textWidth;
-    }
-
     public function getTextStart() : int
     {
         return $this->textStart;
@@ -45,7 +39,6 @@ class Code extends AbstractInline implements Inline
         {
             return new static(
                 $data['width'],
-                $data['textWidth'],
                 $data['textStart'],
                 $data['text']
             );
@@ -65,7 +58,6 @@ class Code extends AbstractInline implements Inline
         ) {
             return array(
                 'text'      => $matches[2],
-                'textWidth' => strlen($matches[2]),
                 'textStart' => strlen($matches[1]),
                 'width'     => strlen($matches[0])
             );
@@ -76,12 +68,10 @@ class Code extends AbstractInline implements Inline
 
     private function __construct(
         int $width,
-        int $textWidth,
         int $textStart,
         string $text
     ) {
         $this->width     = $width;
-        $this->textWidth = $textWidth;
         $this->textStart = $textStart;
 
         $this->Element = new InlineElement('code');

@@ -12,7 +12,6 @@ class Link extends AbstractInline implements Inline
 {
     private $Element,
             $width,
-            $textWidth,
             $textStart;
 
     protected static $markers = array(
@@ -29,11 +28,6 @@ class Link extends AbstractInline implements Inline
         return $this->width;
     }
 
-    public function getTextWidth() : int
-    {
-        return $this->textWidth;
-    }
-
     public function getTextStart() : int
     {
         return $this->textStart;
@@ -45,7 +39,6 @@ class Link extends AbstractInline implements Inline
         {
             return new static(
                 $data['width'],
-                $data['textWidth'],
                 $data['textStart'],
                 $data['text'],
                 $data['href'],
@@ -67,7 +60,6 @@ class Link extends AbstractInline implements Inline
         ) {
             return array(
                 'text'      => $matches[1],
-                'textWidth' => strlen($matches[1]),
                 'textStart' => 1,
                 'width'     => strlen($matches[0]),
                 'href'      => $matches[2],
@@ -80,14 +72,12 @@ class Link extends AbstractInline implements Inline
 
     private function __construct(
         int $width,
-        int $textWidth,
         int $textStart,
         string $text,
         string $href,
         ?string $title = null
     ) {
         $this->width     = $width;
-        $this->textWidth = $textWidth;
         $this->textStart = $textStart;
 
         $this->Element = new InlineElement('a');

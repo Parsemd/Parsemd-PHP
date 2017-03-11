@@ -12,4 +12,9 @@ abstract class AbstractInline implements Inline
     {
         return static::$markers;
     }
+
+    public function getTextWidth() : int
+    {
+        return $this->getElement()->getContent()->count();
+    }
 }
