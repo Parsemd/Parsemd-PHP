@@ -135,17 +135,16 @@ class Phpmd
 
             $Inline = $this->findNewInline($marker, $Line);
 
-            if ( ! empty($restrictions))
-            {
-                foreach ($restrictions as $class)
-                {
-                    if (is_subclass_of($Inline, $class))
-                    {
-                        unset($Inline);
+            if (
+                isset($Inline)
+                and InlineResolver::isRestricted(
+                    $restrictions,
+                    $Inline->getElement()
+                )
+            ) {
+                unset($Inline);
 
-                        continue 2;
-                    }
-                }
+                continue;
             }
 
             if (isset($Inline))
@@ -156,7 +155,8 @@ class Phpmd
                     'end'
                         => $Line->key() + $Inline->getWidth(),
                     'textEnd'
-                        => $Line->key() + $Inline->getTextStart() + $Inline->getTextWidth(),
+                        => $Line->key() + $Inline->getTextStart()
+                            + $Inline->getTextWidth(),
                     'textStart'
                         => $Line->key() + $Inline->getTextStart(),
                     'inline'
