@@ -55,14 +55,6 @@ class Lines extends LineIterator implements Iterator, Pointer
         return $this->pointer->count();
     }
 
-    /**
-     * Lookup the value at $position as if it was a pointer key,
-     * do NOT move the internal pointer
-     *
-     * @param int $position
-     *
-     * @return ?string
-     */
     public function lookup(int $position) : ?string
     {
         if ($position >= 0 and $position < $this->pointer->count())

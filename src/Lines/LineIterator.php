@@ -58,10 +58,25 @@ abstract class LineIterator implements Iterator, Pointer
         return $this->pointer;
     }
 
+    public function __clone()
+    {
+        $this->pointer = clone($this->pointer);
+    }
+
     /**
      * Append $text
      *
      * @param string $text
      */
     abstract public function append(string $text);
+
+    /**
+     * Lookup the value at $position as if it was a pointer key,
+     * do NOT move the internal pointer
+     *
+     * @param int $position
+     *
+     * @return ?string
+     */
+    abstract public function lookup(int $position) : ?string;
 }
