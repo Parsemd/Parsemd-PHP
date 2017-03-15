@@ -100,7 +100,7 @@ class Bold extends AbstractInline implements Inline
             )
             or
             preg_match(
-                '/^[_]{2}([^\s](?:.)*?)(?<=[^\s])(?:(?<=[^[:punct:]])[_]{2}|[_]{2}(?=[\s]|$|[[:punct:]]))(?=[^\w])(?![_])/',
+                '/^[_]{2}([^\s](?:.)*?)(?<=[^\s])(?:(?<=[^[:punct:]])[_]{2}|[_]{2}(?=[\s]|$|[[:punct:]]))(?![\w])(?![_])/',
                 $text,
                 $matches
             )
