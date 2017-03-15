@@ -21,7 +21,9 @@ class Phpmd
 
     private $InlineHandlers = array(
         'Aidantwoods\Phpmd\Inlines\Code',
-        'Aidantwoods\Phpmd\Inlines\Link'
+        'Aidantwoods\Phpmd\Inlines\Link',
+        'Aidantwoods\Phpmd\Inlines\Bold',
+        'Aidantwoods\Phpmd\Inlines\Italic',
     );
 
     private $BlockMarkerRegister = array();
@@ -77,20 +79,22 @@ class Phpmd
         return Paragraph::begin($Lines);
     }
 
-    private function findNewInline(string $marker, Line $Line) : ?Inline
+    private function findNewInlines(string $marker, Line $Line) : ?array
     {
+        $Inlines = array();
+
         if (array_key_exists($marker, $this->InlineMarkerRegister))
         {
             foreach ($this->InlineMarkerRegister[$marker] as $handler)
             {
                 if ($Inline = $handler::parse($Line))
                 {
-                    return $Inline;
+                    $Inlines[] = $Inline;
                 }
             }
         }
 
-        return null;
+        return (empty($Inlines) ? null : $Inlines);
     }
 
     private function findBlockMarker(Lines $Lines) : ?string
@@ -133,18 +137,38 @@ class Phpmd
         {
             $marker = $Line->current()[0];
 
-            $Inline = $this->findNewInline($marker, $Line);
+            unset($Inline);
 
-            if (
-                isset($Inline)
-                and InlineResolver::isRestricted(
-                    $restrictions,
-                    $Inline->getElement()
-                )
-            ) {
-                unset($Inline);
+            $NewInlines = $this->findNewInlines($marker, $Line);
 
+            if (empty($NewInlines))
+            {
                 continue;
+            }
+
+            $widthLead = 0;
+            $markerLead = 0;
+
+            foreach ($NewInlines as $NewInline)
+            {
+                if (
+                    InlineResolver::isRestricted(
+                        $restrictions,
+                        $NewInline->getElement()
+                    )
+                ) {
+                    unset($NewInline);
+
+                    continue;
+                }
+
+                if (isset($NewInline) and $NewInline->getWidth() > $widthLead)
+                {
+                    $Inline = $NewInline;
+                    $widthLead = $NewInline->getWidth();
+
+                    continue;
+                }
             }
 
             if (isset($Inline))
@@ -162,8 +186,6 @@ class Phpmd
                     'inline'
                         => $Inline
                 );
-
-                continue;
             }
         }
 
