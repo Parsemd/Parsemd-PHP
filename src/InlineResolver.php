@@ -57,7 +57,7 @@ abstract class InlineResolver
      *   3. Able to interrupt the former
      *
      * * If all of the above hold true then:
-     *   Recurse this algorithm for all InlineDatas occuring after former,
+     *   Recurse this algorithm for all InlineDatas occurring after former,
      *   and place the Resolved returned from this recursion into Interrupts
      *
      * * Discard from Interrupts, all InlineData which does not intersect the
