@@ -90,82 +90,16 @@ class Emphasis extends AbstractInline implements Inline
                 $isLf = self::isLeftFlanking($Line, $length);
                 $isRf = self::isRightFlanking($Line, $length);
 
-                # can we end/begin and emph or strong emph?
-                $nEmph = (bool) ($length % 2);
+                # an emph, a strong emph, or both
+                list($isEmph, $isStrong) = self::isEmphOrStrong($length);
 
-                if ($nEmph)
+                if (self::canOpen($isLf, $isRf, $openSequence))
                 {
-                    $nStrong = ($length > 1);
+                    self::open($isEmph, $isStrong, $openSequence);
                 }
-                else
+                elseif (self::canClose($isLf, $isRf, $length, $root))
                 {
-                    $nStrong = true;
-                }
-
-                # if we are left but not right flanking, or the first run
-                if (
-                    $isLf
-                    and (
-                        ! $isRf
-                        or empty($openSequence)
-                    )
-                ) {
-                    # record whether we are opening emph, strong emph, or both
-                    if ($nEmph and $nStrong)
-                    {
-                        $openSequence[] = self::EM | self::ST;
-                    }
-                    elseif ($nEmph)
-                    {
-                        $openSequence[] = self::EM;
-                    }
-                    elseif ($nStrong)
-                    {
-                        $openSequence[] = self::ST;
-                    }
-                }
-                /**
-                 * http://spec.commonmark.org/0.27/#can-open-emphasis
-                 *
-                 * If one of the delimiters can both open and close (strong)
-                 * emphasis, then the sum of the lengths of the delimiter runs
-                 * containing the opening and closing delimiters must not be a
-                 * multiple of 3.
-                 */
-                elseif ($isRf and ( ! $isLf or (($length + $root) % 3)))
-                {
-                    $end = count($openSequence) -1;
-
-                    /**
-                     * Ideally we will close the last opened (strong) emph,
-                     * but if we cannot, find the first available match (going
-                     * backwards) and discard all opened after it (going
-                     * forwards)
-                     */
-                    for ($i = $end; $i >= 0 and ($nEmph or $nStrong); $i--)
-                    {
-                        if ($nEmph and ($openSequence[$i] & self::EM))
-                        {
-                            $nEmph = false;
-
-                            $openSequence[$i] &= ~self::EM;
-                        }
-
-                        if ($nStrong and ($openSequence[$i] & self::ST))
-                        {
-                            $nStrong = false;
-
-                            $openSequence[$i] &= ~self::ST;
-                        }
-                    }
-
-                    $openSequence = array_slice($openSequence, 0, $i + 2);
-
-                    if ($openSequence[$i + 1] === 0)
-                    {
-                        array_pop($openSequence);
-                    }
-
+                    self::close($isEmph, $isStrong, $openSequence);
                 }
                 elseif (empty($openSequence))
                 {
@@ -266,6 +200,117 @@ class Emphasis extends AbstractInline implements Inline
                 or preg_match('/^[[:punct:]]$/', $after)
             )
         );
+    }
+
+    protected static function isEmphOrStrong(int $length) : array
+    {
+        # can we end/begin and emph or strong emph?
+        $isEmph = (bool) ($length % 2);
+
+        if ($isEmph)
+        {
+            $isStrong = ($length > 1);
+        }
+        else
+        {
+            $isStrong = true;
+        }
+
+        return array($isEmph, $isStrong);
+    }
+
+    /**
+     * Are left but not right flanking, or the left flanking on the first run?
+     */
+    protected static function canOpen(
+        bool $isLf,
+        bool $isRf,
+        array $openSequence
+    ) : bool
+    {
+        return (
+            $isLf
+            and (
+                ! $isRf
+                or empty($openSequence)
+            )
+        );
+    }
+
+    /**
+     * http://spec.commonmark.org/0.27/#can-open-emphasis
+     *
+     * If one of the delimiters can both open and close (strong)
+     * emphasis, then the sum of the lengths of the delimiter runs
+     * containing the opening and closing delimiters must not be a
+     * multiple of 3.
+     */
+    protected static function canClose(
+        bool $isLf,
+        bool $isRf,
+        int $length,
+        int $root
+    ) : bool
+    {
+        return ($isRf and ( ! $isLf or (($length + $root) % 3)));
+    }
+
+    protected static function open(
+        bool $isEmph,
+        bool $isStrong,
+        array &$openSequence
+    ) {
+        # open an emph, a strong emph, or both
+        if ($isEmph and $isStrong)
+        {
+            $openSequence[] = self::EM | self::ST;
+        }
+        elseif ($isEmph)
+        {
+            $openSequence[] = self::EM;
+        }
+        elseif ($isStrong)
+        {
+            $openSequence[] = self::ST;
+        }
+    }
+
+    /**
+     * Ideally we will close the last opened (strong) emph,
+     * but if we cannot, find the first available match (going
+     * backwards) and discard all opened after it (going
+     * forwards)
+     */
+    protected static function close(
+        bool $isEmph,
+        bool $isStrong,
+        array &$openSequence
+    ) {
+        $end = count($openSequence) -1;
+
+        for ($i = $end; $i >= 0 and ($isEmph or $isStrong); $i--)
+        {
+            if ($isEmph and ($openSequence[$i] & self::EM))
+            {
+                $isEmph = false;
+
+                $openSequence[$i] &= ~self::EM;
+            }
+
+            if ($isStrong and ($openSequence[$i] & self::ST))
+            {
+                $isStrong = false;
+
+                $openSequence[$i] &= ~self::ST;
+            }
+        }
+
+        $openSequence = array_slice($openSequence, 0, $i + 2);
+
+        if ($openSequence[$i + 1] === 0)
+        {
+            array_pop($openSequence);
+        }
     }
 
     protected function __construct(
