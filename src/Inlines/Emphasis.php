@@ -10,6 +10,14 @@ use Aidantwoods\Phpmd\Lines\Line;
 
 class Emphasis extends AbstractInline implements Inline
 {
+    /**
+     * Perhaps the only convenience when parsing emphaises to commonmark
+     * compliance:
+     *  The number of characters present in each type's delimiter run are
+     *  distinct multiples of two, so this number may this be used
+     *  interchangeably with the following constants intended for bitwise
+     *  operations.
+     */
     const EM = 0b01;
     const ST = 0b10;
 
@@ -52,27 +60,37 @@ class Emphasis extends AbstractInline implements Inline
 
     protected static function parseText(Line $Line) : ?array
     {
+        # data from the begining of the text
         $root     = self::measureDelimiterRun($Line);
         $marker   = $Line->current()[0];
-        $offset   = ($root < 3 ? $root : null);
+        $start    = $Line->key();
 
+        # ensure there is a root delimiter and it is left flanking
         if ( ! $root or ! self::isLeftFlanking($Line, $root))
         {
             return null;
         }
 
-        $start = $Line->key();
-        $Line  = clone($Line);
+        # we may be able to determine our emphasis type now
+        $offset = ($root < 3 ? $root : ($root % 2 ? null : self::ST));
 
+        # make a copy of the Line object
+        $Line = clone($Line);
+
+        # we will need to record nested structures so we can ignore their
+        # endings
         $openSequence = array();
 
         for (; $Line->valid(); $Line->strcspnJump($marker))
         {
+            # if the current position is a delimiter run
             if ($length = self::measureDelimiterRun($Line, $marker))
             {
+                # are we left or right flanking?
                 $isLf = self::isLeftFlanking($Line, $length);
                 $isRf = self::isRightFlanking($Line, $length);
 
+                # can we end/begin and emph or strong emph?
                 $nEmph = (bool) ($length % 2);
 
                 if ($nEmph)
@@ -84,6 +102,7 @@ class Emphasis extends AbstractInline implements Inline
                     $nStrong = true;
                 }
 
+                # if we are left but not right flanking, or the first run
                 if (
                     $isLf
                     and (
@@ -91,6 +110,7 @@ class Emphasis extends AbstractInline implements Inline
                         or empty($openSequence)
                     )
                 ) {
+                    # record whether we are opening emph, strong emph, or both
                     if ($nEmph and $nStrong)
                     {
                         $openSequence[] = self::EM | self::ST;
@@ -104,10 +124,24 @@ class Emphasis extends AbstractInline implements Inline
                         $openSequence[] = self::ST;
                     }
                 }
+                /**
+                 * http://spec.commonmark.org/0.27/#can-open-emphasis
+                 *
+                 * If one of the delimiters can both open and close (strong)
+                 * emphasis, then the sum of the lengths of the delimiter runs
+                 * containing the opening and closing delimiters must not be a
+                 * multiple of 3.
+                 */
                 elseif ($isRf and ( ! $isLf or (($length + $root) % 3)))
                 {
                     $end = count($openSequence) -1;
 
+                    /**
+                     * Ideally we will close the last opened (strong) emph,
+                     * but if we cannot, find the first available match (going
+                     * backwards) and discard all opened after it (going
+                     * forwards)
+                     */
                     for ($i = $end; $i >= 0 and ($nEmph or $nStrong); $i--)
                     {
                         if ($nEmph and ($openSequence[$i] & self::EM))
@@ -138,6 +172,7 @@ class Emphasis extends AbstractInline implements Inline
                     return null;
                 }
 
+                # jump to the end of the current delimiter run
                 $Line->jump($Line->key() + $length -1);
             }
 
@@ -151,17 +186,9 @@ class Emphasis extends AbstractInline implements Inline
 
         if (empty($openSequence))
         {
-            if ( ! $offset)
-            {
-                if ($root % 2)
-                {
-                    $offset = ($length % 2 ? 1 : 2);
-                }
-                else
-                {
-                    $offset = 2;
-                }
-            }
+            # if we didn't set the emph type earlier, we can now determine our
+            # type based on the length of the closing run
+            $offset = $offset ?? ($length % 2 ? self::EM : self::ST);
 
             return array(
                 'text'
