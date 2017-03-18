@@ -22,8 +22,7 @@ class Phpmd
     private $InlineHandlers = array(
         'Aidantwoods\Phpmd\Inlines\Code',
         'Aidantwoods\Phpmd\Inlines\Link',
-        'Aidantwoods\Phpmd\Inlines\Bold',
-        'Aidantwoods\Phpmd\Inlines\Italic',
+        'Aidantwoods\Phpmd\Inlines\Emphasis',
     );
 
     private $BlockMarkerRegister = array();
@@ -255,11 +254,13 @@ class Phpmd
                 $lineRef = &$Lines->currentRef();
                 $lineRef = ltrim($lineRef);
 
-                # This allows the new block to backtrack into lines already
-                # parsed by the current block
-                # We must reparse the lines for the current block
-                # so that lines are not parsed twice by different block
-                # structures
+                /**
+                 * This allows the new block to backtrack into lines already
+                 * parsed by the current block
+                 * We must reparse the lines for the current block
+                 * so that lines are not parsed twice by different block
+                 * structures
+                 */
                 if (isset($NewBlock) and $NewBlock->backtrackCount() > 0)
                 {
                     $position = $Lines->key() - $NewBlock->backtrackCount();
@@ -422,7 +423,12 @@ class Phpmd
 
     public function parse(string $text) : array
     {
-        $Lines = new Lines(str_replace("\0", '', $text));
+        $text = str_replace("\0", "\u{fffd}", $text);
+
+        $text = str_replace("\r\n", "\n", $text);
+        $text = str_replace("\r", "\n", $text);
+
+        $Lines = new Lines($text);
 
         return $this->elements($Lines);
     }

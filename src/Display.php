@@ -30,16 +30,26 @@ abstract class Display
                 })()
                 .":\n";
 
-            if (! $Element instanceof InlineElement)
+            if ( ! $Element instanceof InlineElement)
             {
                 foreach ($Element->getContent() as $Line)
                 {
-                    $string .= $subIndent.$Line."\n";
+                    $string
+                        .= $subIndent.str_replace(
+                            "\n",
+                            "\n$subIndent",
+                            $Line
+                        )."\n";
                 }
             }
             elseif ($Element->getContent()->count() > 0)
             {
-                $string .= $subIndent.$Element->getContent()->current()."\n";
+                $string
+                    .= $subIndent.str_replace(
+                        "\n",
+                        "\n$subIndent",
+                        $Element->getContent()->current()
+                    )."\n";
             }
 
             $string .= self::elements($Element->getElements(), $subIndent);

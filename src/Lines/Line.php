@@ -73,6 +73,11 @@ class Line extends LineIterator implements Iterator, Pointer
         return new Line(substr($this->text, $start, $end - $start));
     }
 
+    public function substr(int $start, int $end) : string
+    {
+        return substr($this->text, $start, $end - $start);
+    }
+
     public function lookup(int $position) : ?string
     {
         if ($position >= 0 and $position < $this->pointer->count())

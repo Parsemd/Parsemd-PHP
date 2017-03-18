@@ -6,6 +6,7 @@ use Aidantwoods\Phpmd\Lines\Line;
 
 use Aidantwoods\Phpmd\Inlines\Code;
 use Aidantwoods\Phpmd\Inlines\Link;
+use Aidantwoods\Phpmd\Inlines\Emphasis;
 
 abstract class InlineResolver
 {
@@ -27,8 +28,26 @@ abstract class InlineResolver
             return true;
         }
 
+        /**
+         * http://spec.commonmark.org/0.27/#link-text
+         * Links may not contain other links, at any level of nesting. If
+         * multiple otherwise valid link definitions appear nested inside each
+         * other, the inner-most definition is used.
+         */
         if ($NewInline instanceof Link and $Inline instanceof Link)
         {
+            return true;
+        }
+
+        /**
+         * http://spec.commonmark.org/0.27/#link-text
+         * The brackets in link text bind more tightly than markers for
+         * emphasis and strong emphasis.
+         */
+        if (
+            $NewInline instanceof Link
+            and $Inline instanceof Emphasis
+        ) {
             return true;
         }
 
@@ -141,7 +160,7 @@ abstract class InlineResolver
     }
 
     public static function isRestricted(
-        array $restrictions,
+        ?array $restrictions,
         InlineElement $Element
     ) : bool
     {
