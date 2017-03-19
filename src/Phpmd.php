@@ -78,7 +78,7 @@ class Phpmd
         return Paragraph::begin($Lines);
     }
 
-    private function findNewInlines(string $marker, Line $Line) : ?array
+    private function findNewInline(string $marker, Line $Line) : ?Inline
     {
         $Inlines = array();
 
@@ -88,12 +88,12 @@ class Phpmd
             {
                 if ($Inline = $handler::parse($Line))
                 {
-                    $Inlines[] = $Inline;
+                    return $Inline;
                 }
             }
         }
 
-        return (empty($Inlines) ? null : $Inlines);
+        return null;
     }
 
     private function findBlockMarker(Lines $Lines) : ?string
@@ -136,42 +136,19 @@ class Phpmd
         {
             $marker = $Line->current()[0];
 
-            unset($Inline);
+            $Inline = $this->findNewInline($marker, $Line);
 
-            $NewInlines = $this->findNewInlines($marker, $Line);
-
-            if (empty($NewInlines))
+            if ( ! isset($Inline))
             {
                 continue;
             }
 
-            $widthLead = 0;
-            $markerLead = 0;
-
-            foreach ($NewInlines as $NewInline)
-            {
-                if (
-                    InlineResolver::isRestricted(
-                        $restrictions,
-                        $NewInline->getElement()
-                    )
-                ) {
-                    unset($NewInline);
-
-                    continue;
-                }
-
-                if (isset($NewInline) and $NewInline->getWidth() > $widthLead)
-                {
-                    $Inline = $NewInline;
-                    $widthLead = $NewInline->getWidth();
-
-                    continue;
-                }
-            }
-
-            if (isset($Inline))
-            {
+            if (
+                ! InlineResolver::isRestricted(
+                    $restrictions,
+                    $Inline->getElement()
+                )
+            ) {
                 $Inlines[] = array(
                     'start'
                         => $Line->key(),
