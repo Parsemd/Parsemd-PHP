@@ -14,7 +14,7 @@ class Emphasis extends AbstractInline implements Inline
      * Perhaps the only convenience when parsing emphaises to commonmark
      * compliance:
      *  The number of characters present in each type's delimiter run are
-     *  distinct multiples of two, so this number may this be used
+     *  distinct powers of two, so this number may this be used
      *  interchangeably with the following constants intended for bitwise
      *  operations.
      */
@@ -58,12 +58,21 @@ class Emphasis extends AbstractInline implements Inline
         return null;
     }
 
+    /**
+     * The idea here is to parse the outer inline (sub-structures will be
+     * parsed recursively).
+     *
+     * Unfortunately (for performance) the only way to parse two types of
+     * emphasis that utilise idential marking characters, that may also be
+     * arbitrarily nested, or may just be "literal" is to be aware of
+     * substructures as we are parsing the outer one, so that we know the
+     * correct place to end.
+     */
     protected static function parseText(Line $Line) : ?array
     {
-        # data from the begining of the text
-        $root     = self::measureDelimiterRun($Line);
-        $marker   = $Line->current()[0];
-        $start    = $Line->key();
+        $root   = self::measureDelimiterRun($Line);
+        $marker = $Line->current()[0];
+        $start  = $Line->key();
 
         # ensure there is a root delimiter and it is left flanking
         if ( ! $root or ! self::isLeftFlanking($Line, $root))
@@ -74,23 +83,17 @@ class Emphasis extends AbstractInline implements Inline
         # we may be able to determine our emphasis type now
         $offset = ($root < 3 ? $root : ($root % 2 ? null : self::ST));
 
-        # make a copy of the Line object
         $Line = clone($Line);
 
-        # we will need to record nested structures so we can ignore their
-        # endings
         $openSequence = array();
 
         for (; $Line->valid(); $Line->strcspnJump($marker))
         {
-            # if the current position is a delimiter run
             if ($length = self::measureDelimiterRun($Line, $marker))
             {
-                # are we left or right flanking?
                 $isLf = self::isLeftFlanking($Line, $length);
                 $isRf = self::isRightFlanking($Line, $length);
 
-                # an emph, a strong emph, or both
                 list($isEmph, $isStrong) = self::isEmphOrStrong($length);
 
                 if (self::canOpen($isLf, $isRf, $openSequence))
@@ -106,7 +109,6 @@ class Emphasis extends AbstractInline implements Inline
                     return null;
                 }
 
-                # jump to the end of the current delimiter run
                 $Line->jump($Line->key() + $length -1);
             }
 
@@ -144,6 +146,13 @@ class Emphasis extends AbstractInline implements Inline
     {
         $marker = $marker ?? '*_';
 
+        /**
+         * http://spec.commonmark.org/0.27/#delimiter-run
+         *
+         * A delimiter run is either a sequence of one or more ('*', '_')
+         * characters that is not preceded or followed by a ('*', '_')
+         * character respectively.
+         */
         if (preg_match('/^(['.$marker.'])\1*+/', $Line->current(), $match))
         {
             if ($Line->lookup($Line->key() -1)[0] === $match[1])
@@ -153,9 +162,16 @@ class Emphasis extends AbstractInline implements Inline
 
             $length = strlen($match[0]);
 
-            $before = $Line->lookup($Line->key() -1) ?? ' ';
-            $after  = $Line->lookup($Line->key() + $length) ?? ' ';
+            $before = $Line->lookup($Line->key() -1) ?? '';
+            $after  = $Line->lookup($Line->key() + $length) ?? '';
 
+            /**
+             * http://spec.commonmark.org/0.27/#emphasis-and-strong-emphasis
+             *
+             * Many implementations have also restricted intraword emphasis to
+             * the * forms, to avoid unwanted emphasis in words containing
+             * internal underscores.
+             */
             if (
                 $match[1] === '_'
                 and (
@@ -172,6 +188,9 @@ class Emphasis extends AbstractInline implements Inline
         return null;
     }
 
+    /**
+     * http://spec.commonmark.org/0.27/#left-flanking-delimiter-run
+     */
     protected static function isLeftFlanking(Line $Line, int $length) : bool
     {
         $before = $Line->lookup($Line->key() -1)[0] ?? ' ';
@@ -187,6 +206,9 @@ class Emphasis extends AbstractInline implements Inline
         );
     }
 
+    /**
+     * http://spec.commonmark.org/0.27/#right-flanking-delimiter-run
+     */
     protected static function isRightFlanking(Line $Line, int $length) : bool
     {
         $before = $Line->lookup($Line->key() -1)[0] ?? ' ';
@@ -207,14 +229,7 @@ class Emphasis extends AbstractInline implements Inline
         # can we end/begin and emph or strong emph?
         $isEmph = (bool) ($length % 2);
 
-        if ($isEmph)
-        {
-            $isStrong = ($length > 1);
-        }
-        else
-        {
-            $isStrong = true;
-        }
+        $isStrong = ( ! $isEmph ?: $length > 1);
 
         return array($isEmph, $isStrong);
     }
@@ -228,13 +243,7 @@ class Emphasis extends AbstractInline implements Inline
         array $openSequence
     ) : bool
     {
-        return (
-            $isLf
-            and (
-                ! $isRf
-                or empty($openSequence)
-            )
-        );
+        return ($isLf and ( ! $isRf or empty($openSequence)));
     }
 
     /**
@@ -261,18 +270,7 @@ class Emphasis extends AbstractInline implements Inline
         array &$openSequence
     ) {
         # open an emph, a strong emph, or both
-        if ($isEmph and $isStrong)
-        {
-            $openSequence[] = self::EM | self::ST;
-        }
-        elseif ($isEmph)
-        {
-            $openSequence[] = self::EM;
-        }
-        elseif ($isStrong)
-        {
-            $openSequence[] = self::ST;
-        }
+        $openSequence[] = ($isEmph ? self::EM : 0) | ($isStrong ? self::ST : 0);
     }
 
     /**
@@ -305,9 +303,11 @@ class Emphasis extends AbstractInline implements Inline
             }
         }
 
+        # slice off any now irrelevant openings
         $openSequence = array_slice($openSequence, 0, $i + 2);
 
-        if ($openSequence[$i + 1] === 0)
+        # clean up if last item was fully closed
+        if (end($openSequence) === 0)
         {
             array_pop($openSequence);
         }
