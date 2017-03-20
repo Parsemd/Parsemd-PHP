@@ -94,15 +94,13 @@ class Emphasis extends AbstractInline implements Inline
                 $isLf = self::isLeftFlanking($Line, $length);
                 $isRf = self::isRightFlanking($Line, $length);
 
-                list($isEmph, $isStrong) = self::isEmphOrStrong($length);
-
                 if (self::canOpen($isLf, $isRf, $openSequence))
                 {
-                    self::open($isEmph, $isStrong, $openSequence);
+                    self::open($length, $openSequence);
                 }
                 elseif (self::canClose($isLf, $isRf, $length, $root))
                 {
-                    self::close($isEmph, $isStrong, $openSequence);
+                    self::close($length, $openSequence);
                 }
                 elseif (empty($openSequence))
                 {
@@ -224,16 +222,6 @@ class Emphasis extends AbstractInline implements Inline
         );
     }
 
-    protected static function isEmphOrStrong(int $length) : array
-    {
-        # can we end/begin and emph or strong emph?
-        $isEmph = (bool) ($length % 2);
-
-        $isStrong = ( ! $isEmph ?: $length > 1);
-
-        return array($isEmph, $isStrong);
-    }
-
     /**
      * Are left but not right flanking, or the left flanking on the first run?
      */
@@ -264,13 +252,10 @@ class Emphasis extends AbstractInline implements Inline
         return ($isRf and ( ! $isLf or (($length + $root) % 3)));
     }
 
-    protected static function open(
-        bool $isEmph,
-        bool $isStrong,
-        array &$openSequence
-    ) {
+    protected static function open(int $length, array &$openSequence)
+    {
         # open an emph, a strong emph, or both
-        $openSequence[] = ($isEmph ? self::EM : 0) | ($isStrong ? self::ST : 0);
+        $openSequence[] = $length;
     }
 
     /**
@@ -279,27 +264,24 @@ class Emphasis extends AbstractInline implements Inline
      * backwards) and discard all opened after it (going
      * forwards)
      */
-    protected static function close(
-        bool $isEmph,
-        bool $isStrong,
-        array &$openSequence
-    ) {
-        $end = count($openSequence) -1;
-
-        for ($i = $end; $i >= 0 and ($isEmph or $isStrong); $i--)
+    protected static function close(int $length, array &$openSequence)
+    {
+        for ($i = count($openSequence) -1; $i >= 0 and $length; $i--)
         {
-            if ($isEmph and ($openSequence[$i] & self::EM))
+            if ($length % 2 and $openSequence[$i] % 2)
             {
-                $isEmph = false;
-
-                $openSequence[$i] &= ~self::EM;
+                $length           -= self::EM;
+                $openSequence[$i] -= self::EM;
             }
 
-            if ($isStrong and ($openSequence[$i] & self::ST))
+            if ($length > 1 and $openSequence[$i] > 1)
             {
-                $isStrong = false;
+                $stLen = $length - ($length % 2);
 
-                $openSequence[$i] &= ~self::ST;
+                $trim = ($stLen > $openSequence[$i] ? $stLen - $trim : $stLen);
+
+                $length           -= $trim;
+                $openSequence[$i] -= $trim;
             }
         }
 
