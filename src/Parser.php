@@ -5,13 +5,13 @@ namespace Aidantwoods\Phpmd;
 use Aidantwoods\Phpmd\Lines\LineIterator;
 
 /**
- * ** Abstract Interface **: This MUST NOT be implemented directly
+ * **Abstract Interface**: This MUST NOT be implemented directly
  */
-interface Structure
+interface Parser
 {
     /**
      * Return an array of markers for which the structure should
-     * use to identify itself
+     * use to identify itself.
      *
      * @return string[];
      */

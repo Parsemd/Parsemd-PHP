@@ -4,7 +4,7 @@ namespace Aidantwoods\Phpmd;
 
 use Aidantwoods\Phpmd\Lines\Lines;
 
-interface Block extends Structure
+interface Block extends Parser
 {
     /**
      * Determine whether the Block can begin

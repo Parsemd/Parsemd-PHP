@@ -4,7 +4,16 @@ namespace Aidantwoods\Phpmd;
 
 use Aidantwoods\Phpmd\Lines\Line;
 
-interface Inline extends Structure
+/**
+ * An Inline MUST treat the null character ("\0") as if it were a consumable
+ * text character if the Inline allows containment of subparsable structures.
+ *
+ * E.g. If an element begins with ('^') and ends with ('&') and wishes to
+ * contain other structures, then "^foo\0\0\0bar\0&" is of width 12,
+ * text start is 1, and text width is 10. The Inline returned by Parse also
+ * contains a Line element with text content "foo\0\0\0bar\0".
+ */
+interface Inline extends Parser
 {
     /**
      * MUST return either `null` (in case of failure), or a new
