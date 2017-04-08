@@ -9,6 +9,8 @@ use Aidantwoods\Phpmd\Lines\Lines;
 use Aidantwoods\Phpmd\Blocks\Paragraph;
 use Aidantwoods\Phpmd\Inlines\Text;
 
+use Aidantwoods\Phpmd\Elements\InlineElement;
+
 class Phpmd
 {
     private $BlockHandlers = array(
@@ -23,39 +25,37 @@ class Phpmd
         'Aidantwoods\Phpmd\Inlines\Code',
         'Aidantwoods\Phpmd\Inlines\Link',
         'Aidantwoods\Phpmd\Inlines\Emphasis',
+        'Aidantwoods\Phpmd\Inlines\AutoLink',
+        'Aidantwoods\Phpmd\Inlines\Image',
     );
 
-    private $BlockMarkerRegister = array();
+    private $BlockMarkerRegister  = array();
     private $InlineMarkerRegister = array();
 
-    private function registerBlockHandlers()
+    private function registerHandlers()
     {
-        foreach ($this->BlockHandlers as $Block)
-        {
-            foreach ($Block::getMarkers() as $marker)
-            {
-                if ( ! array_key_exists($marker, $this->BlockMarkerRegister))
-                {
-                    $this->BlockMarkerRegister[$marker] = array();
-                }
+        $handlerTypes = array('Block', 'Inline');
 
-                $this->BlockMarkerRegister[$marker][] = $Block;
-            }
+        foreach ($handlerTypes as $type)
+        {
+            $this->registerHandlersOfType($type);
         }
     }
 
-    private function registerInlineHandlers()
+    private function registerHandlersOfType(string $type)
     {
-        foreach ($this->InlineHandlers as $Inline)
+        $markerRegister = "${type}MarkerRegister";
+
+        foreach ($this->{"${type}Handlers"} as $Handler)
         {
-            foreach ($Inline::getMarkers() as $marker)
+            foreach ($Handler::getMarkers() as $marker)
             {
-                if ( ! array_key_exists($marker, $this->InlineMarkerRegister))
+                if ( ! array_key_exists($marker, $this->$markerRegister))
                 {
-                    $this->InlineMarkerRegister[$marker] = array();
+                    $this->$markerRegister[$marker] = array();
                 }
 
-                $this->InlineMarkerRegister[$marker][] = $Inline;
+                $this->$markerRegister[$marker][] = $Handler;
             }
         }
     }
@@ -80,8 +80,6 @@ class Phpmd
 
     private function findNewInline(string $marker, Line $Line) : ?Inline
     {
-        $Inlines = array();
-
         if (array_key_exists($marker, $this->InlineMarkerRegister))
         {
             foreach ($this->InlineMarkerRegister[$marker] as $handler)
@@ -120,7 +118,7 @@ class Phpmd
     }
 
     private function parseInlines(
-        Line $Line,
+        Line   $Line,
         ?array $restrictions = null
     ) : array
     {
@@ -149,19 +147,9 @@ class Phpmd
                     $Inline->getElement()
                 )
             ) {
-                $Inlines[] = array(
-                    'start'
-                        => $Line->key(),
-                    'end'
-                        => $Line->key() + $Inline->getWidth(),
-                    'textEnd'
-                        => $Line->key() + $Inline->getTextStart()
-                            + $Inline->getTextWidth(),
-                    'textStart'
-                        => $Line->key() + $Inline->getTextStart(),
-                    'inline'
-                        => $Inline
-                );
+                $newInline = new InlineData($Line, $Inline);
+
+                $Inlines[] = $newInline;
             }
         }
 
@@ -169,20 +157,20 @@ class Phpmd
 
         $blank = 0;
 
-        foreach ($Inlines as $data)
+        foreach ($Inlines as $Data)
         {
-            if ($data['start'] > $blank)
+            if ($Data->start() > $blank)
             {
-                $text = $Line->subset($blank, $data['start']);
+                $text = $Line->subset($blank, $Data->start());
 
                 $text = Text::parse($text);
 
                 $Elements[] = $text->getElement();
             }
 
-            $blank = $data['end'];
+            $blank = $Data->end();
 
-            $Elements[] = $data['inline']->getElement();
+            $Elements[] = $Data->getInline()->getElement();
         }
 
         if ($Line->count() > $blank)
@@ -228,9 +216,6 @@ class Phpmd
                     continue;
                 }
 
-                $lineRef = &$Lines->currentRef();
-                $lineRef = ltrim($lineRef);
-
                 /**
                  * This allows the new block to backtrack into lines already
                  * parsed by the current block
@@ -261,10 +246,6 @@ class Phpmd
                     $blockStart = $Lines->key();
 
                     $Block = $NewBlock;
-                }
-                else
-                {
-                    $Lines->before();
                 }
 
                 continue;
@@ -304,7 +285,7 @@ class Phpmd
 
     private function inlineElement(
         Element $Element,
-        ?array $restrictions = null
+        ?array  $restrictions = null
     ) {
         if ( ! $Element instanceof InlineElement)
         {
@@ -355,7 +336,7 @@ class Phpmd
     }
 
     private function inlineLine(
-        Line $Line,
+        Line   $Line,
         ?array $restrictions = null
     ) : array
     {
@@ -392,19 +373,18 @@ class Phpmd
         return $Elements;
     }
 
-    public function __construct()
-    {
-        $this->registerBlockHandlers();
-        $this->registerInlineHandlers();
+    public function __construct(
+        ?array $BlockHandlers = null,
+        ?array $InlineHandlers = null
+    ) {
+        $this->BlockHandlers  = $BlockHandlers  ?? $this->BlockHandlers;
+        $this->InlineHandlers = $InlineHandlers ?? $this->InlineHandlers;
+
+        $this->registerHandlers();
     }
 
     public function parse(string $text) : array
     {
-        $text = str_replace("\0", "\u{fffd}", $text);
-
-        $text = str_replace("\r\n", "\n", $text);
-        $text = str_replace("\r", "\n", $text);
-
         $Lines = new Lines($text);
 
         return $this->elements($Lines);
