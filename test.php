@@ -8,7 +8,7 @@ $text = file_get_contents(
     '/Users/Aidan/GitHub/SecureHeaders/docs/generated/apply.md'
 );
 
-$Phpmd = new Phpmd();
+$Phpmd = new Phpmd;
 
 $t0 = microtime(true);
 
