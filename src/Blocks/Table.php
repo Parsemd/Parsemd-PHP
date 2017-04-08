@@ -3,14 +3,13 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class Table extends AbstractBlock implements Block
 {
-    private $Element,
-            $columns,
+    private $columns,
             $tBody;
 
     protected static $markers = array(
@@ -51,7 +50,7 @@ class Table extends AbstractBlock implements Block
     {
         $texts = self::decomposeTableRow($Lines->current());
 
-        $row = new Element('tr');
+        $row = new BlockElement('tr');
         $row->setNonReducible();
 
         $this->tBody->appendElement($row);
@@ -63,7 +62,7 @@ class Table extends AbstractBlock implements Block
                 break;
             }
 
-            $data = new Element('td');
+            $data = new BlockElement('td');
             $data->setNonReducible();
 
             $data->appendContent(trim($text));
@@ -81,11 +80,6 @@ class Table extends AbstractBlock implements Block
         );
     }
 
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
     public function backtrackCount() : int
     {
         return 1;
@@ -95,13 +89,13 @@ class Table extends AbstractBlock implements Block
     {
         $this->columns = count($headings);
 
-        $this->Element = new Element('table');
+        $this->Element = new BlockElement('table');
         $this->Element->setNonReducible();
 
-        $tHead = new Element('thead');
+        $tHead = new BlockElement('thead');
         $tHead->setNonReducible();
 
-        $row = new Element('tr');
+        $row = new BlockElement('tr');
         $row->setNonReducible();
 
         $tHead->appendElement($row);
@@ -109,7 +103,7 @@ class Table extends AbstractBlock implements Block
 
         foreach ($headings as $heading)
         {
-            $data = new Element('td');
+            $data = new BlockElement('td');
             $data->setNonReducible();
 
             $data->appendContent(trim($heading));
@@ -117,7 +111,7 @@ class Table extends AbstractBlock implements Block
             $row->appendElement($data);
         }
 
-        $tBody = new Element('tbody');
+        $tBody = new BlockElement('tbody');
         $tBody->setNonReducible();
 
         $this->tBody = $tBody;
@@ -155,7 +149,7 @@ class Table extends AbstractBlock implements Block
 
         if (
             preg_match(
-                '/^[|]?+(([-]++)(?:[|](?1))?)[|]?+$/',
+                '/^\s*+[|]?+(([-]++)(?:[|](?1))?)[|]?+$/',
                 $normalisedLine,
                 $matches
             )

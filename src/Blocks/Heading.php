@@ -3,28 +3,26 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class Heading extends AbstractBlock implements Block
 {
-    private $Element;
-
     protected static $markers = array(
         '#'
     );
 
     public static function isPresent(Lines $Lines) : bool
     {
-        return preg_match('/^[#]{1,6}[ ]++[^ ]/', $Lines->current());
+        return preg_match('/^\s*+[#]{1,6}[ ]++[^ ]/', $Lines->current());
     }
 
     public static function begin(Lines $Lines) : ?Block
     {
         if (
             preg_match(
-                '/^([#]{1,6})[ ]++([^ ].*)(?:\1\s*)?$/',
+                '/^\s*+([#]{1,6})[ ]++([^ ].*)(?:\1\s*)?$/',
                 $Lines->current(),
                 $matches
             )
@@ -45,14 +43,9 @@ class Heading extends AbstractBlock implements Block
         return false;
     }
 
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
     private function __construct(int $level, string $text, Lines $Lines)
     {
-        $Element = new Element("h$level");
+        $Element = new BlockElement("h$level");
 
         $this->initPointer = $Lines->key();
 

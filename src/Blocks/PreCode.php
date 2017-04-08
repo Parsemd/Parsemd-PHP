@@ -3,14 +3,13 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class PreCode extends AbstractBlock implements Block
 {
-    private $Element,
-            $Code,
+    private $Code,
             $initialMarker,
             $isComplete = false;
 
@@ -21,7 +20,7 @@ class PreCode extends AbstractBlock implements Block
     public static function isPresent(Lines $Lines) : bool
     {
         return preg_match(
-            '/^(?:[`]{3,}+|[~]{3,}+)[^\s]*+[ ]*+$/',
+            '/^\s*+(?:[`]{3,}+|[~]{3,}+)[^\s]*+[ ]*+$/',
             $Lines->current()
         );
     }
@@ -30,7 +29,10 @@ class PreCode extends AbstractBlock implements Block
     {
         if (
             preg_match(
-                '/^('.implode('{3,}|', self::$markers).'{3,})([^\s]*+)[ ]*+$/',
+                '/^\s*+('
+                .implode('{3,}|', self::$markers)
+                .'{3,})([^\s]*+)[ ]*+$/',
+
                 $Lines->current(),
                 $matches
             )
@@ -65,11 +67,6 @@ class PreCode extends AbstractBlock implements Block
         return ! $this->isComplete;
     }
 
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
     private function __construct(
         Lines $Lines,
         string $initialMarker,
@@ -77,9 +74,8 @@ class PreCode extends AbstractBlock implements Block
     ) {
         $this->initialMarker = $initialMarker;
 
-        $this->Element = new Element('pre');
-
-        $this->Code = new Element('code');
+        $this->Element = new BlockElement('pre');
+        $this->Code    = new BlockElement('code');
 
         $this->Element->setNonReducible();
         $this->Element->setNonInlinable();

@@ -3,14 +3,12 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class Paragraph extends AbstractBlock implements Block
 {
-    private $Element;
-
     protected static $markers = array();
 
     public static function isPresent(Lines $Lines) : bool
@@ -32,10 +30,15 @@ class Paragraph extends AbstractBlock implements Block
 
         $this->uninterrupt();
 
-        $toCurrentLine = (trim($Lines->lookup($Lines->key() -1)) !== '');
+        $lastLine = $Lines->lookup($Lines->key() -1);
+
+        # append to the current line or a new one?
+
+        $toCurrentLine = (trim($lastLine) !== '');
+        $toCurrentLine = ! ( ! $toCurrentLine ?:substr($lastLine, -2) === '  ');
 
         $this->Element->appendContent(
-            ltrim($Lines->current()),
+            trim($Lines->current()),
             $toCurrentLine
         );
 
@@ -52,14 +55,9 @@ class Paragraph extends AbstractBlock implements Block
         return true;
     }
 
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
     private function __construct(Lines $Lines)
     {
-        $this->Element = new Element('p');
+        $this->Element = new BlockElement('p');
 
         $this->Element->setNonReducible();
 

@@ -3,14 +3,12 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class ThematicBreak extends AbstractBlock implements Block
 {
-    private $Element;
-
     protected static $markers = array(
         '-', '_', '*'
     );
@@ -18,7 +16,7 @@ class ThematicBreak extends AbstractBlock implements Block
     public static function isPresent(Lines $Lines) : bool
     {
         return preg_match(
-            '/^(?:[-]{3,}+|[_]{3,}+|[*]{3,}+)[\s]*+$/',
+            '/^\s*+(?:[-]{3,}+|[_]{3,}+|[*]{3,}+)[\s]*+$/',
             $Lines->current()
         );
     }
@@ -38,14 +36,9 @@ class ThematicBreak extends AbstractBlock implements Block
         return false;
     }
 
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
     private function __construct()
     {
-        $Element = new Element("hr");
+        $Element = new BlockElement('hr');
 
         $Element->setNonReducible();
 

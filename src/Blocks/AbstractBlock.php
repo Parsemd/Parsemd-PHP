@@ -3,11 +3,13 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
+use Aidantwoods\Phpmd\Element;
 use Aidantwoods\Phpmd\Lines\Lines;
 
 abstract class AbstractBlock implements Block
 {
-    protected $interrupted = false;
+    protected $interrupted = false,
+              $Element;
 
     public static function getMarkers() : array
     {
@@ -32,5 +34,10 @@ abstract class AbstractBlock implements Block
     public function backtrackCount() : int
     {
         return 0;
+    }
+
+    public function getElement() : Element
+    {
+        return $this->Element;
     }
 }
