@@ -3,6 +3,7 @@
 namespace Aidantwoods\Phpmd\Lines;
 
 use Iterator;
+use Countable;
 
 /**
  * Stores text and is iterable, but defers iteration task
@@ -10,7 +11,7 @@ use Iterator;
  * Implements the extended functionality provided by
  * Pointer, by again deferring tasks to the LinePointer.
  */
-abstract class LineIterator implements Iterator, Pointer
+abstract class LineIterator implements Iterator, Pointer, Countable
 {
     public function key() : int
     {

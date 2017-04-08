@@ -44,11 +44,6 @@ class Lines extends LineIterator implements Iterator, Pointer
         $this->lines[$this->key()] = $new;
     }
 
-    public function count() : int
-    {
-        return $this->pointer->count();
-    }
-
     public function lookup(int $position) : ?string
     {
         if ($position >= 0 and $position < $this->pointer->count())

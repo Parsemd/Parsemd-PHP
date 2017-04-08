@@ -3,12 +3,13 @@
 namespace Aidantwoods\Phpmd\Lines;
 
 use Iterator;
+use Countable;
 
 /**
  * Implements the Iterator class, and adds before and jump methods for
  * arbitrary positioning
  */
-class LinePointer implements Iterator, Pointer
+class LinePointer implements Iterator, Pointer, Countable
 {
     private $pointer,
             $length;
