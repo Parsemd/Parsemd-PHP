@@ -29,13 +29,13 @@ class Line extends LineIterator implements Iterator, Pointer
 
     public function current() : string
     {
-        if ($this->pointer->current() === $this->cache['position'])
+        if ($this->pointer->current() !== $this->cache['position'])
         {
-            return $this->cache['text'];
+            $this->cache = array(
+                'text'     => $this->lookup($this->key()),
+                'position' => $this->pointer->key()
+            );
         }
-
-        $this->cache['text'] = substr($this->text, $this->pointer->current());
-        $this->cache['position'] = $this->pointer->current();
 
         return $this->cache['text'];
     }
@@ -68,23 +68,34 @@ class Line extends LineIterator implements Iterator, Pointer
         $this->jump($this->key() + strcspn($this->text, $mask, $this->key()));
     }
 
-    public function subset(int $start, int $end) : Line
+    public function subset(int $start, ?int $end = null) : Line
     {
-        return new Line(substr($this->text, $start, $end - $start));
+        return new Line($this->substr($start, $end));
     }
 
-    public function substr(int $start, int $end) : string
+    public function substr(int $start, ?int $end = null) : string
     {
+        $end = $end ?? $this->count();
+
         return substr($this->text, $start, $end - $start);
     }
 
     public function lookup(int $position) : ?string
     {
-        if ($position >= 0 and $position < $this->pointer->count())
+        if ($position === $this->cache['position'])
+        {
+            return $this->cache['text'];
+        }
+        elseif ($position >= 0 and $position < $this->pointer->count())
         {
             return substr($this->text, $position);
         }
 
         return null;
+    }
+
+    public function __toString() : string
+    {
+        return $this->text;
     }
 }

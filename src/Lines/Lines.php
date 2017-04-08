@@ -20,6 +20,10 @@ class Lines extends LineIterator implements Iterator, Pointer
     {
         if ( ! empty($lines))
         {
+            $lines = str_replace("\0", "\u{fffd}", $lines);
+            $lines = str_replace("\r\n", "\n", $lines);
+            $lines = str_replace("\r", "\n", $lines);
+
             $this->lines = explode("\n", $lines);
         }
         else
@@ -27,27 +31,17 @@ class Lines extends LineIterator implements Iterator, Pointer
             $this->lines = array();
         }
 
-        foreach ($this->lines as $key => $line)
-        {
-            $this->lengths[$key] = strlen($line);
-        }
-
         $this->pointer = new LinePointer(count($this->lines));
     }
 
     public function current() : string
     {
-        return $this->lines[$this->pointer->current()];
+        return $this->lines[$this->key()];
     }
 
-    /**
-     * Like {@see current}, but return a reference
-     *
-     * @return &string
-     */
-    public function &currentRef() : string
+    public function setCurrent(string $new)
     {
-        return $this->lines[$this->pointer->current()];
+        $this->lines[$this->key()] = $new;
     }
 
     public function count() : int
@@ -76,12 +70,12 @@ class Lines extends LineIterator implements Iterator, Pointer
      */
     public function append(
         string $line,
-        bool $toCurrentLine = false,
-        bool $withSpace = true
+        bool   $toCurrentLine = false,
+        bool   $withSpace     = true
     ) {
         if ($toCurrentLine and $this->count() > 0)
         {
-            $this->lines[$this->pointer->current()]
+            $this->lines[$this->key()]
                 .= ($withSpace ? ' ' : '') . $line;
         }
         else
