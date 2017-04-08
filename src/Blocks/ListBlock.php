@@ -3,9 +3,8 @@
 namespace Aidantwoods\Phpmd\Blocks;
 
 use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\Structure;
 use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Phpmd\Elements\BlockElement;
 
 class ListBlock extends AbstractBlock implements Block
 {
@@ -14,7 +13,6 @@ class ListBlock extends AbstractBlock implements Block
             $marker,
             $initalWhitespace,
             $requiredIndent,
-            $Element,
             $loose = false;
 
     protected static $markers = array(
@@ -44,13 +42,7 @@ class ListBlock extends AbstractBlock implements Block
     {
         if ($data = self::deconstructLine($Lines->current()))
         {
-            return new static(
-                $Lines,
-                $data['fullMarker'],
-                $data['marker'],
-                $data['initialWhitespace'],
-                $data['text']
-            );
+            return new static($Lines, $data);
         }
 
         return null;
@@ -58,20 +50,14 @@ class ListBlock extends AbstractBlock implements Block
 
     public function parse(Lines $Lines) : bool
     {
-        if ($data = self::deconstructLine($Lines->current()))
-        {
-            $Li = new Element('li');
+        $data = self::deconstructLine($Lines->current());
 
-            $Li->appendContent($data['text']);
+        if (
+            ( ! $data or $this->isContent($Lines))
+            and trim($Lines->current()) !== ''
+        ) {
+            $this->unInterrupt();
 
-            $this->Element->appendElement($Li);
-
-            $this->CurrentLi = $Li;
-
-            return true;
-        }
-        elseif ($this->isContent($Lines))
-        {
             $trim = preg_replace(
                 '/^[ ]{0,'.$this->requiredIndent.'}+/',
                 '',
@@ -89,50 +75,55 @@ class ListBlock extends AbstractBlock implements Block
 
             return true;
         }
+        elseif ($this->marker === $data['marker'])
+        {
+            $this->unInterrupt();
+
+            $Li = new BlockElement('li');
+
+            $Li->appendContent($data['text']);
+
+            $this->Element->appendElement($Li);
+
+            $this->CurrentLi = $Li;
+
+            $this->configureWhitespace($data);
+
+            return true;
+        }
 
         return false;
     }
 
     public function isContinuable(Lines $Lines) : bool
     {
-        $lineLength = strlen($Lines->current());
-
-        if ($lineLength === 0)
+        if (trim($Lines->current()) === '')
         {
             $this->interrupt();
 
             return true;
         }
 
-        if ($this->isContent($Lines))
+        $isPresent = $this->isPresent($Lines, $this->marker);
+        $isContent = $this->isContent($Lines);
+
+        if ($isPresent or $isContent)
         {
             return true;
         }
-        elseif ($this->isPresent($Lines, $this->marker))
+        elseif ( ! $this->isInterrupted())
         {
+            $this->interrupt();
+
             return true;
         }
 
         return false;
     }
 
-    public function getElement() : Element
+    private function __construct(Lines $Lines, array $data)
     {
-        return $this->Element;
-    }
-
-    private function __construct(
-        Lines $Lines,
-        string $fullMarker,
-        string $marker,
-        string $initialWhitespace,
-        string $text
-    ) {
-        $this->fullMarker = $fullMarker;
-
-        $this->marker = $marker;
-
-        if ($marker === '*' or $marker === '-')
+        if ($data['marker'] === '*' or $data['marker'] === '-')
         {
             $type = 'ul';
 
@@ -145,7 +136,7 @@ class ListBlock extends AbstractBlock implements Block
             $startNumber = preg_replace(
                 '/[0-9]++\K.*+/',
                 '',
-                $fullMarker
+                $data['fullMarker']
             );
 
             if ($startNumber === '1')
@@ -154,23 +145,13 @@ class ListBlock extends AbstractBlock implements Block
             }
         }
 
-        if (empty($text))
-        {
-            $this->initialWhitespace = 1;
-        }
-        else
-        {
-            $this->initialWhitespace = strlen($initialWhitespace);
-        }
+        $this->configureWhitespace($data);
 
-        $this->requiredIndent = $this->initialWhitespace
-                              + strlen($this->fullMarker);
+        $Li = new BlockElement('li');
 
-        $Li = new Element('li');
+        $Li->appendContent($data['text']);
 
-        $Li->appendContent($text);
-
-        $List = new Element($type);
+        $List = new BlockElement($type);
 
         if (isset($startNumber))
         {
@@ -199,25 +180,27 @@ class ListBlock extends AbstractBlock implements Block
     {
         if (
             preg_match(
-                '/^(?|([0-9]{1,9}+([.)]))|(([*-])))([ ]++|$)(.*+)$/',
+                '/^([ ]*+)(?|([0-9]{1,9}+([.)]))|(([*-])))([ ]++|$)(.*+)$/',
                 $line,
                 $matches
             )
         ) {
             if (empty($text))
             {
-                $matches[3] = ' ';
+                $matches[4] = ' ';
             }
 
             $data = array(
                 'fullMarker'
-                    => $matches[1],
-                'marker'
                     => $matches[2],
-                'initialWhitespace'
+                'marker'
                     => $matches[3],
+                'initialWhitespace'
+                    => $matches[4],
+                'leadWhitespace'
+                    => $matches[1],
                 'text'
-                    => $matches[4]
+                    => $matches[5]
             );
 
             return $data;
@@ -226,5 +209,26 @@ class ListBlock extends AbstractBlock implements Block
         {
             return null;
         }
+    }
+
+    private function configureWhitespace(array $data)
+    {
+        $this->fullMarker = $data['fullMarker'];
+        $this->marker     = $data['marker'];
+
+        $this->leadWhitepace = strlen($data['leadWhitespace']);
+
+        if (empty($data['text']))
+        {
+            $this->initialWhitespace = 1;
+        }
+        else
+        {
+            $this->initialWhitespace = strlen($data['initialWhitespace']);
+        }
+
+        $this->requiredIndent = $this->leadWhitepace
+                              + $this->initialWhitespace
+                              + strlen($this->fullMarker);
     }
 }
