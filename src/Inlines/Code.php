@@ -4,34 +4,15 @@ namespace Aidantwoods\Phpmd\Inlines;
 
 use Aidantwoods\Phpmd\Inline;
 use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\InlineElement;
+use Aidantwoods\Phpmd\Elements\InlineElement;
 
 use Aidantwoods\Phpmd\Lines\Line;
 
 class Code extends AbstractInline implements Inline
 {
-    private $Element,
-            $width,
-            $textStart;
-
     protected static $markers = array(
         '`'
     );
-
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
-    public function getWidth() : int
-    {
-        return $this->width;
-    }
-
-    public function getTextStart() : int
-    {
-        return $this->textStart;
-    }
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -51,7 +32,7 @@ class Code extends AbstractInline implements Inline
     {
         if (
             preg_match(
-                '/^([`]++)(.*?[^`\0])\1(?=[^`]|$)/',
+                '/^([`]++)(.*?[^`])\1(?=[^`]|$)/',
                 $text,
                 $matches
             )
@@ -67,8 +48,8 @@ class Code extends AbstractInline implements Inline
     }
 
     private function __construct(
-        int $width,
-        int $textStart,
+        int    $width,
+        int    $textStart,
         string $text
     ) {
         $this->width     = $width;
@@ -77,7 +58,7 @@ class Code extends AbstractInline implements Inline
         $this->Element = new InlineElement('code');
 
         $this->Element->setNonInlinable();
-        $this->Element->setNoUnescapeContent();
+        $this->Element->setNotUnescapeContent();
         $this->Element->setNonNestables(['code']);
 
         $this->Element->appendContent($text);

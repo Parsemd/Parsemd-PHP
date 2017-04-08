@@ -4,7 +4,7 @@ namespace Aidantwoods\Phpmd\Inlines;
 
 use Aidantwoods\Phpmd\Inline;
 use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\InlineElement;
+use Aidantwoods\Phpmd\Elements\InlineElement;
 
 use Aidantwoods\Phpmd\Lines\Line;
 
@@ -21,28 +21,9 @@ class Emphasis extends AbstractInline implements Inline
     const EM = 0b01;
     const ST = 0b10;
 
-    protected $Element,
-              $width,
-              $textStart;
-
     protected static $markers = array(
         '*', '_'
     );
-
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
-    public function getWidth() : int
-    {
-        return $this->width;
-    }
-
-    public function getTextStart() : int
-    {
-        return $this->textStart;
-    }
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -67,6 +48,10 @@ class Emphasis extends AbstractInline implements Inline
      * arbitrarily nested, or may just be "literal" is to be aware of
      * substructures as we are parsing the outer one, so that we know the
      * correct place to end.
+     *
+     * @param Line $Line
+     *
+     * @return ?array
      */
     protected static function parseText(Line $Line) : ?array
     {
@@ -137,20 +122,25 @@ class Emphasis extends AbstractInline implements Inline
         return null;
     }
 
+    /**
+     * Measure a delimiter run as defined in
+     * http://spec.commonmark.org/0.27/#delimiter-run
+     *
+     * Return null if the line pointer has not been placed at the beginning of
+     * a valid delimiter run
+     *
+     * @param Line $Line
+     * @param string $marker
+     *
+     * @return ?int
+     */
     protected static function measureDelimiterRun(
-        Line $Line,
+        Line   $Line,
         string $marker = null
     ) : ?int
     {
         $marker = $marker ?? '*_';
 
-        /**
-         * http://spec.commonmark.org/0.27/#delimiter-run
-         *
-         * A delimiter run is either a sequence of one or more ('*', '_')
-         * characters that is not preceded or followed by a ('*', '_')
-         * character respectively.
-         */
         if (preg_match('/^(['.$marker.'])\1*+/', $Line->current(), $match))
         {
             if ($Line->lookup($Line->key() -1)[0] === $match[1])
@@ -173,8 +163,8 @@ class Emphasis extends AbstractInline implements Inline
             if (
                 $match[1] === '_'
                 and (
-                    preg_match('/^\w/', $before)
-                    or preg_match('/^\w/', $after)
+                    preg_match('/^\p{L}/u', $before)
+                    or preg_match('/^\p{L}/u', $after)
                 )
             ) {
                 return null;
@@ -187,7 +177,14 @@ class Emphasis extends AbstractInline implements Inline
     }
 
     /**
+     * Given a Line with the pointer at the begining of an already valid
+     * delimiter run, determine whether it is left flanking as defined in
      * http://spec.commonmark.org/0.27/#left-flanking-delimiter-run
+     *
+     * @param Line $Line
+     * @param int $length
+     *
+     * @return bool
      */
     protected static function isLeftFlanking(Line $Line, int $length) : bool
     {
@@ -195,17 +192,24 @@ class Emphasis extends AbstractInline implements Inline
         $after  = $Line->lookup($Line->key() + $length)[0] ?? ' ';
 
         return (
-            $after !== ' '
+            ! ctype_space($after)
             and (
-                ! preg_match('/^[[:punct:]]$/', $after)
-                or $before === ' '
-                or preg_match('/^[[:punct:]]$/', $before)
+                ! preg_match('/^\p{P}/u', $after)
+                or ctype_space($before)
+                or preg_match('/^\p{P}/u', $before)
             )
         );
     }
 
     /**
+     * Given a Line with the pointer at the begining of an already valid
+     * delimiter run, determine whether it is right flanking as defined in
      * http://spec.commonmark.org/0.27/#right-flanking-delimiter-run
+     *
+     * @param Line $Line
+     * @param int $length
+     *
+     * @return bool
      */
     protected static function isRightFlanking(Line $Line, int $length) : bool
     {
@@ -213,21 +217,28 @@ class Emphasis extends AbstractInline implements Inline
         $after  = $Line->lookup($Line->key() + $length)[0] ?? ' ';
 
         return (
-            $before !== ' '
+            ! ctype_space($before)
             and (
-                ! preg_match('/^[[:punct:]]$/', $before)
-                or $after === ' '
-                or preg_match('/^[[:punct:]]$/', $after)
+                ! preg_match('/^\p{P}/u', $before)
+                or ctype_space($after)
+                or preg_match('/^\p{P}/u', $after)
             )
         );
     }
 
     /**
+     * Determine whether the given sequence may open an emph or strong emph.
      * Are left but not right flanking, or the left flanking on the first run?
+     *
+     * @param bool $isLf
+     * @param bool $isRf
+     * @param array $openSequence
+     *
+     * @return bool
      */
     protected static function canOpen(
-        bool $isLf,
-        bool $isRf,
+        bool  $isLf,
+        bool  $isRf,
         array $openSequence
     ) : bool
     {
@@ -235,18 +246,26 @@ class Emphasis extends AbstractInline implements Inline
     }
 
     /**
+     * Determine whether the given sequence may close an emph or strong emph
      * http://spec.commonmark.org/0.27/#can-open-emphasis
      *
      * If one of the delimiters can both open and close (strong)
      * emphasis, then the sum of the lengths of the delimiter runs
      * containing the opening and closing delimiters must not be a
      * multiple of 3.
+     *
+     * @param bool $isLf
+     * @param bool $isRf
+     * @param int $length
+     * @param int $root
+     *
+     * @return bool
      */
     protected static function canClose(
         bool $isLf,
         bool $isRf,
-        int $length,
-        int $root
+        int  $length,
+        int  $root
     ) : bool
     {
         return ($isRf and ( ! $isLf or (($length + $root) % 3)));
@@ -296,8 +315,8 @@ class Emphasis extends AbstractInline implements Inline
     }
 
     protected function __construct(
-        int $width,
-        int $textStart,
+        int    $width,
+        int    $textStart,
         string $text
     ) {
         $this->width     = $width;

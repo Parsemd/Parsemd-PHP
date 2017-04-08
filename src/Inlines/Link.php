@@ -4,34 +4,15 @@ namespace Aidantwoods\Phpmd\Inlines;
 
 use Aidantwoods\Phpmd\Inline;
 use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\InlineElement;
+use Aidantwoods\Phpmd\Elements\InlineElement;
 
 use Aidantwoods\Phpmd\Lines\Line;
 
 class Link extends AbstractInline implements Inline
 {
-    private $Element,
-            $width,
-            $textStart;
-
     protected static $markers = array(
         '['
     );
-
-    public function getElement() : Element
-    {
-        return $this->Element;
-    }
-
-    public function getWidth() : int
-    {
-        return $this->width;
-    }
-
-    public function getTextStart() : int
-    {
-        return $this->textStart;
-    }
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -53,7 +34,14 @@ class Link extends AbstractInline implements Inline
     {
         if (
             preg_match(
-                '/^\[((?:[\\\]\]|[^]])++)\][(]\s*+((?:[\\\][)]|[^ )])++)(?:\s*+([\'"])((?:[\\\]\3|(?!\3).)++)\3)?\s*+[)]/',
+                '/
+                ^
+                \[((?:[\\\]\]|\[(?1)*?\]|[^]])++)\]
+                [(]\s*+
+                ((?:[\\\][)]|[^ )])++)
+                (?:\s*+([\'"])((?:[\\\]\3|(?!\3).)++)\3)?
+                \s*+[)]
+                /x',
                 $text,
                 $matches
             )
@@ -71,18 +59,16 @@ class Link extends AbstractInline implements Inline
     }
 
     private function __construct(
-        int $width,
-        int $textStart,
-        string $text,
-        string $href,
+        int     $width,
+        int     $textStart,
+        string  $text,
+        string  $href,
         ?string $title = null
     ) {
         $this->width     = $width;
         $this->textStart = $textStart;
 
         $this->Element = new InlineElement('a');
-
-        $this->Element->setNonNestables(['a']);
 
         $this->Element->appendContent($text);
 
