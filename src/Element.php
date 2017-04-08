@@ -2,89 +2,29 @@
 
 namespace Aidantwoods\Phpmd;
 
-use Aidantwoods\Phpmd\Lines\Lines;
-
-class Element
+interface Element
 {
-    protected $type,
-              $Lines,
-              $reducible  = true,
-              $inlinable  = true,
-              $attributes = array(),
-              $Elements   = array();
+    public function __construct(string $type);
 
-    public function __construct(string $type)
-    {
-        $this->type = $type;
+    public function getType() : string;
 
-        $this->Lines = new Lines;
-    }
+    public function appendContent(string $content);
 
-    public function getType() : string
-    {
-        return $this->type;
-    }
+    public function getContent();
 
-    public function appendContent(
-        string $content,
-        bool $toCurrentLine = false,
-        bool $withSpace = true
-    ) {
-        $this->Lines->append($content, $toCurrentLine, $withSpace);
-    }
+    public function dumpElements();
 
-    public function getContent()
-    {
-        return $this->Lines;
-    }
+    public function setAttribute(string $attribute, $value);
 
-    public function appendElement(Element $Element)
-    {
-        $this->Elements[] = $Element;
-    }
+    public function getAttributes() : array;
 
-    public function appendElements(array $Elements)
-    {
-        $this->Elements = array_merge($this->Elements, $Elements);
-    }
+    public function setNonReducible(bool $mode = true);
 
-    public function getElements() : array
-    {
-        return $this->Elements;
-    }
+    public function setNonInlinable(bool $mode = true);
 
-    public function dumpElements()
-    {
-        $this->Elements = array();
-    }
+    public function isReducible() : bool;
 
-    public function setAttribute(string $attribute, $value)
-    {
-        $this->attributes[$attribute] = $value;
-    }
+    public function isInlinable() : bool;
 
-    public function getAttributes() : array
-    {
-        return $this->attributes;
-    }
-
-    public function setNonReducible(bool $mode = true)
-    {
-        $this->reducible = ( ! $mode);
-    }
-
-    public function setNonInlinable(bool $mode = true)
-    {
-        $this->inlinable = ( ! $mode);
-    }
-
-    public function isReducible() : bool
-    {
-        return $this->reducible;
-    }
-
-    public function isInlinable() : bool
-    {
-        return $this->inlinable;
-    }
+    public function __clone();
 }

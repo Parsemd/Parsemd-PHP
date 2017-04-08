@@ -1,10 +1,11 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Phpmd\Elements;
 
+use Aidantwoods\Phpmd\AbstractElement;
 use Aidantwoods\Phpmd\Lines\Line;
 
-class InlineElement extends Element
+class InlineElement extends AbstractElement
 {
     protected $Line,
               $nonNestables = null,
@@ -18,30 +19,27 @@ class InlineElement extends Element
         $this->Line = new Line;
     }
 
-    public function appendContent(
-        string $content,
-        bool $toCurrentLine = false,
-        bool $withSpace = true
-    ) {
+    public function appendContent(string $content)
+    {
         $this->Line->append($content);
     }
 
-    public function getContent()
+    public function getContent() : Line
     {
         return $this->Line;
     }
 
-    public function appendElement(Element $Element)
+    public function appendElement(InlineElement $Element)
     {
         $this->Elements[] = $Element;
     }
 
-    public function setNoUnescapeContent(bool $mode = true)
+    public function setNotUnescapeContent(bool $mode = true)
     {
         $this->unescape = ( ! $mode);
     }
 
-    public function isUnescapeContent() : bool
+    public function canUnescapeContent() : bool
     {
         return $this->unescape;
     }
@@ -54,5 +52,12 @@ class InlineElement extends Element
     public function getNonNestables() : ?array
     {
         return $this->nonNestables;
+    }
+
+    public function __clone()
+    {
+        parent::__clone();
+
+        $this->Line = clone($this->Line);
     }
 }

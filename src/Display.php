@@ -2,6 +2,8 @@
 
 namespace Aidantwoods\Phpmd;
 
+use Aidantwoods\Phpmd\Elements\InlineElement;
+
 abstract class Display
 {
     public static function elements(
