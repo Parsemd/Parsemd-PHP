@@ -162,8 +162,7 @@ abstract class InlineResolver
                 $Next = $Next ?? reset($Interrupts);
 
                 if (
-                    ! self::canNest(
-                        $Current->getInline()->getElement(),
+                    ! $Current->getInline()->getElement()->canNest(
                         $Next->getInline()->getElement()
                     )
                 ) {
@@ -173,8 +172,7 @@ abstract class InlineResolver
                 foreach ($Interrupts as $Interrupt)
                 {
                     if (
-                        ! self::canNest(
-                            $Current->getInline()->getElement(),
+                        ! $Current->getInline()->getElement()->canNest(
                             $Interrupt->getInline()->getElement()
                         )
                     ) {
@@ -215,8 +213,7 @@ abstract class InlineResolver
             and ! (
                 $Next->start() >= $Current->textStart()
                 and $Next->end() <= $Current->textEnd()
-                and self::canNest(
-                    $Current->getInline()->getElement(),
+                and $Current->getInline()->getElement()->canNest(
                     $Next->getInline()->getElement()
                 )
             )
@@ -225,49 +222,6 @@ abstract class InlineResolver
                 $Current->getInline()
             )
         );
-    }
-
-    public static function canNest(
-        InlineElement $Outer,
-        InlineElement $Inner
-    ) : bool
-    {
-        return (
-            $Outer->isInlinable()
-            and ! self::isRestricted(
-                $Outer->getNonNestables(),
-                $Inner
-            )
-        );
-    }
-
-    public static function isRestricted(
-        ?array        $restrictions,
-        InlineElement $Element
-    ) : bool
-    {
-        $type = strtolower($Element->getType());
-
-        if ( ! empty($restrictions))
-        {
-            foreach ($restrictions as $restrictedType)
-            {
-                if ($type === strtolower($restrictedType))
-                {
-                    return true;
-                }
-            }
-        }
-
-        foreach ($Element->getElements() as $SubElement)
-        {
-            if (self::isRestricted($restrictions, $SubElement))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static function intersecting(InlineData $current, array $Inlines)

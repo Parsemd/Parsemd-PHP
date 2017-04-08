@@ -54,10 +54,50 @@ class InlineElement extends AbstractElement
         return $this->nonNestables;
     }
 
+    public function canNest(InlineElement $Element) : bool
+    {
+        return (
+            $this->isInlinable()
+            and ! self::isRestricted(
+                $this->getNonNestables(),
+                $Element
+            )
+        );
+    }
+
     public function __clone()
     {
         parent::__clone();
 
         $this->Line = clone($this->Line);
+    }
+
+    public static function isRestricted(
+        ?array        $restrictions,
+        InlineElement $Element
+    ) : bool
+    {
+        $type = strtolower($Element->getType());
+
+        if ( ! empty($restrictions))
+        {
+            foreach ($restrictions as $restrictedType)
+            {
+                if ($type === strtolower($restrictedType))
+                {
+                    return true;
+                }
+            }
+        }
+
+        foreach ($Element->getElements() as $SubElement)
+        {
+            if (self::isRestricted($restrictions, $SubElement))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

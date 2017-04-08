@@ -142,7 +142,7 @@ class Phpmd
             }
 
             if (
-                ! InlineResolver::isRestricted(
+                ! InlineElement::isRestricted(
                     $restrictions,
                     $Inline->getElement()
                 )
