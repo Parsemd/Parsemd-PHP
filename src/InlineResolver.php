@@ -209,6 +209,20 @@ abstract class InlineResolver
     ) : bool
     {
         return (
+            self::isInSubparseableSubsection($Current, $Next)
+            and self::interrupts(
+                $Next->getInline(),
+                $Current->getInline()
+            )
+        );
+    }
+
+    private static function isInSubparseableSubsection(
+        InlineData $Current,
+        InlineData $Next
+    ) : bool
+    {
+        return (
             $Next->start() < $Current->end()
             and ! (
                 $Next->start() >= $Current->textStart()
@@ -216,10 +230,6 @@ abstract class InlineResolver
                 and $Current->getInline()->getElement()->canNest(
                     $Next->getInline()->getElement()
                 )
-            )
-            and self::interrupts(
-                $Next->getInline(),
-                $Current->getInline()
             )
         );
     }
