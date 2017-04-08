@@ -7,6 +7,8 @@ use Aidantwoods\Phpmd\Lines\Line;
 use Aidantwoods\Phpmd\Inlines\Code;
 use Aidantwoods\Phpmd\Inlines\Link;
 use Aidantwoods\Phpmd\Inlines\Emphasis;
+use Aidantwoods\Phpmd\Elements\InlineElement;
+use Aidantwoods\Phpmd\Inlines\Image;
 
 abstract class InlineResolver
 {
@@ -26,6 +28,21 @@ abstract class InlineResolver
         if ($NewInline instanceof Code and ! $Inline instanceof Code)
         {
             return true;
+        }
+
+        if ($NewInline instanceof Image and $Inline instanceof Image)
+        {
+            return true;
+        }
+
+        if ($NewInline instanceof Image and $Inline instanceof Link)
+        {
+            return true;
+        }
+
+        if ($NewInline instanceof Link and $Inline instanceof Image)
+        {
+            return false;
         }
 
         /**
@@ -56,38 +73,54 @@ abstract class InlineResolver
 
     /**
      * Let InlineData be an Inline coupled with its positional metadata.
-     * Let Inlines be a list where each item is an InlineData.
+     * Let Inlines be an ordered list by start position where each item is an
+     *     InlineData.
      * Let Resolved be a an empty list which may be populated with InlineData
      * items.
      *
      * Examine all InlineDatas in Inlines by repeating the following
      * bullet points until InlineDatas is empty.
      *
-     * * Let the former be the InlineData which holds the lowest start
-     *   position, and let the latter the next InlineData
+     * * Let Current be the InlineData in Inlines
      *
-     * * Copy former and remove it from Inlines
+     * * Make a copy of Current and remove it from Inlines
      *
      * * Let Interrupts be an empty list which may be populated with InlineData
      *
-     * * Determine whether the latter is:
-     *   1. Intersecting the former; and
-     *   2. Not contained in a parseable subsection of the former; and
-     *   3. Able to interrupt the former
+     * * Let Next be null
      *
-     * * If all of the above hold true then:
-     *   Recurse this algorithm for all InlineDatas occurring after former,
-     *   and place the Resolved returned from this recursion into Interrupts
+     * * Foreach Inlines as Intersect:
+     *   * If Intersect is {@see intersecting} Current
+     *     AND Intersect is (not contained in a parseable subsection of Current
+     *     OR may not be contained in Current)
+     *     AND is able to interrupt Current,
+     *     then:
+     *     * Let Interrupts be the result of recursing this entire algorithm
+     *       over all Inlines after and including Intersect.
+     *     * Break the current loop over Inlines
+     *    Otherwise:
+     *    * If Next is null, let Next be Intersect
      *
      * * Discard from Interrupts, all InlineData which does not intersect the
      *   former
      *
-     * * If Interrupts is empty, place the former onto the end of Resolved and
-     *   discard from Inlines all InlineData which intersect the former
+     * * If Interrupts is empty:
+     *   * Append Current to Resolved and discard from Inlines all InlineData
+     *     which intersect the former
+     *   Otherwise:
+     *   * If Next is null, let Next be the first item in Interrupts
+     *   * Foreach Interrupts as Interrupt:
+     *     * Let Pair be an ordered list containing Next and Interrupt
+     *       respectively.
+     *     * If Current may be extended over the text spanned by InlineData
+     *       in Pair then:
+     *       * Let New be the result of this extension
+     *       * Push New into the first position in Inlines
+     *       * Break the current loop over Interrupts
      *
      * Return Resolved
      *
-     * @param array $Inlines
+     * @param InlineData[] $Inlines
      *
      * @return array Resolved
      */
@@ -97,52 +130,101 @@ abstract class InlineResolver
 
         while ( ! empty($Inlines))
         {
-            $current = array_shift($Inlines);
-            $interrupts = array();
+            $Current    = array_shift($Inlines);
+            $Interrupts = array();
+            $Next       = null;
 
-            if (
-                isset($Inlines[0])
-                and $Inlines[0]['start'] < $current['end']
-                and ! (
-                    $Inlines[0]['start'] >= $current['textStart']
-                    and $Inlines[0]['end'] <= $current['textEnd']
-                    and self::canNest(
-                        $current['inline']->getElement(),
-                        $Inlines[0]['inline']->getElement()
-                    )
-                )
-                and self::interrupts(
-                    $Inlines[0]['inline'],
-                    $current['inline']
-                )
-            ) {
-                $interrupts = self::resolve($Inlines);
-            }
-
-            foreach ($interrupts as $key => $interrupt)
+            foreach (self::intersecting($Current, $Inlines) as $i => $Inline)
             {
-                if ($interrupt['start'] > $current['end'])
+                if (self::canInterrupt($Current, $Inline))
                 {
-                    unset($interrupts[$key]);
+                    $Interrupts = self::resolve(array_slice($Inlines, $i));
+
+                    break;
+                }
+
+                if ($Inline->start() >= $Current->textStart())
+                {
+                    $Next = $Next ?? $Inline;
                 }
             }
 
-            if (empty($interrupts))
-            {
-                $Resolved[] = $current;
+            $Interrupts = self::filterIntersecting($Current, $Interrupts);
 
-                for (
-                    $i = 0;
-                    isset($Inlines[$i])
-                    and $Inlines[$i]['start'] < $current['end'];
-                    $i++
+            if (empty($Interrupts))
+            {
+                $Resolved[] = $Current;
+
+                $Inlines = self::filterNotIntersecting($Current, $Inlines);
+            }
+            else
+            {
+                $Next = $Next ?? reset($Interrupts);
+
+                if (
+                    ! self::canNest(
+                        $Current->getInline()->getElement(),
+                        $Next->getInline()->getElement()
+                    )
                 ) {
-                    unset($Inlines[$i]);
+                    continue;
+                }
+
+                foreach ($Interrupts as $Interrupt)
+                {
+                    if (
+                        ! self::canNest(
+                            $Current->getInline()->getElement(),
+                            $Interrupt->getInline()->getElement()
+                        )
+                    ) {
+                        break;
+                    }
+
+                    $Pair = array($Next, $Interrupt);
+
+                    if ($New = InlineExtender::extend($Current, $Pair))
+                    {
+                        array_unshift($Inlines, $New);
+
+                        break;
+                    }
                 }
             }
         }
 
         return $Resolved;
+    }
+
+    /**
+     * Determine extensively whether $Next may interrupt $Current, (based on
+     * positional critera as well as precedence rules)
+     *
+     * @param InlineData $Current
+     * @param InlineData $Next
+     *
+     * @return bool
+     */
+    public static function canInterrupt(
+        InlineData $Current,
+        InlineData $Next
+    ) : bool
+    {
+        return (
+            $Next->start() < $Current->end()
+            and ! (
+                $Next->start() >= $Current->textStart()
+                and $Next->end() <= $Current->textEnd()
+                and self::canNest(
+                    $Current->getInline()->getElement(),
+                    $Next->getInline()->getElement()
+                )
+            )
+            and self::interrupts(
+                $Next->getInline(),
+                $Current->getInline()
+            )
+        );
     }
 
     public static function canNest(
@@ -160,7 +242,7 @@ abstract class InlineResolver
     }
 
     public static function isRestricted(
-        ?array $restrictions,
+        ?array        $restrictions,
         InlineElement $Element
     ) : bool
     {
@@ -186,5 +268,52 @@ abstract class InlineResolver
         }
 
         return false;
+    }
+
+    private static function intersecting(InlineData $current, array $Inlines)
+    {
+        for (
+            $i = 0;
+            isset($Inlines[$i]) and self::intersects($current, $Inlines[$i]);
+            $i++
+        ) {
+            yield $i => $Inlines[$i];
+        }
+    }
+
+    private static function intersects(
+        InlineData $Current,
+        InlineData $Next
+    ) : bool
+    {
+        return $Next->start() <= $Current->end();
+    }
+
+    private static function filterIntersecting(
+        InlineData $Current,
+        array      $Inlines
+    ) : array
+    {
+        return array_filter(
+            $Inlines,
+            function (InlineData $Next) use ($Current)
+            {
+                return self::intersects($Current, $Next);
+            }
+        );
+    }
+
+    private static function filterNotIntersecting(
+        InlineData $Current,
+        array      $Inlines
+    ) : array
+    {
+        return array_filter(
+            $Inlines,
+            function (InlineData $Next) use ($Current)
+            {
+                return ! self::intersects($Current, $Next);
+            }
+        );
     }
 }
