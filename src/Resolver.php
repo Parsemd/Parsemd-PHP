@@ -30,6 +30,11 @@ abstract class Resolver
             return true;
         }
 
+        if ( ! $NewBlock instanceof Paragraph and ! $NewBlock instanceof $Block)
+        {
+            return $Block->isInterrupted();
+        }
+
         return false;
     }
 }
