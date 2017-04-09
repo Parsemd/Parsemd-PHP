@@ -4,6 +4,7 @@ namespace Aidantwoods\Phpmd;
 
 use Aidantwoods\Phpmd\Blocks\Paragraph;
 use Aidantwoods\Phpmd\Blocks\ListBlock;
+use Aidantwoods\Phpmd\Blocks\IndentedCode;
 
 use Aidantwoods\Phpmd\Lines\Lines;
 
@@ -25,14 +26,18 @@ abstract class Resolver
             return $Block->isInterrupted();
         }
 
-        if ( ! $NewBlock instanceof Paragraph and $Block instanceof Paragraph)
-        {
-            return true;
-        }
-
-        if ( ! $NewBlock instanceof Paragraph and ! $NewBlock instanceof $Block)
-        {
-            return $Block->isInterrupted();
+        if (
+            ! $NewBlock instanceof Paragraph
+            and ! $NewBlock instanceof IndentedCode
+        ) {
+            if ($Block instanceof Paragraph)
+            {
+                return true;
+            }
+            elseif ( ! $NewBlock instanceof $Block)
+            {
+                return $Block->isInterrupted();
+            }
         }
 
         return false;
