@@ -297,7 +297,8 @@ class Emphasis extends AbstractInline implements Inline
             {
                 $stLen = $length - ($length % 2);
 
-                $trim = ($stLen > $openSequence[$i] ? $stLen - $trim : $stLen);
+                $trim = ($stLen > $openSequence[$i] ?
+                        $stLen - $openSequence[$i] : $stLen);
 
                 $length           -= $trim;
                 $openSequence[$i] -= $trim;
