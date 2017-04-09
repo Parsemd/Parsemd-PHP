@@ -32,7 +32,7 @@ class Code extends AbstractInline implements Inline
     {
         if (
             preg_match(
-                '/^([`]++)(.*?[^`])\1(?=[^`]|$)/',
+                '/^([`]++)(.*?[^`])\1(?=[^`]|$)/s',
                 $text,
                 $matches
             )
