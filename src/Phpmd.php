@@ -18,7 +18,8 @@ class Phpmd
         'Aidantwoods\Phpmd\Blocks\Heading',
         'Aidantwoods\Phpmd\Blocks\ListBlock',
         'Aidantwoods\Phpmd\Blocks\ThematicBreak',
-        'Aidantwoods\Phpmd\Blocks\Table'
+        'Aidantwoods\Phpmd\Blocks\Table',
+        'Aidantwoods\Phpmd\Blocks\IndentedCode',
     );
 
     private $InlineHandlers = array(
@@ -101,7 +102,7 @@ class Phpmd
         if ( ! isset($marker) or $marker === ' ')
         {
             $trimmedLine = preg_replace(
-                '/^[ ]{0,3}+(?=[^ ])/',
+                '/^[ ]{0,3}+/',
                 '',
                 $Lines->current()
             );
