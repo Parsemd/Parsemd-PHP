@@ -391,4 +391,9 @@ class Phpmd
         return $this->elements($Lines);
     }
 
+    public function html(string $text)
+    {
+        return DisplayAsHtml::elements($this->parse($text));
+    }
+
 }
