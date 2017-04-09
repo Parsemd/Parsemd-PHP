@@ -18,7 +18,7 @@ class Lines extends LineIterator implements Iterator, Pointer
 
     public function __construct(?string $lines = null)
     {
-        if ( ! empty($lines))
+        if (isset($lines))
         {
             $lines = str_replace("\0", "\u{fffd}", $lines);
             $lines = str_replace("\r\n", "\n", $lines);
@@ -32,6 +32,8 @@ class Lines extends LineIterator implements Iterator, Pointer
         }
 
         $this->pointer = new LinePointer(count($this->lines));
+
+        $this->transformWhitespace();
     }
 
     public function current() : string
@@ -42,6 +44,8 @@ class Lines extends LineIterator implements Iterator, Pointer
     public function setCurrent(string $new)
     {
         $this->lines[$this->key()] = $new;
+
+        $this->transformWhitespace($this->key());
     }
 
     public function lookup(int $position) : ?string
@@ -81,6 +85,8 @@ class Lines extends LineIterator implements Iterator, Pointer
 
             $this->pointer->jump($this->count() -1);
         }
+
+        $this->transformWhitespace($this->key());
     }
 
     public function pop() : Lines
@@ -102,5 +108,50 @@ class Lines extends LineIterator implements Iterator, Pointer
         }
 
         return $Lines;
+    }
+
+    private function transformWhitespace(?int $at = null)
+    {
+        if ( ! isset($at))
+        {
+            $n = $this->count();
+
+            for ($i = 0; $i < $n; $i++)
+            {
+                $this->convertTabsAt($i);
+            }
+        }
+        elseif ($at >= 0 and $at < $this->count())
+        {
+            $this->convertTabsAt($at);
+        }
+    }
+
+    private function convertTabsAt(int $at)
+    {
+        if ($at < 0 or $at >= $this->count())
+        {
+            return;
+        }
+
+        $line = $this->lines[$at];
+
+        $whitespace = preg_replace('/^(\s*+)[\s\S]*+/', '$1', $line);
+
+        $this->lines[$at] = self::convertTabs($whitespace).ltrim($line);
+    }
+
+    public static function convertTabs(string $whitespace) : string
+    {
+        $n = 0;
+
+        while (($n = strpos($whitespace, "\t")) !== false)
+        {
+            $whitespace = substr($whitespace, 0, $n)
+                        . str_repeat(' ', 4 - ($n % 4))
+                        . substr($whitespace, $n + 1);
+        }
+
+        return $whitespace;
     }
 }
