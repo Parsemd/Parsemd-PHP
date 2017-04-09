@@ -13,6 +13,8 @@ use Countable;
  */
 abstract class LineIterator implements Iterator, Pointer, Countable
 {
+    protected $pointer;
+
     public function key() : int
     {
         return $this->pointer->key();
