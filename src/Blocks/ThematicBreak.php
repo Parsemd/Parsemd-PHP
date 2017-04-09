@@ -16,7 +16,7 @@ class ThematicBreak extends AbstractBlock implements Block
     public static function isPresent(Lines $Lines) : bool
     {
         return preg_match(
-            '/^\s*+(?:[-]{3,}+|[_]{3,}+|[*]{3,}+)[\s]*+$/',
+            '/^[ ]{0,3}+([-_*])(?:\s*+\1){2,}[\s]*+$/',
             $Lines->current()
         );
     }
