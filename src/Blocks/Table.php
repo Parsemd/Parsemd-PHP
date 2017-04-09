@@ -18,14 +18,13 @@ class Table extends AbstractBlock implements Block
 
     public static function isPresent(Lines $Lines) : bool
     {
+        $before = $Lines->lookup($Lines->key() -1) ?? '';
+
         if ($cols = self::tableMarker($Lines->current()))
         {
             # if we have sufficient headings to match marker indicated columns
-            if (
-                count(
-                    self::decomposeTableRow($Lines->lookup($Lines->key() -1))
-                ) === $cols
-            ) {
+            if (count(self::decomposeTableRow($before)) === $cols)
+            {
                 # place the pointer on the heading line
 
                 $Lines->before();
