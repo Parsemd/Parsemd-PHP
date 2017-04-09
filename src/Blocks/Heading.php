@@ -15,14 +15,14 @@ class Heading extends AbstractBlock implements Block
 
     public static function isPresent(Lines $Lines) : bool
     {
-        return preg_match('/^\s*+[#]{1,6}[ ]++[^ ]/', $Lines->current());
+        return preg_match('/^\s*+[#]{1,6}\s++\S/', $Lines->current());
     }
 
     public static function begin(Lines $Lines) : ?Block
     {
         if (
             preg_match(
-                '/^\s*+([#]{1,6})[ ]++([^ ].*)(?:\1\s*)?$/',
+                '/^\s*+([#]{1,6})\s++(\S.*)(?:\1\s*)?$/',
                 $Lines->current(),
                 $matches
             )
@@ -49,7 +49,7 @@ class Heading extends AbstractBlock implements Block
 
         $this->initPointer = $Lines->key();
 
-        $Element->appendContent($text);
+        $Element->appendContent(trim($text));
 
         $id = strtolower(str_replace(' ', '', $text));
 
