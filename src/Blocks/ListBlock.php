@@ -6,6 +6,8 @@ use Aidantwoods\Phpmd\Block;
 use Aidantwoods\Phpmd\Lines\Lines;
 use Aidantwoods\Phpmd\Elements\BlockElement;
 
+use Aidantwoods\Phpmd\Blocks\ThematicBreak;
+
 class ListBlock extends AbstractBlock implements Block
 {
     private $fullMarker,
@@ -17,7 +19,7 @@ class ListBlock extends AbstractBlock implements Block
 
     protected static $markers = array(
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        '-', '*'
+        '-', '*', '+'
     );
 
     public static function isPresent(
@@ -123,7 +125,7 @@ class ListBlock extends AbstractBlock implements Block
 
     private function __construct(Lines $Lines, array $data)
     {
-        if ($data['marker'] === '*' or $data['marker'] === '-')
+        if (strpos('*-+', $data['marker']) !== false)
         {
             $type = 'ul';
 
@@ -178,15 +180,27 @@ class ListBlock extends AbstractBlock implements Block
 
     private static function deconstructLine(string $line) : ?array
     {
-        if (
+        if (ThematicBreak::isPresent(new Lines($line)))
+        {
+            return null;
+        }
+        elseif (
             preg_match(
-                '/^([ ]*+)(?|([0-9]{1,9}+([.)]))|(([*-])))([ ]++|$)(.*+)$/',
+                '/^([ ]*+)(?|([0-9]{1,9}+([.)]))|(([*+-])))(\s++|$)(.*+)$/',
                 $line,
                 $matches
             )
         ) {
-            if (empty($text))
+            if (empty($matches[4]))
             {
+                $matches[4] = ' ';
+            }
+
+            $matches[4] = Lines::convertTabs($matches[4]);
+
+            if (strlen($matches[4]) > 4)
+            {
+                $matches[5] = substr($matches[4], 1) . $matches[5];
                 $matches[4] = ' ';
             }
 
