@@ -40,4 +40,9 @@ abstract class AbstractBlock implements Block
     {
         return $this->Element;
     }
+
+    public function complete()
+    {
+        return;
+    }
 }

@@ -96,4 +96,9 @@ interface Block extends Parser
      * @return int
      */
     public function backtrackCount() : int;
+
+    /**
+     * Will be called when the block is considered complete.
+     */
+    public function complete();
 }

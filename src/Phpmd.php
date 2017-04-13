@@ -237,6 +237,8 @@ class Phpmd
                 }
                 else
                 {
+                    $Block->complete();
+
                     $Elements[] = $Block->getElement();
                 }
 
@@ -263,6 +265,8 @@ class Phpmd
 
         if (isset($Block))
         {
+            $Block->complete();
+
             $Elements[] = $Block->getElement();
         }
 
