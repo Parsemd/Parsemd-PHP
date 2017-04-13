@@ -148,7 +148,7 @@ class Table extends AbstractBlock implements Block
 
         if (
             preg_match(
-                '/^\s*+[|]?+(([-]++)(?:[|](?1))?)[|]?+$/',
+                '/^[ ]{0,3}+[|]?+(([-]++)(?:[|](?1))?)[|]?+$/',
                 $normalisedLine,
                 $matches
             )

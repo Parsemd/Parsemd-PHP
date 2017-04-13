@@ -15,7 +15,7 @@ class Heading extends AbstractBlock implements Block
 
     public static function isPresent(Lines $Lines) : bool
     {
-        return preg_match('/^\s*+[#]{1,6}\s++\S/', $Lines->current());
+        return preg_match('/^[ ]{0,3}+[#]{1,6}\s++\S/', $Lines->current());
     }
 
     public static function begin(Lines $Lines) : ?Block
