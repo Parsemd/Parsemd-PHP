@@ -52,12 +52,17 @@ class ListBlock extends AbstractBlock implements Block
 
     public function parse(Lines $Lines) : bool
     {
+        if (trim($Lines->current()) === '')
+        {
+            $this->CurrentLi->appendContent('');
+
+            return true;
+        }
+
         $data = self::deconstructLine($Lines->current());
 
-        if (
-            ( ! $data or $this->isContent($Lines))
-            and trim($Lines->current()) !== ''
-        ) {
+        if ( ! $data or $this->isContent($Lines))
+        {
             $this->unInterrupt();
 
             $trim = preg_replace(
@@ -65,13 +70,6 @@ class ListBlock extends AbstractBlock implements Block
                 '',
                 $Lines->current()
             );
-
-            $previousBreak = (trim($Lines->lookup($Lines->key() -1)) === '');
-
-            if ($previousBreak)
-            {
-                $this->CurrentLi->appendContent('');
-            }
 
             $this->CurrentLi->appendContent($trim);
 
