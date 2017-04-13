@@ -4,9 +4,7 @@ namespace Aidantwoods\Phpmd;
 
 require_once('vendor/autoload.php');
 
-$text = file_get_contents(
-    '/Users/Aidan/GitHub/SecureHeaders/docs/generated/apply.md'
-);
+$text = file_get_contents('markdownText.md');
 
 $Phpmd = new Phpmd;
 
