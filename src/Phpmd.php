@@ -20,6 +20,7 @@ class Phpmd
         'Aidantwoods\Phpmd\Blocks\ThematicBreak',
         'Aidantwoods\Phpmd\Blocks\Table',
         'Aidantwoods\Phpmd\Blocks\IndentedCode',
+        'Aidantwoods\Phpmd\Blocks\Quote',
     );
 
     private $InlineHandlers = array(
