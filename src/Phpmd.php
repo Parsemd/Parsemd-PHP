@@ -24,6 +24,7 @@ class Phpmd
         'Aidantwoods\Phpmd\Blocks\Table',
         'Aidantwoods\Phpmd\Blocks\IndentedCode',
         'Aidantwoods\Phpmd\Blocks\Quote',
+        'Aidantwoods\Phpmd\Blocks\QuoteWithQuotee',
     );
 
     private $InlineHandlers = array(
