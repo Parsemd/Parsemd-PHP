@@ -81,11 +81,11 @@ class Emphasis extends AbstractInline implements Inline
 
                 if (self::canOpen($isLf, $isRf, $openSequence))
                 {
-                    self::open($length, $openSequence);
+                    $openSequence = self::open($length, $openSequence);
                 }
                 elseif (self::canClose($isLf, $isRf, $length, $root))
                 {
-                    self::close($length, $openSequence);
+                    $openSequence = self::close($length, $openSequence);
                 }
                 elseif (empty($openSequence))
                 {
@@ -271,19 +271,36 @@ class Emphasis extends AbstractInline implements Inline
         return ($isRf and ( ! $isLf or (($length + $root) % 3)));
     }
 
-    protected static function open(int $length, array &$openSequence)
+    /**
+     * Open emph with the run length $length.
+     *
+     * @param int $length
+     * @param array $openSequence
+     *
+     * @return array
+     */
+    protected static function open(int $length, array $openSequence) : array
     {
         # open an emph, a strong emph, or both
         $openSequence[] = $length;
+
+        return $openSequence;
     }
 
     /**
+     * Close emph with the run length $length.
+     *
      * Ideally we will close the last opened (strong) emph,
      * but if we cannot, find the first available match (going
      * backwards) and discard all opened after it (going
-     * forwards)
+     * forwards).
+     *
+     * @param int $length
+     * @param array $openSequence
+     *
+     * @param array
      */
-    protected static function close(int $length, array &$openSequence)
+    protected static function close(int $length, array $openSequence) : array
     {
         for ($i = count($openSequence) -1; $i >= 0 and $length; $i--)
         {
@@ -298,14 +315,19 @@ class Emphasis extends AbstractInline implements Inline
                 $stLen = $length - ($length % 2);
 
                 $trim = ($stLen > $openSequence[$i] ?
-                        $stLen - $openSequence[$i] : $stLen);
+                         $stLen - $openSequence[$i] : $stLen);
 
                 $length           -= $trim;
                 $openSequence[$i] -= $trim;
             }
         }
 
-        # slice off any now irrelevant openings
+        /**
+         * Slice off any now irrelevant openings:
+         * We want to include the last $i touched by the loop, so need at least
+         * $i + 1, but the loop will also always tick under by 1, so our $i will
+         * be 1 less than the last value in the loop. Hence $i + 2.
+        */
         $openSequence = array_slice($openSequence, 0, $i + 2);
 
         # clean up if last item was fully closed
@@ -313,6 +335,8 @@ class Emphasis extends AbstractInline implements Inline
         {
             array_pop($openSequence);
         }
+
+        return $openSequence;
     }
 
     protected function __construct(
