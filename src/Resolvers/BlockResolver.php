@@ -1,6 +1,8 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Phpmd\Resolvers;
+
+use Aidantwoods\Phpmd\Block;
 
 use Aidantwoods\Phpmd\Blocks\Paragraph;
 use Aidantwoods\Phpmd\Blocks\ListBlock;
@@ -9,13 +11,10 @@ use Aidantwoods\Phpmd\Blocks\Quote;
 
 use Aidantwoods\Phpmd\Lines\Lines;
 
-abstract class Resolver
+abstract class BlockResolver
 {
-    public static function interrupts(
-        Block $NewBlock,
-        Block $Block,
-        Lines $Lines
-    ) {
+    public static function interrupts(Block $NewBlock, Block $Block) : bool
+    {
         if (
             $NewBlock instanceof ListBlock
             and array_key_exists(

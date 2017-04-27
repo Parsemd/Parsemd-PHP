@@ -6,6 +6,9 @@ namespace Aidantwoods\Phpmd;
 use Aidantwoods\Phpmd\Lines\Line;
 use Aidantwoods\Phpmd\Lines\Lines;
 
+use Aidantwoods\Phpmd\Resolvers\BlockResolver;
+use Aidantwoods\Phpmd\Resolvers\InlineResolver;
+
 use Aidantwoods\Phpmd\Blocks\Paragraph;
 use Aidantwoods\Phpmd\Inlines\Text;
 
@@ -210,7 +213,7 @@ class Phpmd
                     $Block->isContinuable($Lines)
                     and (
                         ! isset($NewBlock)
-                        or ! Resolver::interrupts($NewBlock, $Block, $Lines)
+                        or ! BlockResolver::interrupts($NewBlock, $Block)
                     )
                 ) {
                     $Block->parse($Lines);

@@ -1,8 +1,9 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Phpmd\Resolvers;
 
-use Aidantwoods\Phpmd\Lines\Line;
+use Aidantwoods\Phpmd\Inline;
+use Aidantwoods\Phpmd\InlineData;
 
 use Aidantwoods\Phpmd\Inlines\Code;
 use Aidantwoods\Phpmd\Inlines\Link;
