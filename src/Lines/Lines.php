@@ -98,9 +98,11 @@ class Lines extends LineIterator implements Iterator, Pointer
         return $instance;
     }
 
-    public function subset(int $start, int $end) : Lines
+    public function subset(int $start, ?int $end = null) : Lines
     {
         $Lines = new Lines;
+
+        $end = $end ?? $this->count();
 
         for ($i = $start; $i < $end; $i++)
         {
