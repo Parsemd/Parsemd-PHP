@@ -109,6 +109,8 @@ class Lines extends LineIterator implements Iterator, Pointer
             $Lines->append($this->lines[$i]);
         }
 
+        $Lines->rewind();
+
         return $Lines;
     }
 
