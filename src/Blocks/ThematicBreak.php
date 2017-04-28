@@ -21,7 +21,7 @@ class ThematicBreak extends AbstractBlock implements Block
         );
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         return new static();
     }

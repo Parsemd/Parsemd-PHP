@@ -20,22 +20,22 @@ abstract class LineIterator implements Iterator, Pointer, Countable
         return $this->pointer->key();
     }
 
-    public function next()
+    public function next() : void
     {
         $this->pointer->next();
     }
 
-    public function before()
+    public function before() : void
     {
         $this->pointer->before();
     }
 
-    public function jump(int $position)
+    public function jump(int $position) : void
     {
         $this->pointer->jump($position);
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->pointer->rewind();
     }
@@ -71,7 +71,7 @@ abstract class LineIterator implements Iterator, Pointer, Countable
      *
      * @param string $text
      */
-    abstract public function append(string $text);
+    abstract public function append(string $text) : void;
 
     /**
      * Lookup the value at $position as if it was a pointer key,

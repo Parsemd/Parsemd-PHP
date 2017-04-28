@@ -36,7 +36,7 @@ class Table extends AbstractBlock implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         $headings = self::decomposeTableRow($Lines->current());
 

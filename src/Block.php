@@ -38,7 +38,7 @@ interface Block extends Parser
      *
      * @return static of type matching the current implementation
      */
-    public static function begin(Lines $Lines) : ?Block;
+    public static function begin(Lines $Lines) : Block;
 
     /**
      * Lines:current() MUST be used as the begining of the structure.
@@ -82,12 +82,12 @@ interface Block extends Parser
     /**
      * Interrupt the block at $Lines::current()
      */
-    public function interrupt();
+    public function interrupt() : void;
 
     /**
      * Un-interrupt the block at $Lines::current()
      */
-    public function uninterrupt();
+    public function uninterrupt() : void;
 
     /**
      * Return the number of lines the block backtracked during or before
@@ -100,5 +100,5 @@ interface Block extends Parser
     /**
      * Will be called when the block is considered complete.
      */
-    public function complete();
+    public function complete() : void;
 }

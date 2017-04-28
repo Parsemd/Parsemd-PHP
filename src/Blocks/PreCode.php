@@ -25,7 +25,7 @@ class PreCode extends AbstractBlock implements Block
         );
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if (
             preg_match(
@@ -39,8 +39,6 @@ class PreCode extends AbstractBlock implements Block
         ) {
             return new static($Lines, $matches[1], $matches[2]);
         }
-
-        return null;
     }
 
     public function parse(Lines $Lines) : bool

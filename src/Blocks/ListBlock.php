@@ -40,14 +40,12 @@ class ListBlock extends AbstractBlock implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if ($data = self::deconstructLine($Lines->current()))
         {
             return new static($Lines, $data);
         }
-
-        return null;
     }
 
     public function parse(Lines $Lines) : bool

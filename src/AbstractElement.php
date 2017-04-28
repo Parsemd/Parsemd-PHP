@@ -30,12 +30,12 @@ abstract class AbstractElement implements Element
         return $this->Elements;
     }
 
-    public function dumpElements()
+    public function dumpElements() : void
     {
         $this->Elements = array();
     }
 
-    public function setAttribute(string $attribute, $value)
+    public function setAttribute(string $attribute, $value) : void
     {
         $this->attributes[$attribute] = $value;
     }
@@ -45,12 +45,12 @@ abstract class AbstractElement implements Element
         return $this->attributes;
     }
 
-    public function setNonReducible(bool $mode = true)
+    public function setNonReducible(bool $mode = true) : void
     {
         $this->reducible = ( ! $mode);
     }
 
-    public function setNonInlinable(bool $mode = true)
+    public function setNonInlinable(bool $mode = true) : void
     {
         $this->inlinable = ( ! $mode);
     }

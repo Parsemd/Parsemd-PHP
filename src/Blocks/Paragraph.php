@@ -16,7 +16,7 @@ class Paragraph extends AbstractBlock implements Block
         return (trim($Lines->current()) !== '');
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         return new static($Lines);
     }

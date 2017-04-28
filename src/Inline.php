@@ -24,7 +24,7 @@ interface Inline extends Parser
      *
      * @param Line $Line
      *
-     * @return static of type matching the current implementation
+     * @return ?static of type matching the current implementation
      */
     public static function parse(Line $Line) : ?Inline;
 

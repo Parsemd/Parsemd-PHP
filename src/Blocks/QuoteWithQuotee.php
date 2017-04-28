@@ -44,14 +44,12 @@ class QuoteWithQuotee extends Quote implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if (self::isPresent($Lines, $quotee, $timestamp))
         {
             return new static($quotee, $timestamp);
         }
-
-        return null;
     }
 
     private function __construct(string $quotee, ?string $timestamp = null)

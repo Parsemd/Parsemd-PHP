@@ -41,7 +41,7 @@ class Lines extends LineIterator implements Iterator, Pointer
         return $this->lines[$this->key()];
     }
 
-    public function setCurrent(string $new)
+    public function setCurrent(string $new) : void
     {
         $this->lines[$this->key()] = $new;
 
@@ -71,7 +71,8 @@ class Lines extends LineIterator implements Iterator, Pointer
         string $line,
         bool   $toCurrentLine = false,
         bool   $withSpace     = true
-    ) {
+    ) : void
+    {
         if ($toCurrentLine and $this->count() > 0)
         {
             $this->lines[$this->key()]
@@ -114,7 +115,7 @@ class Lines extends LineIterator implements Iterator, Pointer
         return $Lines;
     }
 
-    private function transformWhitespace(?int $at = null)
+    private function transformWhitespace(?int $at = null) : void
     {
         if ( ! isset($at))
         {
@@ -131,7 +132,7 @@ class Lines extends LineIterator implements Iterator, Pointer
         }
     }
 
-    private function convertTabsAt(int $at)
+    private function convertTabsAt(int $at) : void
     {
         if ($at < 0 or $at >= $this->count())
         {

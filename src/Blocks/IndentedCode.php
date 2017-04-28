@@ -24,14 +24,12 @@ class IndentedCode extends AbstractBlock implements Block
         );
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if (preg_match('/^[ ]{4}(.*+)$/', $Lines->current(), $matches))
         {
             return new static($matches[1]);
         }
-
-        return null;
     }
 
     public function parse(Lines $Lines) : bool

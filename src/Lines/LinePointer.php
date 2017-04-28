@@ -31,22 +31,22 @@ class LinePointer implements Iterator, Pointer, Countable
         return $this->current();
     }
 
-    public function next()
+    public function next() : void
     {
         $this->pointer++;
     }
 
-    public function before()
+    public function before() : void
     {
         $this->pointer--;
     }
 
-    public function jump(int $position)
+    public function jump(int $position) : void
     {
         $this->pointer = $position;
     }
 
-    public function rewind()
+    public function rewind() : void
     {
         $this->pointer = 0;
     }
@@ -66,7 +66,7 @@ class LinePointer implements Iterator, Pointer, Countable
      *
      * @param int $n
      */
-    public function extendRange(int $n = 1)
+    public function extendRange(int $n = 1) : void
     {
         $this->length += $n;
     }

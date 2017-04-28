@@ -44,14 +44,12 @@ class Quote extends AbstractBlock implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if (self::isPresent($Lines, $text, $marker))
         {
             return new static($text, $marker);
         }
-
-        return null;
     }
 
     public function parse(Lines $Lines) : bool
@@ -85,7 +83,7 @@ class Quote extends AbstractBlock implements Block
         return true;
     }
 
-    public function complete()
+    public function complete() : void
     {
         if ($this->marker === self::LONG)
         {

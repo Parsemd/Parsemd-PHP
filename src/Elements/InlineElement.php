@@ -19,7 +19,7 @@ class InlineElement extends AbstractElement
         $this->Line = new Line;
     }
 
-    public function appendContent(string $content)
+    public function appendContent(string $content) : void
     {
         $this->Line->append($content);
     }

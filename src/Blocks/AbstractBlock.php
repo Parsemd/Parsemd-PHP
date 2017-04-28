@@ -21,12 +21,12 @@ abstract class AbstractBlock implements Block
         return $this->interrupted;
     }
 
-    public function interrupt()
+    public function interrupt() : void
     {
         $this->interrupted = true;
     }
 
-    public function uninterrupt()
+    public function uninterrupt() : void
     {
         $this->interrupted = false;
     }
@@ -41,7 +41,7 @@ abstract class AbstractBlock implements Block
         return $this->Element;
     }
 
-    public function complete()
+    public function complete() : void
     {
         return;
     }

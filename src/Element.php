@@ -8,19 +8,19 @@ interface Element
 
     public function getType() : string;
 
-    public function appendContent(string $content);
+    public function appendContent(string $content) : void;
 
     public function getContent();
 
-    public function dumpElements();
+    public function dumpElements() : void;
 
-    public function setAttribute(string $attribute, $value);
+    public function setAttribute(string $attribute, $value) : void;
 
     public function getAttributes() : array;
 
-    public function setNonReducible(bool $mode = true);
+    public function setNonReducible(bool $mode = true) : void;
 
-    public function setNonInlinable(bool $mode = true);
+    public function setNonInlinable(bool $mode = true) : void;
 
     public function isReducible() : bool;
 

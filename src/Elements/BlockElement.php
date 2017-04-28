@@ -21,7 +21,8 @@ class BlockElement extends AbstractElement
         string $content,
         bool   $toCurrentLine = false,
         bool   $withSpace     = true
-    ) {
+    ) : void
+    {
         $this->Lines->append($content, $toCurrentLine, $withSpace);
     }
 

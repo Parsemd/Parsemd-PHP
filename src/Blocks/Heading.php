@@ -18,7 +18,7 @@ class Heading extends AbstractBlock implements Block
         return preg_match('/^[ ]{0,3}+[#]{1,6}\s++\S/', $Lines->current());
     }
 
-    public static function begin(Lines $Lines) : ?Block
+    public static function begin(Lines $Lines) : Block
     {
         if (
             preg_match(
@@ -29,8 +29,6 @@ class Heading extends AbstractBlock implements Block
         ) {
             return new static(strlen($matches[1]), $matches[2], $Lines);
         }
-
-        return null;
     }
 
     public function parse(Lines $Lines) : bool

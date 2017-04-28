@@ -40,7 +40,7 @@ class Line extends LineIterator implements Iterator, Pointer
         return $this->cache['text'];
     }
 
-    public function append(string $text)
+    public function append(string $text) : void
     {
         $this->text .= $text;
 
@@ -61,7 +61,7 @@ class Line extends LineIterator implements Iterator, Pointer
         return $instance;
     }
 
-    public function strcspnJump(string $mask)
+    public function strcspnJump(string $mask) : void
     {
         $this->next();
 
