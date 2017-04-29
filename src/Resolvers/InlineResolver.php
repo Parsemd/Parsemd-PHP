@@ -1,16 +1,16 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Resolvers;
+namespace Parsemd\Parsemd\Resolvers;
 
-use Aidantwoods\Parsemd\Parsers\Inline;
-use Aidantwoods\Parsemd\InlineData;
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\InlineData;
 
-use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Code;
-use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Link;
-use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Emphasis;
-use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Image;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image;
 
-use Aidantwoods\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Elements\InlineElement;
 
 abstract class InlineResolver
 {

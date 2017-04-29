@@ -1,13 +1,13 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers\CommonMark\Blocks;
+namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
-use Aidantwoods\Parsemd\Parsers\Block;
-use Aidantwoods\Parsemd\Parsers\Core\Blocks\AbstractBlock;
-use Aidantwoods\Parsemd\Lines\Lines;
-use Aidantwoods\Parsemd\Elements\BlockElement;
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
-use Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak;
+use Parsemd\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak;
 
 class ListBlock extends AbstractBlock implements Block
 {

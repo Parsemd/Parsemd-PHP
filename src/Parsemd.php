@@ -1,41 +1,41 @@
 <?php
 # this file is a testing environment that ties the application together and is
 # very much incomplete and too dense
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Lines\Line;
-use Aidantwoods\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Lines\Lines;
 
-use Aidantwoods\Parsemd\Resolvers\BlockResolver;
-use Aidantwoods\Parsemd\Resolvers\InlineResolver;
+use Parsemd\Parsemd\Resolvers\BlockResolver;
+use Parsemd\Parsemd\Resolvers\InlineResolver;
 
-use Aidantwoods\Parsemd\Parsers\Block;
-use Aidantwoods\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Inline;
 
-use Aidantwoods\Parsemd\Parsers\Core\Blocks\Paragraph;
-use Aidantwoods\Parsemd\Parsers\Core\Inlines\Text;
+use Parsemd\Parsemd\Parsers\Core\Blocks\Paragraph;
+use Parsemd\Parsemd\Parsers\Core\Inlines\Text;
 
-use Aidantwoods\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Elements\InlineElement;
 
 class Parsemd
 {
     private $BlockHandlers = array(
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\PreCode',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Heading',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ListBlock',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Table',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\IndentedCode',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Quote',
-        'Aidantwoods\Parsemd\Parsers\Aidantwoods\Blocks\QuoteWithQuotee',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\PreCode',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Heading',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\ListBlock',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Table',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\IndentedCode',
+        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote',
+        'Parsemd\Parsemd\Parsers\Aidantwoods\Blocks\QuoteWithQuotee',
     );
 
     private $InlineHandlers = array(
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Code',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Link',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
-        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Image',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image',
     );
 
     private $BlockMarkerRegister  = array();

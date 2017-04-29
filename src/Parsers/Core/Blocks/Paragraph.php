@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers\Core\Blocks;
+namespace Parsemd\Parsemd\Parsers\Core\Blocks;
 
-use Aidantwoods\Parsemd\Parsers\Block;
-use Aidantwoods\Parsemd\Lines\Lines;
-use Aidantwoods\Parsemd\Elements\BlockElement;
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
 class Paragraph extends AbstractBlock implements Block
 {

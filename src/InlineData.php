@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Inline;
 
-use Aidantwoods\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Lines\Line;
 
 class InlineData
 {

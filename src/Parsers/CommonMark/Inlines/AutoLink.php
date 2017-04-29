@@ -1,13 +1,13 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers\CommonMark\Inlines;
+namespace Parsemd\Parsemd\Parsers\CommonMark\Inlines;
 
-use Aidantwoods\Parsemd\Parsers\Inline;
-use Aidantwoods\Parsemd\Parsers\Core\Inlines\AbstractInline;
-use Aidantwoods\Parsemd\Element;
-use Aidantwoods\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
+use Parsemd\Parsemd\Element;
+use Parsemd\Parsemd\Elements\InlineElement;
 
-use Aidantwoods\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Lines\Line;
 
 class AutoLink extends AbstractInline implements Inline
 {

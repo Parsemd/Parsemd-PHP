@@ -1,9 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers;
+namespace Parsemd\Parsemd\Parsers;
 
-use Aidantwoods\Parsemd\Parser;
-use Aidantwoods\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Parser;
+use Parsemd\Parsemd\Lines\Lines;
 
 interface Block extends Parser
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Elements;
+namespace Parsemd\Parsemd\Elements;
 
-use Aidantwoods\Parsemd\Element;
-use Aidantwoods\Parsemd\AbstractElement;
-use Aidantwoods\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Element;
+use Parsemd\Parsemd\AbstractElement;
+use Parsemd\Parsemd\Lines\Lines;
 
 class BlockElement extends AbstractElement
 {

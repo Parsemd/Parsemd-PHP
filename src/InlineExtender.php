@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Lines\Line;
 
 abstract class InlineExtender
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Elements\InlineElement;
 
 abstract class Display
 {

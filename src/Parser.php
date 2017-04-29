@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Lines\LineIterator;
+use Parsemd\Parsemd\Lines\LineIterator;
 
 /**
  * **Abstract Interface**: This MUST NOT be implemented directly

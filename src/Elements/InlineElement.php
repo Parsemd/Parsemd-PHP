@@ -1,9 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Elements;
+namespace Parsemd\Parsemd\Elements;
 
-use Aidantwoods\Parsemd\AbstractElement;
-use Aidantwoods\Parsemd\Lines\Line;
+use Parsemd\Parsemd\AbstractElement;
+use Parsemd\Parsemd\Lines\Line;
 
 class InlineElement extends AbstractElement
 {

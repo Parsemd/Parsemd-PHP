@@ -1,9 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers\Core\Inlines;
+namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 
-use Aidantwoods\Parsemd\Parsers\Inline;
-use Aidantwoods\Parsemd\Element;
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Element;
 
 abstract class AbstractInline implements Inline
 {

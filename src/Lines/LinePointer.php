@@ -1,6 +1,6 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Lines;
+namespace Parsemd\Parsemd\Lines;
 
 use Iterator;
 use Countable;

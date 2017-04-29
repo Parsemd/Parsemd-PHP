@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
-use Aidantwoods\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\Lines;
 
 abstract class AbstractElement implements Element
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Parsers;
+namespace Parsemd\Parsemd\Parsers;
 
-use Aidantwoods\Parsemd\Parser;
-use Aidantwoods\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Parser;
+use Parsemd\Parsemd\Lines\Line;
 
 /**
  * An Inline MUST treat the null character ("\0") as if it were a consumable

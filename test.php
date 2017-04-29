@@ -1,6 +1,6 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Parsemd\Parsemd;
 
 require_once('vendor/autoload.php');
 
