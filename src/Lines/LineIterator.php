@@ -2,8 +2,7 @@
 
 namespace Parsemd\Parsemd\Lines;
 
-use Iterator;
-use Countable;
+use Iterator, Countable;
 
 /**
  * Stores text and is iterable, but defers iteration task

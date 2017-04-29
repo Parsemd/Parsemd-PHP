@@ -2,8 +2,10 @@
 
 namespace Parsemd\Parsemd\Elements;
 
-use Parsemd\Parsemd\AbstractElement;
-use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\{
+    AbstractElement,
+    Lines\Line
+};
 
 class InlineElement extends AbstractElement
 {

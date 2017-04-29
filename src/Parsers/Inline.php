@@ -2,8 +2,10 @@
 
 namespace Parsemd\Parsemd\Parsers;
 
-use Parsemd\Parsemd\Parser;
-use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\{
+    Parser,
+    Lines\Line
+};
 
 /**
  * An Inline MUST treat the null character ("\0") as if it were a consumable

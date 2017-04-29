@@ -2,9 +2,10 @@
 
 namespace Parsemd\Parsemd;
 
-use Parsemd\Parsemd\Parsers\Inline;
-
-use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\{
+    Parsers\Inline,
+    Lines\Line
+};
 
 class InlineData
 {

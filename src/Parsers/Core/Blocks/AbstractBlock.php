@@ -2,9 +2,11 @@
 
 namespace Parsemd\Parsemd\Parsers\Core\Blocks;
 
-use Parsemd\Parsemd\Parsers\Block;
-use Parsemd\Parsemd\Element;
-use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\{
+    Parsers\Block,
+    Element,
+    Lines\Lines
+};
 
 abstract class AbstractBlock implements Block
 {

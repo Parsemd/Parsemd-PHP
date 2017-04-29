@@ -2,8 +2,10 @@
 
 namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 
-use Parsemd\Parsemd\Parsers\Inline;
-use Parsemd\Parsemd\Element;
+use Parsemd\Parsemd\{
+    Parsers\Inline,
+    Element
+};
 
 abstract class AbstractInline implements Inline
 {

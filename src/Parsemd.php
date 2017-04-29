@@ -3,17 +3,25 @@
 # very much incomplete and too dense
 namespace Parsemd\Parsemd;
 
-use Parsemd\Parsemd\Lines\Line;
-use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\{
+    Line,
+    Lines
+};
 
-use Parsemd\Parsemd\Resolvers\BlockResolver;
-use Parsemd\Parsemd\Resolvers\InlineResolver;
+use Parsemd\Parsemd\Resolvers\{
+    BlockResolver,
+    InlineResolver
+};
 
-use Parsemd\Parsemd\Parsers\Block;
-use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\{
+    Block,
+    Inline
+};
 
-use Parsemd\Parsemd\Parsers\Core\Blocks\Paragraph;
-use Parsemd\Parsemd\Parsers\Core\Inlines\Text;
+use Parsemd\Parsemd\Parsers\Core\{
+    Blocks\Paragraph,
+    Inlines\Text
+};
 
 use Parsemd\Parsemd\Elements\InlineElement;
 

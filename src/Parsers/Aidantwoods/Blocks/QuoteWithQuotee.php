@@ -2,11 +2,15 @@
 
 namespace Parsemd\Parsemd\Parsers\Aidantwoods\Blocks;
 
-use Parsemd\Parsemd\Parsers\Block;
-use Parsemd\Parsemd\Lines\Lines;
-use Parsemd\Parsemd\Elements\BlockElement;
+use Parsemd\Parsemd\{
+    Lines\Lines,
+    Elements\BlockElement
+};
 
-use Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote;
+use Parsemd\Parsemd\Parsers\{
+    Block,
+    CommonMark\Blocks\Quote
+};
 
 class QuoteWithQuotee extends Quote implements Block
 {

@@ -2,8 +2,7 @@
 
 namespace Parsemd\Parsemd\Lines;
 
-use Iterator;
-use Countable;
+use Iterator, Countable;
 
 /**
  * Implements the Iterator class, and adds before and jump methods for

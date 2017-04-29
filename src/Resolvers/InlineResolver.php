@@ -2,15 +2,18 @@
 
 namespace Parsemd\Parsemd\Resolvers;
 
-use Parsemd\Parsemd\Parsers\Inline;
-use Parsemd\Parsemd\InlineData;
+use Parsemd\Parsemd\{
+    InlineData,
+    Parsers\Inline,
+    Elements\InlineElement
+};
 
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code;
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link;
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis;
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image;
-
-use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\{
+    Code,
+    Link,
+    Emphasis,
+    Image
+};
 
 abstract class InlineResolver
 {

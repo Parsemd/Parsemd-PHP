@@ -2,14 +2,18 @@
 
 namespace Parsemd\Parsemd\Resolvers;
 
-use Parsemd\Parsemd\Parsers\Block;
-
-use Parsemd\Parsemd\Parsers\Core\Blocks\Paragraph;
-use Parsemd\Parsemd\Parsers\CommonMark\Blocks\ListBlock;
-use Parsemd\Parsemd\Parsers\CommonMark\Blocks\IndentedCode;
-use Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote;
-
 use Parsemd\Parsemd\Lines\Lines;
+
+use Parsemd\Parsemd\Parsers\{
+    Block,
+    Core\Blocks\Paragraph
+};
+
+use Parsemd\Parsemd\Parsers\CommonMark\Blocks\{
+    ListBlock,
+    IndentedCode,
+    Quote
+};
 
 abstract class BlockResolver
 {

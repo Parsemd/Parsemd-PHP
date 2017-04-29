@@ -2,9 +2,11 @@
 
 namespace Parsemd\Parsemd\Elements;
 
-use Parsemd\Parsemd\Element;
-use Parsemd\Parsemd\AbstractElement;
-use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\{
+    Element,
+    AbstractElement,
+    Lines\Lines
+};
 
 class BlockElement extends AbstractElement
 {

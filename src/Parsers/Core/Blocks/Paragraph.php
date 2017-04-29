@@ -2,9 +2,15 @@
 
 namespace Parsemd\Parsemd\Parsers\Core\Blocks;
 
-use Parsemd\Parsemd\Parsers\Block;
-use Parsemd\Parsemd\Lines\Lines;
-use Parsemd\Parsemd\Elements\BlockElement;
+use Parsemd\Parsemd\{
+    Lines\Lines,
+    Elements\BlockElement
+};
+
+use Parsemd\Parsemd\Parsers\{
+    Block,
+    Core\Blocks\AbstractBlock
+};
 
 class Paragraph extends AbstractBlock implements Block
 {

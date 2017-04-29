@@ -2,12 +2,15 @@
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Inlines;
 
-use Parsemd\Parsemd\Parsers\Inline;
-use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
-use Parsemd\Parsemd\Element;
-use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\{
+    Elements\InlineElement,
+    Lines\Line
+};
 
-use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Parsers\{
+    Inline,
+    Core\Inlines\AbstractInline
+};
 
 class Link extends AbstractInline implements Inline
 {

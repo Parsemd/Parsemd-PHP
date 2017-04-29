@@ -2,11 +2,15 @@
 
 namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 
-use Parsemd\Parsemd\Parsers\Inline;
-use Parsemd\Parsemd\Element;
-use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\{
+    Elements\InlineElement,
+    Lines\Line
+};
 
-use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Parsers\{
+    Inline,
+    Core\Inlines\AbstractInline
+};
 
 class Text extends AbstractInline implements Inline
 {
