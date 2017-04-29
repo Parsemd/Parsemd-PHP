@@ -1,12 +1,12 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Blocks;
+namespace Aidantwoods\Parsemd\Blocks;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Lines\Lines;
-use Aidantwoods\Phpmd\Elements\BlockElement;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Lines\Lines;
+use Aidantwoods\Parsemd\Elements\BlockElement;
 
-use Aidantwoods\Phpmd\Blocks\ThematicBreak;
+use Aidantwoods\Parsemd\Blocks\ThematicBreak;
 
 class ListBlock extends AbstractBlock implements Block
 {

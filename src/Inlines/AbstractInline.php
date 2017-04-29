@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Inlines;
+namespace Aidantwoods\Parsemd\Inlines;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Inline;
-use Aidantwoods\Phpmd\Element;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Inline;
+use Aidantwoods\Parsemd\Element;
 
 abstract class AbstractInline implements Inline
 {

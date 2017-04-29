@@ -1,11 +1,11 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Blocks;
+namespace Aidantwoods\Parsemd\Blocks;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Structure;
-use Aidantwoods\Phpmd\Lines\Lines;
-use Aidantwoods\Phpmd\Elements\BlockElement;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Structure;
+use Aidantwoods\Parsemd\Lines\Lines;
+use Aidantwoods\Parsemd\Elements\BlockElement;
 
 class ThematicBreak extends AbstractBlock implements Block
 {

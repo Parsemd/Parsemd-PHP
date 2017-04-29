@@ -1,13 +1,13 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Blocks;
+namespace Aidantwoods\Parsemd\Blocks;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Lines\Lines;
-use Aidantwoods\Phpmd\Elements\BlockElement;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Lines\Lines;
+use Aidantwoods\Parsemd\Elements\BlockElement;
 
-use Aidantwoods\Phpmd\Blocks\PreCode;
-use Aidantwoods\Phpmd\Blocks\IndentedCode;
+use Aidantwoods\Parsemd\Blocks\PreCode;
+use Aidantwoods\Parsemd\Blocks\IndentedCode;
 
 class Quote extends AbstractBlock implements Block
 {
@@ -112,7 +112,7 @@ class Quote extends AbstractBlock implements Block
     {
         $Lines = new Lines($text);
 
-        static $blockNamespace = 'Aidantwoods\Phpmd\Blocks\\';
+        static $blockNamespace = 'Aidantwoods\Parsemd\Blocks\\';
 
         if (empty($this->semiInterrupts))
         {

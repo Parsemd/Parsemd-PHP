@@ -1,16 +1,16 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
 require_once('vendor/autoload.php');
 
 $text = file_get_contents('markdownText.md');
 
-$Phpmd = new Phpmd;
+$Parsemd = new Parsemd;
 
 $t0 = microtime(true);
 
-$Elements = $Phpmd->parse($text);
+$Elements = $Parsemd->parse($text);
 
 $t1 = microtime(true);
 

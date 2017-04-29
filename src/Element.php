@@ -1,6 +1,6 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
 interface Element
 {

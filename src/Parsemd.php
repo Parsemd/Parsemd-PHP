@@ -1,38 +1,38 @@
 <?php
 # this file is a testing environment that ties the application together and is
 # very much incomplete and too dense
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
-use Aidantwoods\Phpmd\Lines\Line;
-use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Parsemd\Lines\Line;
+use Aidantwoods\Parsemd\Lines\Lines;
 
-use Aidantwoods\Phpmd\Resolvers\BlockResolver;
-use Aidantwoods\Phpmd\Resolvers\InlineResolver;
+use Aidantwoods\Parsemd\Resolvers\BlockResolver;
+use Aidantwoods\Parsemd\Resolvers\InlineResolver;
 
-use Aidantwoods\Phpmd\Blocks\Paragraph;
-use Aidantwoods\Phpmd\Inlines\Text;
+use Aidantwoods\Parsemd\Blocks\Paragraph;
+use Aidantwoods\Parsemd\Inlines\Text;
 
-use Aidantwoods\Phpmd\Elements\InlineElement;
+use Aidantwoods\Parsemd\Elements\InlineElement;
 
-class Phpmd
+class Parsemd
 {
     private $BlockHandlers = array(
-        'Aidantwoods\Phpmd\Blocks\PreCode',
-        'Aidantwoods\Phpmd\Blocks\Heading',
-        'Aidantwoods\Phpmd\Blocks\ListBlock',
-        'Aidantwoods\Phpmd\Blocks\ThematicBreak',
-        'Aidantwoods\Phpmd\Blocks\Table',
-        'Aidantwoods\Phpmd\Blocks\IndentedCode',
-        'Aidantwoods\Phpmd\Blocks\Quote',
-        'Aidantwoods\Phpmd\Blocks\QuoteWithQuotee',
+        'Aidantwoods\Parsemd\Blocks\PreCode',
+        'Aidantwoods\Parsemd\Blocks\Heading',
+        'Aidantwoods\Parsemd\Blocks\ListBlock',
+        'Aidantwoods\Parsemd\Blocks\ThematicBreak',
+        'Aidantwoods\Parsemd\Blocks\Table',
+        'Aidantwoods\Parsemd\Blocks\IndentedCode',
+        'Aidantwoods\Parsemd\Blocks\Quote',
+        'Aidantwoods\Parsemd\Blocks\QuoteWithQuotee',
     );
 
     private $InlineHandlers = array(
-        'Aidantwoods\Phpmd\Inlines\Code',
-        'Aidantwoods\Phpmd\Inlines\Link',
-        'Aidantwoods\Phpmd\Inlines\Emphasis',
-        'Aidantwoods\Phpmd\Inlines\AutoLink',
-        'Aidantwoods\Phpmd\Inlines\Image',
+        'Aidantwoods\Parsemd\Inlines\Code',
+        'Aidantwoods\Parsemd\Inlines\Link',
+        'Aidantwoods\Parsemd\Inlines\Emphasis',
+        'Aidantwoods\Parsemd\Inlines\AutoLink',
+        'Aidantwoods\Parsemd\Inlines\Image',
     );
 
     private $BlockMarkerRegister  = array();

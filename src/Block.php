@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
-use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Parsemd\Lines\Lines;
 
 interface Block extends Parser
 {

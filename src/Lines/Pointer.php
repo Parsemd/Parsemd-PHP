@@ -1,6 +1,6 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Lines;
+namespace Aidantwoods\Parsemd\Lines;
 
 use Iterator;
 

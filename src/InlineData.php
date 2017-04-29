@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
-use Aidantwoods\Phpmd\Lines\Line;
+use Aidantwoods\Parsemd\Lines\Line;
 
 class InlineData
 {

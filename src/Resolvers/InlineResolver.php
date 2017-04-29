@@ -1,15 +1,15 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Resolvers;
+namespace Aidantwoods\Parsemd\Resolvers;
 
-use Aidantwoods\Phpmd\Inline;
-use Aidantwoods\Phpmd\InlineData;
+use Aidantwoods\Parsemd\Inline;
+use Aidantwoods\Parsemd\InlineData;
 
-use Aidantwoods\Phpmd\Inlines\Code;
-use Aidantwoods\Phpmd\Inlines\Link;
-use Aidantwoods\Phpmd\Inlines\Emphasis;
-use Aidantwoods\Phpmd\Elements\InlineElement;
-use Aidantwoods\Phpmd\Inlines\Image;
+use Aidantwoods\Parsemd\Inlines\Code;
+use Aidantwoods\Parsemd\Inlines\Link;
+use Aidantwoods\Parsemd\Inlines\Emphasis;
+use Aidantwoods\Parsemd\Elements\InlineElement;
+use Aidantwoods\Parsemd\Inlines\Image;
 
 abstract class InlineResolver
 {

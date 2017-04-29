@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Blocks;
+namespace Aidantwoods\Parsemd\Blocks;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Lines\Lines;
-use Aidantwoods\Phpmd\Elements\BlockElement;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Lines\Lines;
+use Aidantwoods\Parsemd\Elements\BlockElement;
 
 class QuoteWithQuotee extends Quote implements Block
 {

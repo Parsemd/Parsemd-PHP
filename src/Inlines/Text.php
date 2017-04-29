@@ -1,12 +1,12 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Inlines;
+namespace Aidantwoods\Parsemd\Inlines;
 
-use Aidantwoods\Phpmd\Inline;
-use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\Elements\InlineElement;
+use Aidantwoods\Parsemd\Inline;
+use Aidantwoods\Parsemd\Element;
+use Aidantwoods\Parsemd\Elements\InlineElement;
 
-use Aidantwoods\Phpmd\Lines\Line;
+use Aidantwoods\Parsemd\Lines\Line;
 
 class Text extends AbstractInline implements Inline
 {

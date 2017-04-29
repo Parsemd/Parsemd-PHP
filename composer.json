@@ -1,5 +1,5 @@
 {
-    "name": "aidantwoods/phpmd",
+    "name": "aidantwoods/parsemd",
     "description": "Markdown Parser",
     "keywords": [
         "markdown",
@@ -8,7 +8,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Aidantwoods\\Phpmd\\": ["src/"]
+            "Aidantwoods\\Parsemd\\": ["src/"]
         }
     },
     "require": {

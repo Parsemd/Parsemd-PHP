@@ -1,15 +1,15 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Resolvers;
+namespace Aidantwoods\Parsemd\Resolvers;
 
-use Aidantwoods\Phpmd\Block;
+use Aidantwoods\Parsemd\Block;
 
-use Aidantwoods\Phpmd\Blocks\Paragraph;
-use Aidantwoods\Phpmd\Blocks\ListBlock;
-use Aidantwoods\Phpmd\Blocks\IndentedCode;
-use Aidantwoods\Phpmd\Blocks\Quote;
+use Aidantwoods\Parsemd\Blocks\Paragraph;
+use Aidantwoods\Parsemd\Blocks\ListBlock;
+use Aidantwoods\Parsemd\Blocks\IndentedCode;
+use Aidantwoods\Parsemd\Blocks\Quote;
 
-use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Parsemd\Lines\Lines;
 
 abstract class BlockResolver
 {

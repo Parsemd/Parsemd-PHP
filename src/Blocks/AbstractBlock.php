@@ -1,10 +1,10 @@
 <?php
 
-namespace Aidantwoods\Phpmd\Blocks;
+namespace Aidantwoods\Parsemd\Blocks;
 
-use Aidantwoods\Phpmd\Block;
-use Aidantwoods\Phpmd\Element;
-use Aidantwoods\Phpmd\Lines\Lines;
+use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Element;
+use Aidantwoods\Parsemd\Lines\Lines;
 
 abstract class AbstractBlock implements Block
 {

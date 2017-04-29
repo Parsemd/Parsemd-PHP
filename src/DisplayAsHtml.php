@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
-use Aidantwoods\Phpmd\Elements\InlineElement;
+use Aidantwoods\Parsemd\Elements\InlineElement;
 
 abstract class DisplayAsHtml
 {

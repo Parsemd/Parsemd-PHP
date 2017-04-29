@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Phpmd;
+namespace Aidantwoods\Parsemd;
 
-use Aidantwoods\Phpmd\Lines\Line;
+use Aidantwoods\Parsemd\Lines\Line;
 
 /**
  * An Inline MUST treat the null character ("\0") as if it were a consumable
