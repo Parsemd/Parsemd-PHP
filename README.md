@@ -1,4 +1,4 @@
-# Parsemd
+# Parsemd [![Build Status](https://travis-ci.org/Parsemd/Parsemd.svg?branch=master)](https://travis-ci.org/Parsemd/Parsemd)
 A markdown parser, lovingly crafted in php7.1
 
 ## Aims

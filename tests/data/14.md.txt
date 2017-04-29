@@ -1,0 +1,8 @@
+
+blockquote:
+  pre:
+    code:
+      code
+  p:
+    text:
+      not code

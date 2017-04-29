@@ -1,0 +1,17 @@
+
+h2 id="parameters":
+  text:
+    Parameters
+
+h3 id="http":
+  text:
+    http
+
+p:
+  text:
+    An implementation of the 
+  a href="HttpAdapter":
+    code:
+      ->HttpAdapter
+  text:
+     interface, to which settings configured via SecureHeaders will be applied.

@@ -1,0 +1,9 @@
+
+blockquote:
+  pre:
+    code:
+      foo
+
+pre:
+  code:
+    bar

@@ -1,0 +1,82 @@
+
+p:
+  text:
+    Calling this function will initiate the following
+
+ol:
+  li:
+    p:
+      text:
+        Existing headers from the HttpAdapter's source will be imported into SecureHeaders' internal list, parsed
+  li:
+    p:
+      a href="auto":
+        text:
+          Automatic header functions
+      text:
+         will be applied
+  li:
+    p:
+      a href="csp":
+        text:
+          CSP
+      text:
+        , 
+      a href="hsts":
+        text:
+          HSTS
+      text:
+        , and 
+      a href="hpkp":
+        text:
+          HPKP
+      text:
+         policies will be compiled and added to SecureHeaders' internal header list
+  li:
+    p:
+      text:
+        Headers queued for 
+      a href="removeHeader":
+        text:
+          removal
+      text:
+         will be deleted from SecureHeaders' internal header list
+  li:
+    p:
+      a href="safeMode":
+        text:
+          Safe Mode
+      text:
+         will examine the list of headers, and make any required changes according to its settings
+  li:
+    p:
+      text:
+        The HttpAdapter will be instructed to remove all headers from its header source, Headers will then be copied from SecureHeaders' internal header list, into the HttpAdapter's (now empty) list of headers
+  li:
+    p:
+      text:
+        If 
+      a href="errorReporting":
+        text:
+          error reporting
+      text:
+         is enabled (both within SecureHeaders and according to the PHP configuration values for error reporting, and whether to display errors)
+    ul:
+      li:
+        p:
+          text:
+            Missing security headers will be reported as 
+          code:
+            E_USER_WARNING
+      li:
+        p:
+          text:
+            Misconfigured headers will be reported as 
+          code:
+            E_USER_WARNING
+          text:
+             or 
+          code:
+            E_USER_NOTICE
+          text:
+             depending on severity, the former being most severe an issue.

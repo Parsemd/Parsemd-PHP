@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 7.1
+  - nightly
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+matrix:
+  allow_failures:
+    - php: nightly
+
+install:
+  - travis_retry composer install --prefer-dist --no-interaction --no-suggest
+
+script: vendor/bin/phpunit
+

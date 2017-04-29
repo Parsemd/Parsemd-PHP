@@ -1,0 +1,8 @@
+
+h2 id="description":
+  text:
+    Description
+
+pre:
+  code class="language-php":
+    HeaderBag apply ([ ?HttpAdapter $http = new GlobalHttpAdapter ] )

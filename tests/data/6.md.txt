@@ -1,0 +1,20 @@
+
+p:
+  em:
+    text:
+      emph 
+    em:
+      text:
+        with emph
+    text:
+       in it
+  text:
+     
+  strong:
+    text:
+      strong 
+    strong:
+      text:
+        with strong
+    text:
+       in it

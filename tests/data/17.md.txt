@@ -1,0 +1,11 @@
+
+blockquote:
+  pre:
+    code:
+
+p:
+  text:
+    foo
+
+pre:
+  code:

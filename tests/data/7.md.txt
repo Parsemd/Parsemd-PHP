@@ -1,0 +1,9 @@
+
+p:
+  text:
+    internal emphasis: foo
+  em:
+    text:
+      bar
+  text:
+    baz no emphasis: foo_bar_baz

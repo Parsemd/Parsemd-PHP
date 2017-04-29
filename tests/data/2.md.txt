@@ -1,0 +1,17 @@
+
+p:
+  strong:
+    text:
+      Note:
+  text:
+     Calling this function is 
+  strong:
+    text:
+      required
+  text:
+     before the first byte of output in order for SecureHeaders to (be able to) do anything. If you're not sure when the first byte of output might occur, or simply don't want to have to call this every time – take a look at 
+  a href="applyOnOutput":
+    code:
+      ->applyOnOutput
+  text:
+     to have SecureHeaders take care of this for you.

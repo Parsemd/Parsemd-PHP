@@ -1,0 +1,7 @@
+
+blockquote:
+  blockquote:
+    blockquote:
+      p:
+        text:
+          foo bar baz

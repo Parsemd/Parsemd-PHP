@@ -1,0 +1,38 @@
+
+p:
+  em:
+    strong:
+      text:
+        strong emph
+  text:
+     
+  em:
+    strong:
+      text:
+        strong
+    text:
+       in emph
+  text:
+     
+  strong:
+    em:
+      text:
+        emph
+    text:
+       in strong
+  text:
+     
+  strong:
+    text:
+      in strong 
+    em:
+      text:
+        emph
+  text:
+     
+  em:
+    text:
+      in emph 
+    strong:
+      text:
+        strong
