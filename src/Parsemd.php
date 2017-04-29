@@ -9,30 +9,33 @@ use Aidantwoods\Parsemd\Lines\Lines;
 use Aidantwoods\Parsemd\Resolvers\BlockResolver;
 use Aidantwoods\Parsemd\Resolvers\InlineResolver;
 
-use Aidantwoods\Parsemd\Blocks\Paragraph;
-use Aidantwoods\Parsemd\Inlines\Text;
+use Aidantwoods\Parsemd\Parsers\Block;
+use Aidantwoods\Parsemd\Parsers\Inline;
+
+use Aidantwoods\Parsemd\Parsers\Core\Blocks\Paragraph;
+use Aidantwoods\Parsemd\Parsers\Core\Inlines\Text;
 
 use Aidantwoods\Parsemd\Elements\InlineElement;
 
 class Parsemd
 {
     private $BlockHandlers = array(
-        'Aidantwoods\Parsemd\Blocks\PreCode',
-        'Aidantwoods\Parsemd\Blocks\Heading',
-        'Aidantwoods\Parsemd\Blocks\ListBlock',
-        'Aidantwoods\Parsemd\Blocks\ThematicBreak',
-        'Aidantwoods\Parsemd\Blocks\Table',
-        'Aidantwoods\Parsemd\Blocks\IndentedCode',
-        'Aidantwoods\Parsemd\Blocks\Quote',
-        'Aidantwoods\Parsemd\Blocks\QuoteWithQuotee',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\PreCode',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Heading',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ListBlock',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Table',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\IndentedCode',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Quote',
+        'Aidantwoods\Parsemd\Parsers\Aidantwoods\Blocks\QuoteWithQuotee',
     );
 
     private $InlineHandlers = array(
-        'Aidantwoods\Parsemd\Inlines\Code',
-        'Aidantwoods\Parsemd\Inlines\Link',
-        'Aidantwoods\Parsemd\Inlines\Emphasis',
-        'Aidantwoods\Parsemd\Inlines\AutoLink',
-        'Aidantwoods\Parsemd\Inlines\Image',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Code',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Link',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
+        'Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Image',
     );
 
     private $BlockMarkerRegister  = array();

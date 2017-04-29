@@ -1,13 +1,11 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Blocks;
+namespace Aidantwoods\Parsemd\Parsers\CommonMark\Blocks;
 
-use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Parsers\Block;
+use Aidantwoods\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 use Aidantwoods\Parsemd\Lines\Lines;
 use Aidantwoods\Parsemd\Elements\BlockElement;
-
-use Aidantwoods\Parsemd\Blocks\PreCode;
-use Aidantwoods\Parsemd\Blocks\IndentedCode;
 
 class Quote extends AbstractBlock implements Block
 {
@@ -112,13 +110,11 @@ class Quote extends AbstractBlock implements Block
     {
         $Lines = new Lines($text);
 
-        static $blockNamespace = 'Aidantwoods\Parsemd\Blocks\\';
-
         if (empty($this->semiInterrupts))
         {
             foreach (['PreCode', 'IndentedCode'] as $class)
             {
-                $Block = "${blockNamespace}${class}";
+                $Block = __NAMESPACE__."\\${class}";
 
                 if ($Block::isPresent($Lines))
                 {

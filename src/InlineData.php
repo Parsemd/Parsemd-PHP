@@ -2,6 +2,8 @@
 
 namespace Aidantwoods\Parsemd;
 
+use Aidantwoods\Parsemd\Parsers\Inline;
+
 use Aidantwoods\Parsemd\Lines\Line;
 
 class InlineData

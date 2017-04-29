@@ -1,9 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Blocks;
+namespace Aidantwoods\Parsemd\Parsers\CommonMark\Blocks;
 
-use Aidantwoods\Parsemd\Block;
-use Aidantwoods\Parsemd\Structure;
+use Aidantwoods\Parsemd\Parsers\Block;
+use Aidantwoods\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 use Aidantwoods\Parsemd\Lines\Lines;
 use Aidantwoods\Parsemd\Elements\BlockElement;
 

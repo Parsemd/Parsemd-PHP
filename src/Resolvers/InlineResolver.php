@@ -2,14 +2,15 @@
 
 namespace Aidantwoods\Parsemd\Resolvers;
 
-use Aidantwoods\Parsemd\Inline;
+use Aidantwoods\Parsemd\Parsers\Inline;
 use Aidantwoods\Parsemd\InlineData;
 
-use Aidantwoods\Parsemd\Inlines\Code;
-use Aidantwoods\Parsemd\Inlines\Link;
-use Aidantwoods\Parsemd\Inlines\Emphasis;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Code;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Link;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Emphasis;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Inlines\Image;
+
 use Aidantwoods\Parsemd\Elements\InlineElement;
-use Aidantwoods\Parsemd\Inlines\Image;
 
 abstract class InlineResolver
 {
@@ -62,10 +63,8 @@ abstract class InlineResolver
          * The brackets in link text bind more tightly than markers for
          * emphasis and strong emphasis.
          */
-        if (
-            $NewInline instanceof Link
-            and $Inline instanceof Emphasis
-        ) {
+        if ($NewInline instanceof Link and $Inline instanceof Emphasis)
+        {
             return true;
         }
 

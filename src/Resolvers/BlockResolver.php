@@ -2,12 +2,12 @@
 
 namespace Aidantwoods\Parsemd\Resolvers;
 
-use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Parsers\Block;
 
-use Aidantwoods\Parsemd\Blocks\Paragraph;
-use Aidantwoods\Parsemd\Blocks\ListBlock;
-use Aidantwoods\Parsemd\Blocks\IndentedCode;
-use Aidantwoods\Parsemd\Blocks\Quote;
+use Aidantwoods\Parsemd\Parsers\Core\Blocks\Paragraph;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\ListBlock;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\IndentedCode;
+use Aidantwoods\Parsemd\Parsers\CommonMark\Blocks\Quote;
 
 use Aidantwoods\Parsemd\Lines\Lines;
 

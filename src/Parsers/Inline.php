@@ -1,7 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd;
+namespace Aidantwoods\Parsemd\Parsers;
 
+use Aidantwoods\Parsemd\Parser;
 use Aidantwoods\Parsemd\Lines\Line;
 
 /**

@@ -1,8 +1,9 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Inlines;
+namespace Aidantwoods\Parsemd\Parsers\CommonMark\Inlines;
 
-use Aidantwoods\Parsemd\Inline;
+use Aidantwoods\Parsemd\Parsers\Inline;
+use Aidantwoods\Parsemd\Parsers\Core\Inlines\AbstractInline;
 use Aidantwoods\Parsemd\Element;
 use Aidantwoods\Parsemd\Elements\InlineElement;
 

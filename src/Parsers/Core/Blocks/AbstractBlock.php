@@ -1,8 +1,8 @@
 <?php
 
-namespace Aidantwoods\Parsemd\Blocks;
+namespace Aidantwoods\Parsemd\Parsers\Core\Blocks;
 
-use Aidantwoods\Parsemd\Block;
+use Aidantwoods\Parsemd\Parsers\Block;
 use Aidantwoods\Parsemd\Element;
 use Aidantwoods\Parsemd\Lines\Lines;
 
