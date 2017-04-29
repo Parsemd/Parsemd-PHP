@@ -59,7 +59,6 @@ interface Block extends Parser
 
     /**
      * Determine whether the block has been interrupted
-     * at $Lines::current()
      *
      * @param Lines $Lines
      *
@@ -81,12 +80,12 @@ interface Block extends Parser
     public function isContinuable(Lines $Lines) : bool;
 
     /**
-     * Interrupt the block at $Lines::current()
+     * Interrupt the block
      */
     public function interrupt() : void;
 
     /**
-     * Un-interrupt the block at $Lines::current()
+     * Un-interrupt the block
      */
     public function uninterrupt() : void;
 
