@@ -24,11 +24,7 @@ class Quote extends AbstractBlock implements Block
         '>'
     );
 
-    public static function isPresent(
-        Lines   $Lines,
-        ?string &$text   = null,
-        ?int    &$marker = null
-    ) : bool
+    public static function isPresent(Lines $Lines, ?array &$data = null) : bool
     {
         if (preg_match('/^[ ]{0,3}>(\s?+)(.*+)/', $Lines->current(), $matches))
         {
@@ -39,7 +35,13 @@ class Quote extends AbstractBlock implements Block
                 $text = "   ${text}";
             }
 
-            $marker = (strlen($matches[1]) === 1 ? self::LONG : self::SHORT);
+            $data['text'] = $text;
+
+            $data['marker'] = (
+                strlen($matches[1]) === 1 ?
+                    self::LONG
+                    : self::SHORT
+            );
 
             return true;
         }
@@ -49,16 +51,18 @@ class Quote extends AbstractBlock implements Block
 
     public static function begin(Lines $Lines) : Block
     {
-        if (self::isPresent($Lines, $text, $marker))
+        if (self::isPresent($Lines, $data))
         {
-            return new static($text, $marker);
+            return new static($data['text'], $data['marker']);
         }
     }
 
     public function parse(Lines $Lines) : bool
     {
-        if (self::isPresent($Lines, $text, $marker))
+        if (self::isPresent($Lines, $data))
         {
+            list($text, $marker) = [$data['text'], $data['marker']];
+
             $this->semiInterruptIfApplicable($text);
             $this->adjustMarker($marker, $text);
 
