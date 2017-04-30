@@ -18,6 +18,8 @@ interface Element
 
     public function getAttributes() : array;
 
+    public function getAttribute(string $name);
+
     public function setNonReducible(bool $mode = true) : void;
 
     public function setNonInlinable(bool $mode = true) : void;

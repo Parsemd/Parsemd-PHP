@@ -37,12 +37,29 @@ abstract class AbstractElement implements Element
 
     public function setAttribute(string $attribute, $value) : void
     {
-        $this->attributes[$attribute] = $value;
+        $this->attributes[strtolower($attribute)] = array(
+            'value' => $value,
+            'name' => $attribute,
+        );
     }
 
     public function getAttributes() : array
     {
-        return $this->attributes;
+        return array_reduce(
+            $this->attributes,
+            function ($carry, $attribute)
+            {
+                $carry[$attribute['name']] = $attribute['value'];
+
+                return $carry;
+            },
+            []
+        ) ?? array();
+    }
+
+    public function getAttribute(string $name)
+    {
+        return $this->attributes[strtolower($name)]['value'] ?? null;
     }
 
     public function setNonReducible(bool $mode = true) : void
