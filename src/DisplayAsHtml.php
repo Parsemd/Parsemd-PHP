@@ -128,7 +128,7 @@ abstract class DisplayAsHtml
             $Element->setAttribute(
                 $attribute,
                 preg_replace_callback(
-                    '/[^\/#]++/',
+                    '/[^\/#?&=%]++/',
                     function (array $match)
                     {
                         return urlencode($match[0]);
