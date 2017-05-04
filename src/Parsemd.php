@@ -83,10 +83,8 @@ class Parsemd
         {
             foreach ($this->BlockMarkerRegister[$marker] as $handler)
             {
-                if ($handler::isPresent($Lines))
+                if ($Block = $handler::begin($Lines))
                 {
-                    $Block = $handler::begin($Lines);
-
                     return $Block;
                 }
             }

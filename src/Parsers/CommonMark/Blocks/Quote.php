@@ -24,7 +24,10 @@ class Quote extends AbstractBlock implements Block
         '>'
     );
 
-    public static function isPresent(Lines $Lines, ?array &$data = null) : bool
+    protected static function isPresent(
+        Lines $Lines,
+        ?array &$data = null
+    ) : bool
     {
         if (preg_match('/^[ ]{0,3}>(\s?+)(.*+)/', $Lines->current(), $matches))
         {
@@ -38,9 +41,7 @@ class Quote extends AbstractBlock implements Block
             $data['text'] = $text;
 
             $data['marker'] = (
-                strlen($matches[1]) === 1 ?
-                    self::LONG
-                    : self::SHORT
+                strlen($matches[1]) === 1 ? self::LONG : self::SHORT
             );
 
             return true;
@@ -49,12 +50,14 @@ class Quote extends AbstractBlock implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : Block
+    public static function begin(Lines $Lines) : ?Block
     {
         if (self::isPresent($Lines, $data))
         {
             return new static($data['text'], $data['marker']);
         }
+
+        return null;
     }
 
     public function parse(Lines $Lines) : bool
@@ -125,7 +128,7 @@ class Quote extends AbstractBlock implements Block
             {
                 $Block = __NAMESPACE__."\\${class}";
 
-                if ($Block::isPresent($Lines))
+                if ($Block::begin($Lines))
                 {
                     $this->semiInterrupts[$class] = true;
 
@@ -135,14 +138,14 @@ class Quote extends AbstractBlock implements Block
         }
         elseif (isset($this->semiInterrupts['PreCode']))
         {
-            if (PreCode::isPresent($Lines))
+            if (PreCode::begin($Lines))
             {
                 unset($this->semiInterrupts['PreCode']);
             }
         }
         elseif (isset($this->semiInterrupts['IndentedCode']))
         {
-            if ( ! IndentedCode::isPresent($Lines))
+            if ( ! IndentedCode::begin($Lines))
             {
                 unset($this->semiInterrupts['IndentedCode']);
             }

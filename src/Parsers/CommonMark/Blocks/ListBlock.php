@@ -27,7 +27,7 @@ class ListBlock extends AbstractBlock implements Block
         '-', '*', '+'
     );
 
-    public static function isPresent(
+    protected static function isPresent(
         Lines $Lines,
         ?string $marker = null
     ) : bool
@@ -45,12 +45,14 @@ class ListBlock extends AbstractBlock implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : Block
+    public static function begin(Lines $Lines) : ?Block
     {
         if ($data = self::deconstructLine($Lines->current()))
         {
             return new static($Lines, $data);
         }
+
+        return null;
     }
 
     public function parse(Lines $Lines) : bool
@@ -181,7 +183,7 @@ class ListBlock extends AbstractBlock implements Block
 
     private static function deconstructLine(string $line) : ?array
     {
-        if (ThematicBreak::isPresent(new Lines($line)))
+        if (ThematicBreak::begin(new Lines($line)))
         {
             return null;
         }

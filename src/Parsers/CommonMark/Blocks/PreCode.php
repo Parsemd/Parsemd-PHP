@@ -22,28 +22,19 @@ class PreCode extends AbstractBlock implements Block
         '`', '~'
     );
 
-    public static function isPresent(Lines $Lines) : bool
-    {
-        return preg_match(
-            '/^\s*+(?:[`]{3,}+|[~]{3,}+)[^\s]*+[ ]*+$/',
-            $Lines->current()
-        );
-    }
-
-    public static function begin(Lines $Lines) : Block
+    public static function begin(Lines $Lines) : ?Block
     {
         if (
             preg_match(
-                '/^\s*+('
-                .implode('{3,}|', self::$markers)
-                .'{3,})([^\s]*+)[ ]*+$/',
-
+                '/^\s*+([`]{3,}+|[~]{3,}+)([^\s]*+)[ ]*+$/',
                 $Lines->current(),
                 $matches
             )
         ) {
             return new static($Lines, $matches[1], $matches[2]);
         }
+
+        return null;
     }
 
     public function parse(Lines $Lines) : bool

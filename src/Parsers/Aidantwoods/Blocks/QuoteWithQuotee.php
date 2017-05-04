@@ -18,7 +18,10 @@ class QuoteWithQuotee extends Quote implements Block
         '['
     );
 
-    public static function isPresent(Lines $Lines, ?array &$data = null) : bool
+    protected static function isPresent(
+        Lines $Lines,
+        ?array &$data = null
+    ) : bool
     {
         if ($Lines->lookup($Lines->key() + 1) === null)
         {
@@ -46,12 +49,14 @@ class QuoteWithQuotee extends Quote implements Block
         return false;
     }
 
-    public static function begin(Lines $Lines) : Block
+    public static function begin(Lines $Lines) : ?Block
     {
         if (self::isPresent($Lines, $data))
         {
             return new static($data['quotee'], $data['timestamp']);
         }
+
+        return null;
     }
 
     private function __construct(string $quotee, ?string $timestamp = null)

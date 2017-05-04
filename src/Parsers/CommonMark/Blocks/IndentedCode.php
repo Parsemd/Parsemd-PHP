@@ -21,20 +21,16 @@ class IndentedCode extends AbstractBlock implements Block
         ' '
     );
 
-    public static function isPresent(Lines $Lines) : bool
+    public static function begin(Lines $Lines) : ?Block
     {
-        return preg_match(
-            '/^[ ]{4,}+[^ ]/',
-            $Lines->current()
-        );
-    }
-
-    public static function begin(Lines $Lines) : Block
-    {
-        if (preg_match('/^[ ]{4}(.*+)$/', $Lines->current(), $matches))
-        {
+        if (
+            preg_match('/^[ ]{4}(.*+)$/', $Lines->current(), $matches)
+            and trim($matches[1]) !== ''
+        ) {
             return new static($matches[1]);
         }
+
+        return null;
     }
 
     public function parse(Lines $Lines) : bool

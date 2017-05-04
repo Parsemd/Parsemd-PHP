@@ -18,17 +18,18 @@ class ThematicBreak extends AbstractBlock implements Block
         '-', '_', '*'
     );
 
-    public static function isPresent(Lines $Lines) : bool
+    public static function begin(Lines $Lines) : ?Block
     {
-        return preg_match(
-            '/^[ ]{0,3}+([-_*])(?:\s*+\1){2,}[\s]*+$/',
-            $Lines->current()
-        );
-    }
+        if (
+            preg_match(
+                '/^[ ]{0,3}+([-_*])(?:\s*+\1){2,}[\s]*+$/',
+                $Lines->current()
+            )
+        ) {
+            return new static();
+        }
 
-    public static function begin(Lines $Lines) : Block
-    {
-        return new static();
+        return null;
     }
 
     public function parse(Lines $Lines) : bool

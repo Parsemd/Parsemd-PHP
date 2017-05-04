@@ -21,33 +21,22 @@ class Table extends AbstractBlock implements Block
         '-', '|'
     );
 
-    public static function isPresent(Lines $Lines) : bool
+    public static function begin(Lines $Lines) : ?Block
     {
-        $before = $Lines->lookup($Lines->key() -1) ?? '';
-
         if ($cols = self::tableMarker($Lines->current()))
         {
+            $before = $Lines->lookup($Lines->key() -1) ?? '';
+
             # if we have sufficient headings to match marker indicated columns
             if (count(self::decomposeTableRow($before)) === $cols)
             {
-                # place the pointer on the heading line
+                $headings = self::decomposeTableRow($before);
 
-                $Lines->before();
-
-                return true;
+                return new static($headings);
             }
         }
 
-        return false;
-    }
-
-    public static function begin(Lines $Lines) : Block
-    {
-        $headings = self::decomposeTableRow($Lines->current());
-
-        $Lines->next();
-
-        return new static($headings);
+        return null;
     }
 
     public function parse(Lines $Lines) : bool

@@ -10,38 +10,23 @@ use Parsemd\Parsemd\{
 interface Block extends Parser
 {
     /**
-     * Determine whether the Block can begin
+     * MUST return either `null` (in case of failure), or a new instance
+     * of the implementation.
      *
-     * $Lines::current() should be used as a root but the structure
-     * may traverse backwards if the marker is not the start of
-     * the structure.
-     *
-     * isPresent MUST use $Lines::jump() or equivalent to leave the
-     * pointer in the start position upon exit if it is not in the correct
-     * place already.
-     *
-     * @param Lines $Lines
-     *
-     * @return bool;
-     */
-    public static function isPresent(Lines $Lines) : bool;
-
-    /**
-     * Will be called upon {@see isPresent} returning `true` with the line
-     * pointer in the position left by {@see isPresent}. {@see begin} MUST
-     * return either `null` (in case of failure), or a new instance of self.
-     *
-     * The content at $Lines::current() MUST be parsed (using
+     * The content at $Lines::current() or before MUST be parsed (using
      * {@see parse} or otherwise) before the instance of self is returned.
      *
-     * Content not found at the current pointer MAY be read, but MUST NOT
+     * If an content before $Lines::current() is parsed, the implementation
+     * MUST reflect this with {@see backtrackCount}
+     *
+     * Content found after the current pointer MAY be read, but MUST NOT
      * be parsed.
      *
      * @param Lines $Lines
      *
      * @return static of type matching the current implementation
      */
-    public static function begin(Lines $Lines) : Block;
+    public static function begin(Lines $Lines) : ?Block;
 
     /**
      * Lines:current() MUST be used as the begining of the structure.

@@ -16,14 +16,14 @@ class Paragraph extends AbstractBlock implements Block
 {
     protected static $markers = array();
 
-    public static function isPresent(Lines $Lines) : bool
+    public static function begin(Lines $Lines) : ?Block
     {
-        return (trim($Lines->current()) !== '');
-    }
+        if (trim($Lines->current()) !== '')
+        {
+            return new static($Lines);
+        }
 
-    public static function begin(Lines $Lines) : Block
-    {
-        return new static($Lines);
+        return null;
     }
 
     public function parse(Lines $Lines) : bool
