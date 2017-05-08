@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\Core\Blocks;
 
@@ -35,7 +36,7 @@ class Paragraph extends AbstractBlock implements Block
 
         $this->uninterrupt();
 
-        $lastLine = $Lines->lookup($Lines->key() -1);
+        $lastLine = $Lines->lookup($Lines->key() -1) ?? '';
 
         # append to the current line or a new one?
 

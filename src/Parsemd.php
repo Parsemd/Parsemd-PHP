@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 # this file is a testing environment that ties the application together and is
 # very much incomplete and too dense
 namespace Parsemd\Parsemd;
