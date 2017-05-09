@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd;
 
 use Parsemd\Parsemd\Elements\InlineElement;
+use Aidantwoods\Sets\Sets\StringSet;
 
 abstract class DisplayAsHtml
 {
@@ -20,21 +21,17 @@ abstract class DisplayAsHtml
         'news',
     );
 
-    protected static function safeSchemesRe() : string
+    protected static function safeSchemes() : StringSet
     {
-        static $regex;
+        static $StringSet;
 
-        if ( ! isset($regex))
+        if ( ! isset($StringSet))
         {
-            $regex = '/'
-                . '\s*+'
-                . '(' . implode('|', self::SAFE_SCHEMES) . ')'
-                . '\s*+:'
-                . '|[\/#]'
-                . '/i';
+            $StringSet = new StringSet;
+            $StringSet->addArray(self::SAFE_SCHEMES);
         }
 
-        return $regex;
+        return $StringSet;
     }
 
     public static function elements(array $Elements) : string
@@ -121,9 +118,9 @@ abstract class DisplayAsHtml
         string  $attribute
     ) {
         if (
-            ! preg_match(
-                self::safeSchemesRe(),
-                $Element->getAttribute($attribute)
+            ! self::strsiStart(
+                $Element->getAttribute($attribute),
+                self::safeSchemes()
             )
         ) {
             $Element->setAttribute(
@@ -137,6 +134,31 @@ abstract class DisplayAsHtml
                     $Element->getAttribute($attribute)
                 )
             );
+        }
+    }
+
+    protected static function strsiStart(
+        string    $string,
+        StringSet $searches
+    ) : bool
+    {
+        $stringLen = strlen($string);
+
+        foreach ($searches as $search)
+        {
+            $searchLen = strlen($search);
+
+            if ($searchLen > $stringLen)
+            {
+                return false;
+            }
+            else
+            {
+                return (
+                    strtolower(substr($string, 0, $searchLen))
+                    === strtolower($search)
+                );
+            }
         }
     }
 }

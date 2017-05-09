@@ -19,7 +19,8 @@
     ],
     "require": {
         "php": ">=7.1",
-        "aidantwoods/betteroptions": "dev-master"
+        "aidantwoods/betteroptions": "dev-master",
+        "aidantwoods/sets": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^6.1",
