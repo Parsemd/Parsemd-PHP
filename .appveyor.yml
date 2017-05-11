@@ -32,7 +32,8 @@ install:
 
 before_test:
     - cd C:\projects\parsemd
-    - php C:\tools\composer.phar remove friendsofphp/php-cs-fixer --dev
+    - php C:\tools\composer.phar config repositories.0 --unset --no-interaction
+    - php C:\tools\composer.phar remove friendsofphp/php-cs-fixer --dev --no-interaction --no-progress --no-ansi
     - php C:\tools\composer.phar update --no-interaction --no-progress --optimize-autoloader --prefer-stable --no-ansi
 
 test_script:

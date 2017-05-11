@@ -8,10 +8,12 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Parsemd\\Parsemd\\": ["src/"]
+            "Parsemd\\Parsemd\\": [
+                "src/"
+            ]
         }
     },
-     "repositories": [
+    "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/aidantwoods/PHP-CS-Fixer"
