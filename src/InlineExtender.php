@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd;
 
 use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Parsers\Inline;
 
 abstract class InlineExtender
 {
