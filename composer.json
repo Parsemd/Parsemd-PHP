@@ -24,6 +24,6 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^6.1",
-        "friendsofphp/php-cs-fixer": "dev-feature/braces/position_after_control_structures"
+        "friendsofphp/php-cs-fixer": "dev-feature/braces/position_after_return_type_hint"
     }
 }
