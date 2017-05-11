@@ -42,7 +42,7 @@ class Image extends AbstractInline implements Inline
 
         $this->Element = new InlineElement('img');
 
-        $this->Element->appendContent($Element->getContent());
+        $this->Element->appendContent((string) $Element->getContent());
 
         $this->Element->setAttribute('src', $attributes['href']);
 
