@@ -4,31 +4,23 @@ declare(strict_types=1);
 # very much incomplete and too dense
 namespace Parsemd\Parsemd;
 
-use Parsemd\Parsemd\Lines\{
-    Line,
-    Lines
-};
+use Parsemd\Parsemd\Lines\Line;
+use Parsemd\Parsemd\Lines\Lines;
 
-use Parsemd\Parsemd\Resolvers\{
-    BlockResolver,
-    InlineResolver
-};
+use Parsemd\Parsemd\Resolvers\BlockResolver;
+use Parsemd\Parsemd\Resolvers\InlineResolver;
 
-use Parsemd\Parsemd\Parsers\{
-    Block,
-    Inline
-};
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Inline;
 
-use Parsemd\Parsemd\Parsers\Core\{
-    Blocks\Paragraph,
-    Inlines\Text
-};
+use Parsemd\Parsemd\Parsers\Core\Blocks\Paragraph;
+use Parsemd\Parsemd\Parsers\Core\Inlines\Text;
 
 use Parsemd\Parsemd\Elements\InlineElement;
 
 class Parsemd
 {
-    private $BlockHandlers = array(
+    private $BlockHandlers = [
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\PreCode',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Heading',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\ListBlock',
@@ -37,22 +29,22 @@ class Parsemd
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\IndentedCode',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote',
         'Parsemd\Parsemd\Parsers\Aidantwoods\Blocks\QuoteWithQuotee',
-    );
+    ];
 
-    private $InlineHandlers = array(
+    private $InlineHandlers = [
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image',
-    );
+    ];
 
-    private $BlockMarkerRegister  = array();
-    private $InlineMarkerRegister = array();
+    private $BlockMarkerRegister  = [];
+    private $InlineMarkerRegister = [];
 
     private function registerHandlers()
     {
-        $handlerTypes = array('Block', 'Inline');
+        $handlerTypes = ['Block', 'Inline'];
 
         foreach ($handlerTypes as $type)
         {
@@ -70,7 +62,7 @@ class Parsemd
             {
                 if ( ! array_key_exists($marker, $this->$markerRegister))
                 {
-                    $this->$markerRegister[$marker] = array();
+                    $this->$markerRegister[$marker] = [];
                 }
 
                 $this->$markerRegister[$marker][] = $Handler;
@@ -138,13 +130,13 @@ class Parsemd
         ?array $restrictions = null
     ) : array
     {
-        $Elements = array();
+        $Elements = [];
 
-        $Inlines = array();
+        $Inlines = [];
 
         $mask = implode('', array_keys($this->InlineMarkerRegister));
 
-        $restrictions = $restrictions ?? array();
+        $restrictions = $restrictions ?? [];
 
         for ($Line->rewind(); $Line->valid(); $Line->strcspnJump($mask))
         {
@@ -203,7 +195,7 @@ class Parsemd
 
     private function parseLines(Lines $Lines) : array
     {
-        $Elements = array();
+        $Elements = [];
 
         for ($Lines->rewind(); $Lines->valid(); $Lines->next())
         {
@@ -337,7 +329,7 @@ class Parsemd
             if ( ! empty($subRestrictions))
             {
                 $restrictions = array_merge(
-                    $restrictions ?? array(),
+                    $restrictions ?? [],
                     $subRestrictions
                 );
             }
@@ -415,5 +407,4 @@ class Parsemd
     {
         return DisplayAsHtml::elements($this->parse($text));
     }
-
 }

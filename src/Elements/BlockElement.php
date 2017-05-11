@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Elements;
 
-use Parsemd\Parsemd\{
-    Element,
-    AbstractElement,
-    Lines\Lines
-};
+use Parsemd\Parsemd\Element;
+use Parsemd\Parsemd\AbstractElement;
+use Parsemd\Parsemd\Lines\Lines;
 
 class BlockElement extends AbstractElement
 {

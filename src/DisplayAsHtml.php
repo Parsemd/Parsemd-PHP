@@ -8,7 +8,7 @@ use Aidantwoods\Sets\Sets\StringSet;
 
 abstract class DisplayAsHtml
 {
-    protected const SAFE_SCHEMES = array(
+    protected const SAFE_SCHEMES = [
         'http',
         'https',
         'mailto',
@@ -20,7 +20,7 @@ abstract class DisplayAsHtml
         'ftps',
         'news',
         'steam',
-    );
+    ];
 
     protected static function safeSchemes() : StringSet
     {
@@ -65,7 +65,7 @@ abstract class DisplayAsHtml
                 {
                     $string .= (function () use ($Element)
                     {
-                        $texts = array();
+                        $texts = [];
 
                         foreach ($Element->getAttributes() as $key => $value)
                         {

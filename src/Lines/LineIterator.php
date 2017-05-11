@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Lines;
 
-use Iterator, Countable;
+use Iterator;
+use Countable;
 
 /**
  * Stores text and is iterable, but defers iteration task

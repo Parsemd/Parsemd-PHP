@@ -13,11 +13,11 @@ use Iterator;
  */
 class Line extends LineIterator implements Iterator, Pointer
 {
-    private $text,
-            $cache = array(
+    private $text;
+    private $cache = [
                 'position' => null,
                 'text'     => null
-            );
+            ];
 
     protected $pointer;
 
@@ -32,10 +32,10 @@ class Line extends LineIterator implements Iterator, Pointer
     {
         if ($this->pointer->current() !== $this->cache['position'])
         {
-            $this->cache = array(
+            $this->cache = [
                 'text'     => $this->lookup($this->key()),
                 'position' => $this->pointer->key()
-            );
+            ];
         }
 
         return $this->cache['text'];
@@ -47,10 +47,10 @@ class Line extends LineIterator implements Iterator, Pointer
 
         $this->pointer->extendRange(strlen($text));
 
-        $this->cache = array(
+        $this->cache = [
             'position' => null,
             'text'     => null
-        );
+        ];
     }
 
     public function pop() : Line

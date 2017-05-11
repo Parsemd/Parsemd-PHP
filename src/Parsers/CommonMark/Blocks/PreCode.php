@@ -3,25 +3,21 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
-use Parsemd\Parsemd\{
-    Lines\Lines,
-    Elements\BlockElement
-};
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
-use Parsemd\Parsemd\Parsers\{
-    Block,
-    Core\Blocks\AbstractBlock
-};
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 
 class PreCode extends AbstractBlock implements Block
 {
-    private $Code,
-            $initialMarker,
-            $isComplete = false;
+    private $Code;
+    private $initialMarker;
+    private $isComplete = false;
 
-    protected static $markers = array(
+    protected static $markers = [
         '`', '~'
-    );
+    ];
 
     public static function begin(Lines $Lines) : ?Block
     {

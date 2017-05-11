@@ -3,21 +3,17 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Inlines;
 
-use Parsemd\Parsemd\{
-    Elements\InlineElement,
-    Lines\Line
-};
+use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Lines\Line;
 
-use Parsemd\Parsemd\Parsers\{
-    Inline,
-    Core\Inlines\AbstractInline
-};
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 class Link extends AbstractInline implements Inline
 {
-    protected static $markers = array(
+    protected static $markers = [
         '['
-    );
+    ];
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -51,13 +47,13 @@ class Link extends AbstractInline implements Inline
                 $matches
             )
         ) {
-            return array(
+            return [
                 'text'      => $matches[1],
                 'textStart' => 1,
                 'width'     => strlen($matches[0]),
                 'href'      => $matches[2],
                 'title'     => $matches[4] ?? null
-            );
+            ];
         }
 
         return null;

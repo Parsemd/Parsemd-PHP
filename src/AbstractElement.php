@@ -7,11 +7,11 @@ use Parsemd\Parsemd\Lines\Lines;
 
 abstract class AbstractElement implements Element
 {
-    protected $type,
-              $reducible  = true,
-              $inlinable  = true,
-              $attributes = array(),
-              $Elements   = array();
+    protected $type;
+    protected $reducible  = true;
+    protected $inlinable  = true;
+    protected $attributes = [];
+    protected $Elements   = [];
 
     public function getType() : string
     {
@@ -33,15 +33,15 @@ abstract class AbstractElement implements Element
 
     public function dumpElements() : void
     {
-        $this->Elements = array();
+        $this->Elements = [];
     }
 
     public function setAttribute(string $attribute, $value) : void
     {
-        $this->attributes[strtolower($attribute)] = array(
+        $this->attributes[strtolower($attribute)] = [
             'value' => $value,
             'name' => $attribute,
-        );
+        ];
     }
 
     public function getAttributes() : array
@@ -55,7 +55,7 @@ abstract class AbstractElement implements Element
                 return $carry;
             },
             []
-        ) ?? array();
+        ) ?? [];
     }
 
     public function getAttribute(string $name)

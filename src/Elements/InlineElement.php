@@ -3,17 +3,15 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Elements;
 
-use Parsemd\Parsemd\{
-    AbstractElement,
-    Lines\Line
-};
+use Parsemd\Parsemd\AbstractElement;
+use Parsemd\Parsemd\Lines\Line;
 
 class InlineElement extends AbstractElement
 {
-    protected $Line,
-              $nonNestables = null,
-              $reducible    = false,
-              $unescape     = true;
+    protected $Line;
+    protected $nonNestables = null;
+    protected $reducible    = false;
+    protected $unescape     = true;
 
     public function __construct(string $type)
     {

@@ -3,19 +3,15 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Resolvers;
 
-use Parsemd\Parsemd\{
-    InlineData,
-    InlineExtender,
-    Parsers\Inline,
-    Elements\InlineElement
-};
+use Parsemd\Parsemd\InlineData;
+use Parsemd\Parsemd\InlineExtender;
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Elements\InlineElement;
 
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\{
-    Code,
-    Link,
-    Emphasis,
-    Image
-};
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis;
+use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image;
 
 abstract class InlineResolver
 {
@@ -131,12 +127,12 @@ abstract class InlineResolver
      */
     public static function resolve(array $Inlines) : array
     {
-        $Resolved = array();
+        $Resolved = [];
 
         while ( ! empty($Inlines))
         {
             $Current    = array_shift($Inlines);
-            $Interrupts = array();
+            $Interrupts = [];
             $Next       = null;
 
             foreach (self::intersecting($Current, $Inlines) as $i => $Inline)
@@ -184,7 +180,7 @@ abstract class InlineResolver
                         break;
                     }
 
-                    $Pair = array($Next, $Interrupt);
+                    $Pair = [$Next, $Interrupt];
 
                     if ($New = InlineExtender::extend($Current, $Pair))
                     {

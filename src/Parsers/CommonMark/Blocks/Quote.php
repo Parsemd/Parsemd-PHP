@@ -3,27 +3,23 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
-use Parsemd\Parsemd\{
-    Lines\Lines,
-    Elements\BlockElement
-};
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
-use Parsemd\Parsemd\Parsers\{
-    Block,
-    Core\Blocks\AbstractBlock
-};
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 
 class Quote extends AbstractBlock implements Block
 {
     private const SHORT = 0b01,
                   LONG  = 0b10;
 
-    protected $semiInterrupts = array(),
-              $marker = self::LONG;
+    protected $semiInterrupts = [];
+    protected $marker = self::LONG;
 
-    protected static $markers = array(
+    protected static $markers = [
         '>'
-    );
+    ];
 
     protected static function isPresent(
         Lines $Lines,

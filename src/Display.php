@@ -22,7 +22,7 @@ abstract class Display
                 .$indent.$Element->getType().
                 (function () use ($Element)
                 {
-                    $texts = array();
+                    $texts = [];
 
                     foreach ($Element->getAttributes() as $key => $value)
                     {

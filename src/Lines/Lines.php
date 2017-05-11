@@ -29,7 +29,7 @@ class Lines extends LineIterator implements Iterator, Pointer
         }
         else
         {
-            $this->lines = array();
+            $this->lines = [];
         }
 
         $this->pointer = new LinePointer(count($this->lines));

@@ -36,7 +36,7 @@ abstract class InlineExtender
         $end   = $Inlines[1]->end();
         $Line  = $Inlines[0]->getLine();
 
-        $n = strpos ($text, "\0");
+        $n = strpos($text, "\0");
         $l = strrpos($text, "\0");
 
         if ($n === false)

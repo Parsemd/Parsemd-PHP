@@ -1,9 +1,7 @@
 <?php
 
-use Parsemd\Parsemd\{
-    Parsemd,
-    Display
-};
+use Parsemd\Parsemd\Parsemd;
+use Parsemd\Parsemd\Display;
 
 use PHPUnit\Framework\TestCase;
 
@@ -36,7 +34,7 @@ class CrapTest extends TestCase
         $contents = scandir(__DIR__.'/data');
 
         $contents = array_map(
-            function($item)
+            function ($item)
             {
                 return __DIR__."/data/$item";
             },

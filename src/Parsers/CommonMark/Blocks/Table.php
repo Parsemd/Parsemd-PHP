@@ -3,24 +3,20 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
-use Parsemd\Parsemd\{
-    Lines\Lines,
-    Elements\BlockElement
-};
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
-use Parsemd\Parsemd\Parsers\{
-    Block,
-    Core\Blocks\AbstractBlock
-};
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 
 class Table extends AbstractBlock implements Block
 {
-    private $columns,
-            $tBody;
+    private $columns;
+    private $tBody;
 
-    protected static $markers = array(
+    protected static $markers = [
         '-', '|'
-    );
+    ];
 
     public static function begin(Lines $Lines) : ?Block
     {

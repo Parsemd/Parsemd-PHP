@@ -3,21 +3,17 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Inlines;
 
-use Parsemd\Parsemd\{
-    Elements\InlineElement,
-    Lines\Line
-};
+use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Lines\Line;
 
-use Parsemd\Parsemd\Parsers\{
-    Inline,
-    Core\Inlines\AbstractInline
-};
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 class AutoLink extends AbstractInline implements Inline
 {
-    protected static $markers = array(
+    protected static $markers = [
         'h', '<', 'm', 'i'
-    );
+    ];
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -65,11 +61,11 @@ class AutoLink extends AbstractInline implements Inline
                 }
             }
 
-            return array(
+            return [
                 'text'      => $matches[2],
                 'textStart' => (isset($matches[1]) ? 1 : 0),
                 'width'     => strlen($matches[0])
-            );
+            ];
         }
 
         return null;

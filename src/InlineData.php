@@ -3,15 +3,13 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd;
 
-use Parsemd\Parsemd\{
-    Parsers\Inline,
-    Lines\Line
-};
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Lines\Line;
 
 class InlineData
 {
-    private $Line,
-            $Inline;
+    private $Line;
+    private $Inline;
 
     public function __construct(Line $Line, Inline $Inline)
     {

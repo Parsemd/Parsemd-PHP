@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Lines;
 
-use Iterator, Countable;
+use Iterator;
+use Countable;
 
 /**
  * Implements the Iterator class, and adds before and jump methods for
@@ -11,8 +12,8 @@ use Iterator, Countable;
  */
 class LinePointer implements Iterator, Pointer, Countable
 {
-    private $pointer,
-            $length;
+    private $pointer;
+    private $length;
 
     public function __construct(int $length)
     {

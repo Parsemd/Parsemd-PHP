@@ -3,15 +3,11 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Inlines;
 
-use Parsemd\Parsemd\{
-    Elements\InlineElement,
-    Lines\Line
-};
+use Parsemd\Parsemd\Elements\InlineElement;
+use Parsemd\Parsemd\Lines\Line;
 
-use Parsemd\Parsemd\Parsers\{
-    Inline,
-    Core\Inlines\AbstractInline
-};
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 class Emphasis extends AbstractInline implements Inline
 {
@@ -26,9 +22,9 @@ class Emphasis extends AbstractInline implements Inline
     const EM = 0b01;
     const ST = 0b10;
 
-    protected static $markers = array(
+    protected static $markers = [
         '*', '_'
-    );
+    ];
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -75,7 +71,7 @@ class Emphasis extends AbstractInline implements Inline
 
         $Line = clone($Line);
 
-        $openSequence = array();
+        $openSequence = [];
 
         for (; $Line->valid(); $Line->strcspnJump($marker))
         {
@@ -114,14 +110,14 @@ class Emphasis extends AbstractInline implements Inline
             # type based on the length of the closing run
             $offset = $offset ?? ($length % 2 ? self::EM : self::ST);
 
-            return array(
+            return [
                 'text'
                     => $Line->substr($start + $offset, $Line->key() - $offset),
                 'textStart'
                     => $offset,
                 'width'
                     => $Line->key() - $start
-            );
+            ];
         }
 
         return null;

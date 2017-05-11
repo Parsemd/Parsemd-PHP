@@ -3,10 +3,8 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers;
 
-use Parsemd\Parsemd\{
-    Parser,
-    Lines\Lines
-};
+use Parsemd\Parsemd\Parser;
+use Parsemd\Parsemd\Lines\Lines;
 
 interface Block extends Parser
 {

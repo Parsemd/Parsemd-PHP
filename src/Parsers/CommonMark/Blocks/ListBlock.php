@@ -3,30 +3,26 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
-use Parsemd\Parsemd\{
-    Lines\Lines,
-    Elements\BlockElement
-};
+use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Elements\BlockElement;
 
-use Parsemd\Parsemd\Parsers\{
-    Block,
-    Core\Blocks\AbstractBlock,
-    CommonMark\Blocks\ThematicBreak
-};
+use Parsemd\Parsemd\Parsers\Block;
+use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
+use Parsemd\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak;
 
 class ListBlock extends AbstractBlock implements Block
 {
-    private $fullMarker,
-            $CurrentLi,
-            $marker,
-            $initalWhitespace,
-            $requiredIndent,
-            $loose = false;
+    private $fullMarker;
+    private $CurrentLi;
+    private $marker;
+    private $initalWhitespace;
+    private $requiredIndent;
+    private $loose = false;
 
-    protected static $markers = array(
+    protected static $markers = [
         '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
         '-', '*', '+'
-    );
+    ];
 
     protected static function isPresent(
         Lines $Lines,
@@ -208,7 +204,7 @@ class ListBlock extends AbstractBlock implements Block
                 $matches[4] = ' ';
             }
 
-            $data = array(
+            $data = [
                 'fullMarker'
                     => $matches[2],
                 'marker'
@@ -219,7 +215,7 @@ class ListBlock extends AbstractBlock implements Block
                     => $matches[1],
                 'text'
                     => $matches[5]
-            );
+            ];
 
             return $data;
         }

@@ -3,16 +3,14 @@ declare(strict_types=1);
 
 namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 
-use Parsemd\Parsemd\{
-    Parsers\Inline,
-    Element
-};
+use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\Element;
 
 abstract class AbstractInline implements Inline
 {
-    protected $Element,
-              $width,
-              $textStart;
+    protected $Element;
+    protected $width;
+    protected $textStart;
 
     public function getElement() : Element
     {
