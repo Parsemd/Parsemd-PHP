@@ -7,6 +7,7 @@ require_once('vendor/autoload.php');
 $text = file_get_contents('markdownText.md');
 
 $Parsemd = new Parsemd;
+$Elements = $Parsemd->parse($text);
 
 $t0 = microtime(true);
 
