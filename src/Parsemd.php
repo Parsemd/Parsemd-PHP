@@ -78,7 +78,7 @@ class Parsemd
         }
     }
 
-    private function findNewBlock(string $marker, Lines $Lines) : Block
+    private function findNewBlock(string $marker, Lines $Lines) : ?Block
     {
         if (array_key_exists($marker, $this->BlockMarkerRegister))
         {
@@ -227,9 +227,10 @@ class Parsemd
                         or ! BlockResolver::interrupts($NewBlock, $Block)
                     )
                 ) {
-                    $Block->parse($Lines);
-
-                    continue;
+                    if ($Block->parse($Lines))
+                    {
+                        continue;
+                    }
                 }
 
                 /**
