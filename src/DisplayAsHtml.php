@@ -19,6 +19,7 @@ abstract class DisplayAsHtml
         'ftp',
         'ftps',
         'news',
+        'steam',
     );
 
     protected static function safeSchemes() : StringSet
@@ -82,12 +83,15 @@ abstract class DisplayAsHtml
             {
                 foreach ($Element->getContent() as $Line)
                 {
-                    $string .= self::escape($Line);
+                    $string .= self::escape($Line, true);
                 }
             }
             elseif ($Element->getContent()->count() > 0)
             {
-                $string .= self::escape($Element->getContent()->current());
+                $string .= self::escape(
+                    $Element->getContent()->current(),
+                    true
+                );
             }
 
             $string .= self::elements($Element->getElements());
@@ -101,9 +105,16 @@ abstract class DisplayAsHtml
         return $string;
     }
 
-    protected static function escape(string $string) : string
+    protected static function escape(
+        string $string,
+        $allowQuotes = false
+    ) : string
     {
-        return htmlentities($string, ENT_QUOTES, 'UTF-8');
+        return htmlentities(
+            $string,
+            $allowQuotes ? ENT_NOQUOTES : ENT_QUOTES,
+            'UTF-8'
+        );
     }
 
     /**
