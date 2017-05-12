@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
 use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Elements\BlockElement;
 
 use Parsemd\Parsemd\Parsers\Block;
@@ -15,21 +16,22 @@ class Table extends AbstractBlock implements Block
     private $tBody;
 
     protected static $markers = [
-        '-', '|'
+        '-', '|', ':'
     ];
 
     public static function begin(Lines $Lines) : ?Block
     {
-        if ($cols = self::tableMarker($Lines->current()))
+        if ($data = self::tableMarker($Lines->current()))
         {
             $before = $Lines->lookup($Lines->key() -1) ?? '';
+            $cols   = count($data);
 
             # if we have sufficient headings to match marker indicated columns
             if (count(self::decomposeTableRow($before)) === $cols)
             {
                 $headings = self::decomposeTableRow($before);
 
-                return new static($headings);
+                return new static($headings, $data);
             }
         }
 
@@ -52,12 +54,17 @@ class Table extends AbstractBlock implements Block
                 break;
             }
 
-            $data = new BlockElement('td');
-            $data->setNonReducible();
+            $td = new BlockElement('td');
+            $td->setNonReducible();
 
-            $data->appendContent(trim($text));
+            $td->appendContent(trim($text));
 
-            $row->appendElement($data);
+            if ($this->alignmentData[$i]['align'] !== null)
+            {
+                $td->setAttribute('align', $this->alignmentData[$i]['align']);
+            }
+
+            $row->appendElement($td);
         }
 
         return true;
@@ -75,9 +82,11 @@ class Table extends AbstractBlock implements Block
         return 1;
     }
 
-    private function __construct(array $headings)
+    private function __construct(array $headings, array $alignmentData)
     {
         $this->columns = count($headings);
+
+        $this->alignmentData = $alignmentData;
 
         $this->Element = new BlockElement('table');
         $this->Element->setNonReducible();
@@ -91,14 +100,19 @@ class Table extends AbstractBlock implements Block
         $tHead->appendElement($row);
         $this->Element->appendElement($tHead);
 
-        foreach ($headings as $heading)
+        foreach ($headings as $i => $heading)
         {
-            $data = new BlockElement('td');
-            $data->setNonReducible();
+            $th = new BlockElement('th');
+            $th->setNonReducible();
 
-            $data->appendContent(trim($heading));
+            $th->appendContent(trim($heading));
 
-            $row->appendElement($data);
+            if ($this->alignmentData[$i]['align'] !== null)
+            {
+                $th->setAttribute('align', $this->alignmentData[$i]['align']);
+            }
+
+            $row->appendElement($th);
         }
 
         $tBody = new BlockElement('tbody');
@@ -133,22 +147,67 @@ class Table extends AbstractBlock implements Block
         return null;
     }
 
-    private static function tableMarker(string $line) : ?int
+    private static function tableMarker(string $line) : ?array
     {
         $normalisedLine = str_replace(' ', '', $line);
 
-        if (
-            preg_match(
-                '/^[ ]{0,3}+[|]?+(([-]++)(?:[|](?1))?)[|]?+$/',
-                $normalisedLine,
-                $matches
-            )
-        ) {
-            # count the column dividers (after ignoring outer dividers in
-            # the regex for group 1)
-            return substr_count($matches[1], '|') + 1;
+        $lineWithoutAllowedChars = str_replace(
+            [':', '|', '-'],
+            '',
+            $normalisedLine
+        );
+
+        if ($lineWithoutAllowedChars !== '')
+        {
+            return null;
         }
 
-        return null;
+        $Line = new Line($normalisedLine);
+
+        $data = null;
+
+        for ($Line->rewind(); $Line->valid(); $Line->strcspnJump('|'))
+        {
+            if ($data === null and $Line[0] !== '|')
+            {
+                $Line->jump(-1);
+            }
+
+            $seek = ($Line[1] === ':' ? 2 : 1);
+
+            if ($Line[$seek] === '-')
+            {
+                $new = [
+                    'align' => ($seek === 1 ? null : 'left')
+                ];
+
+                $sepMark   = strcspn($Line->lookup($Line->key() + $seek), '|');
+                $alignMark = strcspn($Line->lookup($Line->key() + $seek), ':');
+
+                if ($alignMark < $sepMark -1)
+                {
+                    return null;
+                }
+                elseif ($Line[$seek + $sepMark -1] === ':')
+                {
+                    $new['align'] = (
+                        $new['align'] === 'left' ? 'center' : 'right'
+                    );
+                }
+
+                if ($data === null)
+                {
+                    $data = [];
+                }
+
+                $data[] = $new;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        return $data;
     }
 }
