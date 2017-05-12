@@ -4,6 +4,9 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd\Lines;
 
 use Iterator;
+use ArrayAccess;
+use OutOfBoundsException;
+use InvalidArgumentException;
 
 /**
  * Stores text and is iterable, but defers iteration task
@@ -11,13 +14,13 @@ use Iterator;
  * Implements the extended functionality provided by
  * Pointer, by again deferring tasks to the LinePointer.
  */
-class Line extends LineIterator implements Iterator, Pointer
+class Line extends LineIterator implements Iterator, Pointer, ArrayAccess
 {
     private $text;
     private $cache = [
-                'position' => null,
-                'text'     => null
-            ];
+        'position' => null,
+        'text'     => null
+    ];
 
     protected $pointer;
 
@@ -98,5 +101,69 @@ class Line extends LineIterator implements Iterator, Pointer
     public function __toString() : string
     {
         return $this->text;
+    }
+
+    /**
+     * The following ArrayAccess functions perform relative lookups on a single
+     * char.
+     */
+
+    public function offsetExists($offset) : bool
+    {
+        if ( ! is_int($offset))
+        {
+            throw new InvalidArgumentException(
+                'Offset must be int'
+            );
+        }
+
+        return ($this->lookup($this->key() + $offset) !== null);
+    }
+
+    public function offsetGet($offset) : ?string
+    {
+        if ( ! is_int($offset))
+        {
+            throw new InvalidArgumentException(
+                'Offset must be int'
+            );
+        }
+
+        return $this->lookup($this->key() + $offset)[0] ?? null;
+    }
+
+    public function offsetSet($offset, $value) : void
+    {
+        if ( ! is_int($offset))
+        {
+            throw new InvalidArgumentException(
+                'Offset must be int'
+            );
+        }
+
+        if ( ! is_string($value))
+        {
+            throw new InvalidArgumentException(
+                'Value must be string'
+            );
+        }
+
+        if ($offset === null)
+        {
+            $this->append($string);
+        }
+        else
+        {
+            throw new OutOfBoundsException(
+                'May not specify a key, only append is supported.'
+            );
+        }
+    }
+
+    public function offsetUnset($offset) : void
+    {
+        throw new OutOfBoundsException(
+            'Unset unsupported.'
+        );
     }
 }
