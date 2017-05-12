@@ -1,0 +1,18 @@
+
+table:
+  thead:
+    tr:
+      th align="center":
+        text:
+          abc
+      th align="right":
+        text:
+          defghi
+  tbody:
+    tr:
+      td align="center":
+        text:
+          bar
+      td align="right":
+        text:
+          baz
