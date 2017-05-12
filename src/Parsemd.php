@@ -25,7 +25,7 @@ class Parsemd
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Heading',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\ListBlock',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\ThematicBreak',
-        'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Table',
+        'Parsemd\Parsemd\Parsers\GitHubFlavour\Blocks\Table',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\IndentedCode',
         'Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote',
         'Parsemd\Parsemd\Parsers\Aidantwoods\Blocks\QuoteWithQuotee',
