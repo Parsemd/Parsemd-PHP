@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Parsemd\Parsemd\Parsers\GitHubFlavour\Blocks;
+namespace Parsemd\Parsemd\Parsers\GitHubFlavor\Blocks;
 
 use Parsemd\Parsemd\Lines\Lines;
 use Parsemd\Parsemd\Lines\Line;
