@@ -9,9 +9,9 @@ use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
-use Parsemd\Parsemd\Parsers\CommonMark\Inlines\AbstractEmphasis;
+use Parsemd\Parsemd\Parsers\CommonMark\Abstractions\Inlines\Emphasis;
 
-class Highlight extends AbstractEmphasis implements Inline
+class Highlight extends Emphasis implements Inline
 {
     protected const TAG = 'mark';
 
