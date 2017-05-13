@@ -34,8 +34,7 @@ use Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines\Emphasis;
 class StrikeThrough extends Emphasis implements Inline
 {
     protected const TAG = 'del';
-
-    protected static $markers = [
+    protected const MARKERS = [
         '~'
     ];
 }
