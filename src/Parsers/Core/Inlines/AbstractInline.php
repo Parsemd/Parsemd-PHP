@@ -6,6 +6,8 @@ namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Element;
 
+use RuntimeException;
+
 abstract class AbstractInline implements Inline
 {
     protected $Element;
@@ -29,7 +31,14 @@ abstract class AbstractInline implements Inline
 
     public static function getMarkers() : array
     {
-        return static::MARKERS;
+        if (defined('static::MARKERS'))
+        {
+            return static::MARKERS;
+        }
+
+        throw new RuntimeException(
+            get_called_class().'::MARKERS has not been defined'
+        );
     }
 
     public function getTextWidth() : int

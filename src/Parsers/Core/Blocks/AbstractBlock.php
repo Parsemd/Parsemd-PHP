@@ -7,6 +7,8 @@ use Parsemd\Parsemd\Parsers\Block;
 use Parsemd\Parsemd\Element;
 use Parsemd\Parsemd\Lines\Lines;
 
+use RuntimeException;
+
 abstract class AbstractBlock implements Block
 {
     protected $interrupted = false;
@@ -14,7 +16,14 @@ abstract class AbstractBlock implements Block
 
     public static function getMarkers() : array
     {
-        return static::MARKERS;
+        if (defined('static::MARKERS'))
+        {
+            return static::MARKERS;
+        }
+
+        throw new RuntimeException(
+            get_called_class().'::MARKERS has not been defined'
+        );
     }
 
     public function isInterrupted() : bool
