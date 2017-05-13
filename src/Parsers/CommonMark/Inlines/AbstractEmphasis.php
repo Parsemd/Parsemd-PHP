@@ -59,6 +59,11 @@ abstract class AbstractEmphasis extends AbstractInline implements Inline
         {
             if ($length = static::measureDelimiterRun($Line, $marker))
             {
+                if ($Line->isEscaped())
+                {
+                    continue;
+                }
+
                 $isLf = static::isLeftFlanking($Line, $length);
                 $isRf = static::isRightFlanking($Line, $length);
 
@@ -120,14 +125,12 @@ abstract class AbstractEmphasis extends AbstractInline implements Inline
         string $marker
     ) : ?int
     {
-        if (preg_match('/^(['.$marker.'])\1*+/', $Line->current(), $match))
+        if ($length = strspn($Line->current(), $marker))
         {
-            if ($Line[-1] === $match[1])
+            if ($Line[-1] === $marker and ! $Line->isEscapedAt($Line->key() -1))
             {
                 return null;
             }
-
-            $length = strlen($match[0]);
 
             $before = $Line[-1] ?? '';
             $after  = $Line[$length] ?? '';
@@ -140,7 +143,7 @@ abstract class AbstractEmphasis extends AbstractInline implements Inline
              * internal underscores.
              */
             if (
-                $match[1] === '_'
+                $marker === '_'
                 and (
                     preg_match('/^\p{L}/u', $before)
                     or preg_match('/^\p{L}/u', $after)
@@ -268,11 +271,6 @@ abstract class AbstractEmphasis extends AbstractInline implements Inline
 
     /**
      * Close emph with the run length $length.
-     *
-     * Ideally we will close the last opened (strong) emph,
-     * but if we cannot, find the first available match (going
-     * backwards) and discard all opened after it (going
-     * forwards).
      *
      * @param int $length
      * @param array $openSequence
