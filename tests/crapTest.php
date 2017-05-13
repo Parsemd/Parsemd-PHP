@@ -23,7 +23,7 @@ class CrapTest extends TestCase
     {
         $Elements = $this->Parsemd->parse($markdown);
 
-        $this->assertSame(Display::elements($Elements), $expected);
+        $this->assertSame($expected, Display::elements($Elements));
     }
 
     /**
