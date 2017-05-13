@@ -129,3 +129,9 @@ www.google.com http://www.google.com <http://www.google.com>
 
 ==two mark== =one mark= ===three mark=== ==mark =with mark===
 ===with mark= mark==
+
+**strong *with emph\** in it**
+
+**normal **strong* in it**
+
+**strong* still strong**

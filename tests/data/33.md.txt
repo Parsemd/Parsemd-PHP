@@ -1,0 +1,5 @@
+
+p:
+  strong:
+    text:
+      strong* still strong
