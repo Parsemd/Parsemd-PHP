@@ -15,7 +15,7 @@ class Table extends AbstractBlock implements Block
     private $columns;
     private $tBody;
 
-    protected static $markers = [
+    protected const MARKERS = [
         '-', '|', ':'
     ];
 
