@@ -7,7 +7,7 @@ use Parsemd\Parsemd\Elements\InlineElement;
 use Parsemd\Parsemd\Lines\Line;
 
 use Parsemd\Parsemd\Parsers\Inline;
-use Parsemd\Parsemd\Parsers\CommonMark\Abstractions\Inlines\Emphasis
+use Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines\Emphasis
     as AbstractEmphasis;
 
 class Emphasis extends AbstractEmphasis implements Inline

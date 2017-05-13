@@ -10,7 +10,7 @@ use Parsemd\Parsemd\Elements\InlineElement;
 
 use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code;
 use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link;
-use Parsemd\Parsemd\Parsers\CommonMark\Abstractions\Inlines\Emphasis;
+use Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines\Emphasis;
 use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image;
 
 abstract class InlineResolver

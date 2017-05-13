@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Parsemd\Parsemd\Parsers\CommonMark\Abstractions\Inlines;
+namespace Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines;
 
 use Parsemd\Parsemd\Elements\InlineElement;
 use Parsemd\Parsemd\Lines\Line;
