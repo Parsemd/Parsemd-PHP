@@ -72,6 +72,16 @@ class Line extends LineIterator implements Iterator, Pointer, ArrayAccess
         $this->jump($this->key() + strcspn($this->text, $mask, $this->key()));
     }
 
+    public function isEscaped() : bool
+    {
+        return $this->isEscapedAt($this->key());
+    }
+
+    public function isEscapedAt(int $offset) : bool
+    {
+        return (bool) (strspn(strrev($this->substr(0, $offset)), '\\') % 2);
+    }
+
     public function subset(int $start, ?int $end = null) : Line
     {
         return new Line($this->substr($start, $end));
