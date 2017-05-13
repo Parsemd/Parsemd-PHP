@@ -57,7 +57,7 @@ class Emphasis extends AbstractInline implements Inline
     protected static function parseText(Line $Line) : ?array
     {
         $root   = self::measureDelimiterRun($Line);
-        $marker = $Line->current()[0];
+        $marker = $Line[0];
         $start  = $Line->key();
 
         # ensure there is a root delimiter and it is left flanking
@@ -144,15 +144,15 @@ class Emphasis extends AbstractInline implements Inline
 
         if (preg_match('/^(['.$marker.'])\1*+/', $Line->current(), $match))
         {
-            if ($Line->lookup($Line->key() -1)[0] === $match[1])
+            if ($Line[-1] === $match[1])
             {
                 return null;
             }
 
             $length = strlen($match[0]);
 
-            $before = $Line->lookup($Line->key() -1) ?? '';
-            $after  = $Line->lookup($Line->key() + $length) ?? '';
+            $before = $Line[-1] ?? '';
+            $after  = $Line[$length] ?? '';
 
             /**
              * http://spec.commonmark.org/0.27/#emphasis-and-strong-emphasis
@@ -189,8 +189,8 @@ class Emphasis extends AbstractInline implements Inline
      */
     protected static function isLeftFlanking(Line $Line, int $length) : bool
     {
-        $before = $Line->lookup($Line->key() -1)[0] ?? ' ';
-        $after  = $Line->lookup($Line->key() + $length)[0] ?? ' ';
+        $before = $Line[-1] ?? ' ';
+        $after  = $Line[$length] ?? ' ';
 
         return (
             ! ctype_space($after)
@@ -214,8 +214,8 @@ class Emphasis extends AbstractInline implements Inline
      */
     protected static function isRightFlanking(Line $Line, int $length) : bool
     {
-        $before = $Line->lookup($Line->key() -1)[0] ?? ' ';
-        $after  = $Line->lookup($Line->key() + $length)[0] ?? ' ';
+        $before = $Line[-1] ?? ' ';
+        $after  = $Line[$length] ?? ' ';
 
         return (
             ! ctype_space($before)
