@@ -15,7 +15,7 @@ class PreCode extends AbstractBlock implements Block
     private $initialMarker;
     private $isComplete = false;
 
-    protected static $markers = [
+    protected const MARKERS = [
         '`', '~'
     ];
 

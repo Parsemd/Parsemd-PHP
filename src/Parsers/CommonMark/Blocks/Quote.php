@@ -17,7 +17,7 @@ class Quote extends AbstractBlock implements Block
     protected $semiInterrupts = [];
     protected $marker = self::LONG;
 
-    protected static $markers = [
+    protected const MARKERS = [
         '>'
     ];
 

@@ -10,7 +10,7 @@ class Highlight extends Emphasis implements Inline
 {
     protected const TAG = 'mark';
 
-    protected static $markers = [
+    protected const MARKERS = [
         '='
     ];
 }

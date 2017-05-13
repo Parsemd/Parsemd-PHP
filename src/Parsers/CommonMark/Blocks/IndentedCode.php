@@ -14,7 +14,7 @@ class IndentedCode extends AbstractBlock implements Block
     private $Code;
     private $isComplete = false;
 
-    protected static $markers = [
+    protected const MARKERS = [
         ' '
     ];
 

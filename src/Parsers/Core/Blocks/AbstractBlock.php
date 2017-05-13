@@ -14,7 +14,7 @@ abstract class AbstractBlock implements Block
 
     public static function getMarkers() : array
     {
-        return static::$markers;
+        return static::MARKERS;
     }
 
     public function isInterrupted() : bool

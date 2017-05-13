@@ -11,7 +11,7 @@ use Parsemd\Parsemd\Parsers\Core\Blocks\AbstractBlock;
 
 class Heading extends AbstractBlock implements Block
 {
-    protected static $markers = [
+    protected const MARKERS = [
         '#'
     ];
 

@@ -11,7 +11,7 @@ use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 class Code extends AbstractInline implements Inline
 {
-    protected static $markers = [
+    protected const MARKERS = [
         '`'
     ];
 

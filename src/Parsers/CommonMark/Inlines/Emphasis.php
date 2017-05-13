@@ -12,7 +12,7 @@ use Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines\Emphasis
 
 class Emphasis extends AbstractEmphasis implements Inline
 {
-    protected static $markers = [
+    protected const MARKERS = [
         '*', '_'
     ];
 

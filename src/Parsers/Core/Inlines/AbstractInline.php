@@ -29,7 +29,7 @@ abstract class AbstractInline implements Inline
 
     public static function getMarkers() : array
     {
-        return static::$markers;
+        return static::MARKERS;
     }
 
     public function getTextWidth() : int

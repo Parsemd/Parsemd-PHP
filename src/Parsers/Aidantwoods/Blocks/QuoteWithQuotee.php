@@ -11,7 +11,7 @@ use Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote;
 
 class QuoteWithQuotee extends Quote implements Block
 {
-    protected static $markers = [
+    protected const MARKERS = [
         '['
     ];
 

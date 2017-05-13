@@ -11,7 +11,7 @@ use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 class Text extends AbstractInline implements Inline
 {
-    protected static $markers = [];
+    protected const MARKERS = [];
 
     public static function parse(Line $Line) : ?Inline
     {
