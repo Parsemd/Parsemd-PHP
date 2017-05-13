@@ -211,9 +211,14 @@ abstract class InlineResolver
     {
         return (
             self::isInSubparseableSubsection($Current, $Next)
-            and self::interrupts(
-                $Next->getInline(),
-                $Current->getInline()
+            and (
+                self::interrupts(
+                    $Next->getInline(),
+                    $Current->getInline()
+                )
+                or $Next instanceof $Current
+                and $Next->textEnd() === $Current->textEnd()
+                and $Next->end() === $Current->end()
             )
         );
     }
