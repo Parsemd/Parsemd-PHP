@@ -1,0 +1,23 @@
+
+p:
+  del:
+    text:
+      two del
+  text:
+     
+  del:
+    text:
+      one del
+  text:
+     
+  del:
+    text:
+      three del
+  text:
+     
+  del:
+    text:
+      del 
+    del:
+      text:
+        with del

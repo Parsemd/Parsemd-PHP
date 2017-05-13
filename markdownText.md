@@ -122,3 +122,10 @@ foo
 | abc | defghi |
 :-: | -----------:
 bar | baz
+
+www.google.com http://www.google.com <http://www.google.com>
+
+~~two del~~ ~one del~ ~~~three del~~~ ~~del ~with del~~~
+
+==two mark== =one mark= ===three mark=== ==mark =with mark===
+===with mark= mark==
