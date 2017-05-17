@@ -12,12 +12,14 @@ use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 class AutoLink extends AbstractInline implements Inline
 {
     protected const MARKERS = [
-        'h', '<', 'm', 'i'
+        '<'
     ];
+
+    protected const ABSOLUTE_URI = '[a-z][a-z0-9+.-]{1,31}+:[^\s[:cntrl:]<>]*+';
 
     public static function parse(Line $Line) : ?Inline
     {
-        if ($data = self::parseText($Line))
+        if ($data = static::parseText($Line))
         {
             return new static(
                 $data['text'],
@@ -29,41 +31,18 @@ class AutoLink extends AbstractInline implements Inline
         return null;
     }
 
-    private static function parseText(Line $Line) : ?array
+    protected static function parseText(Line $Line) : ?array
     {
         if (
             preg_match(
-                '/
-                ^([<])?
-                (
-                    (?:https?|mailto|irc)
-                    :[\/]{2}
-                    [^.\s]++[.][^.\s]
-                    (?(1)[^\s>]++|[^\s]++)
-                )
-                (?<![.])
-                (?(1)[>]|)
-                /ix',
+                '/^<('.self::ABSOLUTE_URI.')>/i',
                 $Line->current(),
                 $matches
             )
         ) {
-            if ( ! isset($matches[1]))
-            {
-                $before = $Line->lookup($Line->key() -1) ?? ' ';
-                $after = $Line->lookup(
-                    $Line->key()+ strlen($matches[0])
-                ) ?? ' ';
-
-                if ($before !== ' ' or $after !== ' ')
-                {
-                    return null;
-                }
-            }
-
             return [
-                'text'      => $matches[2],
-                'textStart' => (isset($matches[1]) ? 1 : 0),
+                'text'      => $matches[1],
+                'textStart' => 1,
                 'width'     => strlen($matches[0])
             ];
         }
@@ -71,7 +50,7 @@ class AutoLink extends AbstractInline implements Inline
         return null;
     }
 
-    private function __construct(string $text, int $width, int $textStart)
+    protected function __construct(string $text, int $width, int $textStart)
     {
         $this->width     = $width;
         $this->textStart = $textStart;
