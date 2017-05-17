@@ -9,11 +9,18 @@ cache:
     - $HOME/.composer/cache
 
 matrix:
+  include:
+    - php: 7.1
+      env: STYLE
+      install:
+        - travis_retry composer install --prefer-dist --no-interaction --no-suggest
+      script: vendor/bin/php-cs-fixer fix . --dry-run --diff
+
   allow_failures:
     - php: nightly
 
 install:
+  - composer remove friendsofphp/php-cs-fixer --dev --no-update --no-interaction
   - travis_retry composer install --prefer-dist --no-interaction --no-suggest
 
 script: vendor/bin/phpunit
-
