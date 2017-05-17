@@ -49,7 +49,6 @@ class AutoLink extends CommonMarkAutoLink implements Inline
                 $matches
             )
         ) {
-
             return [
                 'text'      => 'http://'.$matches[0],
                 'textStart' => 0,
