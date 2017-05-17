@@ -1,7 +1,10 @@
 
 p:
+  a href="http://www.google.com":
+    text:
+      http://www.google.com
   text:
-    www.google.com 
+     
   a href="http://www.google.com":
     text:
       http://www.google.com
