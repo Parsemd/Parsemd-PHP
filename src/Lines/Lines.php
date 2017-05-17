@@ -59,6 +59,14 @@ class Lines extends LineIterator implements Iterator, Pointer
         return null;
     }
 
+    public function currentLtrimUpto(int $max) : string
+    {
+        $white = strspn($this->current(), ' ');
+        $trim  = min([$white, $max]);
+
+        return substr($this->current(), $trim);
+    }
+
     /**
      * Append $text to the content at {@see current} if $toCurrentLine is set
      * to true, otherwise append as a new line after all elements

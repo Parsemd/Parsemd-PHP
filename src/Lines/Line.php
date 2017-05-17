@@ -69,6 +69,11 @@ class Line extends LineIterator implements Iterator, Pointer, ArrayAccess
     {
         $this->next();
 
+        $this->strcspnInitJump($mask);
+    }
+
+    public function strcspnInitJump(string $mask) : void
+    {
         $this->jump($this->key() + strcspn($this->text, $mask, $this->key()));
     }
 
@@ -80,6 +85,13 @@ class Line extends LineIterator implements Iterator, Pointer, ArrayAccess
     public function isEscapedAt(int $offset) : bool
     {
         return (bool) (strspn(strrev($this->substr(0, $offset)), '\\') % 2);
+    }
+
+    public function isMaskFirstNonSpace(string $mask) : bool
+    {
+        return (
+            strspn($this->text, ' ') === strcspn($this->text, $mask)
+        );
     }
 
     public function subset(int $start, ?int $end = null) : Line
@@ -139,7 +151,14 @@ class Line extends LineIterator implements Iterator, Pointer, ArrayAccess
             );
         }
 
-        return $this->lookup($this->key() + $offset)[0] ?? null;
+        $absOffset = $this->key() + $offset;
+
+        if ($absOffset >= 0 and $absOffset < $this->count())
+        {
+            return $this->text[$absOffset];
+        }
+
+        return null;
     }
 
     public function offsetSet($offset, $value) : void
