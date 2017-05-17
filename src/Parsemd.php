@@ -36,6 +36,7 @@ class Parsemd
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
+        'Parsemd\Parsemd\Parsers\GitHubFlavor\Inlines\AutoLink',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image',
         'Parsemd\Parsemd\Parsers\Aidantwoods\Inlines\StrikeThrough',
         'Parsemd\Parsemd\Parsers\Aidantwoods\Inlines\Highlight',
@@ -132,8 +133,6 @@ class Parsemd
         ?array $restrictions = null
     ) : array
     {
-        $Elements = [];
-
         $Inlines = [];
 
         $mask = implode('', array_keys($this->InlineMarkerRegister));
@@ -163,12 +162,19 @@ class Parsemd
             }
         }
 
+        # filter into coherent collection of compatible Inlines
         $Inlines = InlineResolver::resolve($Inlines);
 
-        $blank = 0;
+        # the position of the last blank (text position not covered by an
+        # Inline)
+        $blank    = 0;
+        # collection of elements from Inlines we are actually using
+        $Elements = [];
 
         foreach ($Inlines as $Data)
         {
+            # fill text between $blank and the next Inline start with
+            # a Core\Text Inline
             if ($Data->start() > $blank)
             {
                 $text = $Line->subset($blank, $Data->start());
@@ -182,6 +188,8 @@ class Parsemd
 
             $Elements[] = $Data->getInline()->getElement();
         }
+
+        # fill in trailing text with a Core\Text inline
 
         if ($Line->count() > $blank)
         {
