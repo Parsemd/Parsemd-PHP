@@ -125,13 +125,13 @@ bar | baz
 
 www.google.com http://www.google.com <http://www.google.com>
 
-~~two del~~ ~one del~ ~~~three del~~~ ~~del ~with del~~~
-
-==two mark== =one mark= ===three mark=== ==mark =with mark===
-===with mark= mark==
-
 **strong *with emph\** in it**
 
 **normal **strong* in it**
 
 **strong* still strong**
+
+~~two del~~ ~one del~ ~~~three del~~~ ~~del ~with del~~~
+
+==two mark== =one mark= ===three mark=== ==mark =with mark===
+===with mark= mark==
