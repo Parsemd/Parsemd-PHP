@@ -2,9 +2,4 @@
 p:
   strong:
     text:
-      strong 
-    em:
-      text:
-        with emph\*
-    text:
-       in it
+      strong* still strong

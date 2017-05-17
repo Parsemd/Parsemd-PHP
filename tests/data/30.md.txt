@@ -1,31 +1,7 @@
 
 p:
-  mark:
-    text:
-      two mark
   text:
-     
-  mark:
+    **normal 
+  strong:
     text:
-      one mark
-  text:
-     
-  mark:
-    text:
-      three mark
-  text:
-     
-  mark:
-    text:
-      mark 
-    mark:
-      text:
-        with mark
-  text:
-     
-  mark:
-    mark:
-      text:
-        with mark
-    text:
-       mark
+      strong* in it

@@ -1,7 +1,23 @@
 
 p:
-  text:
-    **normal 
-  strong:
+  del:
     text:
-      strong* in it
+      two del
+  text:
+     
+  del:
+    text:
+      one del
+  text:
+     
+  del:
+    text:
+      three del
+  text:
+     
+  del:
+    text:
+      del 
+    del:
+      text:
+        with del

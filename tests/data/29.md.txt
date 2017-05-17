@@ -1,23 +1,10 @@
 
 p:
-  del:
+  strong:
     text:
-      two del
-  text:
-     
-  del:
-    text:
-      one del
-  text:
-     
-  del:
-    text:
-      three del
-  text:
-     
-  del:
-    text:
-      del 
-    del:
+      strong 
+    em:
       text:
-        with del
+        with emph\*
+    text:
+       in it
