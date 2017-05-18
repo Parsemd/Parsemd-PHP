@@ -52,7 +52,7 @@ class HardBreak extends AbstractInline implements Inline
             $spLen = strspn($cur, ' ');
             $nlOff = strcspn($cur, "\n");
 
-            if ($nlOff === $spLen)
+            if ($nlOff === $spLen and $Line[$nlOff] === "\n")
             {
                 $remainder = $Line->substr($Line->key() + $nlOff + 1);
 
