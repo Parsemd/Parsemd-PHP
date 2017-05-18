@@ -9,8 +9,12 @@ use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
+use RuntimeException;
+
 abstract class Emphasis extends AbstractInline implements Inline
 {
+    protected const STRICT_FAIL = true;
+
     public static function parse(Line $Line) : ?Inline
     {
         if ($data = static::parseText($Line))
@@ -46,8 +50,13 @@ abstract class Emphasis extends AbstractInline implements Inline
         $start  = $Line->key();
 
         # ensure there is a root delimiter and it is left flanking
-        if ( ! $root or ! static::isLeftFlanking($Line, $root))
-        {
+        if (
+            ! $root or ! static::isLeftFlanking($Line, $root)
+            or (
+                ! static::isRunLengthValid($root)
+                and ! static::getNearestValid($root)
+            )
+        ) {
             return null;
         }
 
@@ -57,11 +66,19 @@ abstract class Emphasis extends AbstractInline implements Inline
 
         for (; $Line->valid(); $Line->strcspnJump($marker))
         {
+            if ($Line->isEscaped())
+            {
+                continue;
+            }
+
             if ($length = static::measureDelimiterRun($Line, $marker))
             {
-                if ($Line->isEscaped())
+                if ( ! static::isRunLengthValid($length))
                 {
-                    continue;
+                    if ( ! ($length = static::getNearestValid($length)))
+                    {
+                        continue;
+                    }
                 }
 
                 $isLf = static::isLeftFlanking($Line, $length);
@@ -91,7 +108,7 @@ abstract class Emphasis extends AbstractInline implements Inline
             }
         }
 
-        if (empty($openSequence))
+        if (empty($openSequence) and isset($length))
         {
             $offset = ($root > $length ? $length : $root);
 
@@ -156,6 +173,44 @@ abstract class Emphasis extends AbstractInline implements Inline
         }
 
         return null;
+    }
+
+    protected static function isRunLengthValid(int $length) : bool
+    {
+        if (defined('static::MAX_RUN') and $length > static::MAX_RUN)
+        {
+            return false;
+        }
+        elseif (defined('static::MIN_RUN') and $length < static::MIN_RUN)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected static function getNearestValid(int $length) : ?int
+    {
+        if (static::STRICT_FAIL)
+        {
+            return null;
+        }
+
+        if (defined('static::MAX_RUN') and $length > static::MAX_RUN)
+        {
+            if (static::MAX_RUN > 0)
+            {
+                return static::MAX_RUN;
+            }
+        }
+        elseif (defined('static::MIN_RUN') and $length < static::MIN_RUN)
+        {
+            return null;
+        }
+
+        throw new RuntimeException(
+            'Bad MAX_RUN defined, or length already valid.'
+        );
     }
 
     /**
