@@ -25,7 +25,14 @@ class Paragraph extends AbstractBlock implements Block
 
     public function parse(Lines $Lines) : bool
     {
-        $this->Element->appendContent(ltrim($Lines->current()));
+        $text = ltrim($Lines->current());
+
+        if (trim($Lines->lookup($Lines->key() + 1) ?? '') === '')
+        {
+            $text = rtrim($text);
+        }
+
+        $this->Element->appendContent($text);
 
         return true;
     }
