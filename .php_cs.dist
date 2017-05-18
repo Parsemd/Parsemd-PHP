@@ -16,8 +16,11 @@ $rules = [
          'position_after_anonymous_constructs' => 'next',
     ],
     'not_operator_with_space' => true,
+    'return_type_declaration' => [
+        'space_before' => 'one',
+    ],
 ];
 return Config::create()
     ->setRules($rules)
     ->setFinder($finder)
-    ->setUsingCache(true);
+    ->setUsingCache(false);
