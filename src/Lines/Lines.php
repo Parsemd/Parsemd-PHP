@@ -124,6 +124,11 @@ class Lines extends LineIterator implements Iterator, Pointer
         return $Lines;
     }
 
+    public function __toString() : string
+    {
+        return implode("\n", $this->lines);
+    }
+
     private function transformWhitespace(?int $at = null) : void
     {
         if ( ! isset($at))

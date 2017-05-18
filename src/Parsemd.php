@@ -314,21 +314,9 @@ class Parsemd
         {
             $Lines = $Element->getContent()->pop();
 
-            $Lines->rewind();
+            $Line = new Line((string) $Lines);
 
-            if ($Lines->valid())
-            {
-                $Line = new Line($Lines->current());
-
-                for ($Lines->jump(1); $Lines->valid(); $Lines->next())
-                {
-                    $Line->append("\n".$Lines->current());
-                }
-
-                $Element->appendElements(
-                    $this->inlineLine($Line, $restrictions)
-                );
-            }
+            $Element->appendElements($this->inlineLine($Line, $restrictions));
         }
         else
         {
