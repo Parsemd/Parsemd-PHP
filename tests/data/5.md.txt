@@ -5,7 +5,8 @@ p:
       text:
         strong emph
   text:
-     
+    
+    
   em:
     strong:
       text:
@@ -13,7 +14,8 @@ p:
     text:
        in emph
   text:
-     
+    
+    
   strong:
     em:
       text:
@@ -21,7 +23,8 @@ p:
     text:
        in strong
   text:
-     
+    
+    
   strong:
     text:
       in strong 
@@ -29,7 +32,8 @@ p:
       text:
         emph
   text:
-     
+    
+    
   em:
     text:
       in emph 

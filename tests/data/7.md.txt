@@ -6,4 +6,5 @@ p:
     text:
       bar
   text:
-    baz no emphasis: foo_bar_baz
+    baz
+    no emphasis: foo_bar_baz

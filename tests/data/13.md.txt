@@ -4,4 +4,6 @@ blockquote:
     blockquote:
       p:
         text:
-          foo bar baz
+          foo
+          bar
+          baz

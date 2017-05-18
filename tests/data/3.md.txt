@@ -14,4 +14,5 @@ p:
     code:
       ->HttpAdapter
   text:
-     interface, to which settings configured via SecureHeaders will be applied.
+     interface, to which
+    settings configured via SecureHeaders will be applied.

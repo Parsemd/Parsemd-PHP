@@ -2,6 +2,10 @@
 blockquote:
   p:
     text:
-      bar
+      bar 
+    br:
+    text:
       baz
+    br:
+    text:
       foo

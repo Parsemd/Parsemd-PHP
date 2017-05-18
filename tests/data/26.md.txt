@@ -3,4 +3,5 @@ blockquote:
   blockquote data-quotee="Stefan said" data-timestamp="2pm Sunday":
     p:
       text:
-        I would like to visit a castle in north scotland, next year. But my home is my castle
+        I would like to visit a castle in north scotland, next year.
+        But my home is my castle
