@@ -25,24 +25,7 @@ class Paragraph extends AbstractBlock implements Block
 
     public function parse(Lines $Lines) : bool
     {
-        if (trim($Lines->current()) === '')
-        {
-            return true;
-        }
-
-        $this->uninterrupt();
-
-        $lastLine = $Lines->lookup($Lines->key() -1) ?? '';
-
-        # append to the current line or a new one?
-
-        $toCurrentLine = (trim($lastLine) !== '');
-        $toCurrentLine = ! ( ! $toCurrentLine ?:substr($lastLine, -2) === '  ');
-
-        $this->Element->appendContent(
-            trim($Lines->current()),
-            $toCurrentLine
-        );
+        $this->Element->appendContent(ltrim($Lines->current()));
 
         return true;
     }
@@ -51,7 +34,7 @@ class Paragraph extends AbstractBlock implements Block
     {
         if (trim($Lines->current()) === '')
         {
-            $this->interrupt();
+            return false;
         }
 
         return true;
