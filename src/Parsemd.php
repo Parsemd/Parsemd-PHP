@@ -36,6 +36,7 @@ class Parsemd
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\HardBreak',
         'Parsemd\Parsemd\Parsers\GitHubFlavor\Inlines\AutoLink',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image',
         'Parsemd\Parsemd\Parsers\Aidantwoods\Inlines\StrikeThrough',
