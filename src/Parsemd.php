@@ -167,38 +167,52 @@ class Parsemd
 
         # the position of the last blank (text position not covered by an
         # Inline)
-        $blank    = 0;
-        # collection of elements from Inlines we are actually using
-        $Elements = [];
+        $blank = 0;
 
-        foreach ($Inlines as $Data)
+        for ($i = 0; $i < count($Inlines); $i++)
         {
+            $Data = $Inlines[$i];
             # fill text between $blank and the next Inline start with
             # a Core\Text Inline
             if ($Data->start() > $blank)
             {
-                $text = $Line->subset($blank, $Data->start());
+                $Line->jump($blank);
 
-                $text = Text::parse($text);
+                $str = $Line->subset($blank, $Data->start());
 
-                $Elements[] = $text->getElement();
+                $Text = Text::parse($str);
+                $newData = new InlineData($Line, $Text);
+
+                array_splice($Inlines, $i, 0, [$newData]);
+
+                $blank = $newData->end();
             }
-
-            $blank = $Data->end();
-
-            $Elements[] = $Data->getInline()->getElement();
+            else
+            {
+                $blank = $Data->end();
+            }
         }
 
-        # fill in trailing text with a Core\Text inline
+        # fill in trailing text with a Core\Text inlines
 
-        if ($Line->count() > $blank)
+        for ($Line->jump($blank); $Line->valid(); $Line->jump($blank))
         {
-            $text = $Line->subset($blank, $Line->count());
+            $str = $Line->subset($blank);
 
-            $text = Text::parse($text);
+            $Text = Text::parse($str);
 
-            $Elements[] = $text->getElement();
+            array_push($Inlines, new InlineData($Line, $Text));
+
+            $blank = end($Inlines)->end();
         }
+
+        $Elements = array_map(
+            function ($Inline)
+            {
+                return $Inline->getInline()->getElement();
+            },
+            $Inlines
+        );
 
         return $Elements;
     }

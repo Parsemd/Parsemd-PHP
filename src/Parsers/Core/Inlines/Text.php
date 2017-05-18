@@ -23,8 +23,9 @@ class Text extends AbstractInline implements Inline
         $this->textStart = 0;
 
         $this->Element = new InlineElement('text');
-
         $this->Element->setNonInlinable();
+
+        $this->width = strlen($text);
 
         $this->Element->appendContent($text);
     }
