@@ -33,21 +33,6 @@ abstract class InlineResolver
             return true;
         }
 
-        if ($NewInline instanceof Image and $Inline instanceof Image)
-        {
-            return true;
-        }
-
-        if ($NewInline instanceof Image and $Inline instanceof Link)
-        {
-            return true;
-        }
-
-        if ($NewInline instanceof Link and $Inline instanceof Image)
-        {
-            return false;
-        }
-
         /**
          * http://spec.commonmark.org/0.27/#link-text
          * Links may not contain other links, at any level of nesting. If
@@ -73,6 +58,13 @@ abstract class InlineResolver
     }
 
     /**
+     * The following describes a recursive algorithm which takes an ordered
+     * collection of parsed Inlines (coupled with positional metadata), and
+     * returns a compatible collection of non-intersecting Inlines (coupled
+     * with positional metadata).
+     *
+     * ---
+     *
      * Let InlineData be an Inline coupled with its positional metadata.
      * Let Inlines be an ordered list by start position where each item is an
      *     InlineData.
@@ -120,6 +112,8 @@ abstract class InlineResolver
      *       * Break the current loop over Interrupts
      *
      * Return Resolved
+     *
+     * ---
      *
      * @param InlineData[] $Inlines
      *
@@ -209,14 +203,16 @@ abstract class InlineResolver
         InlineData $Next
     ) : bool
     {
+        $NextI    = $Next->getInline();
+        $CurrentI = $Current->getInline();
+
         return (
             self::isInSubparseableSubsection($Current, $Next)
             and (
-                self::interrupts(
-                    $Next->getInline(),
-                    $Current->getInline()
-                )
-                or $Next instanceof $Current
+                self::interrupts($NextI, $CurrentI)
+                # pick the shortest if Inlines of the same type end with the
+                # same delimiter
+                or $NextI instanceof $CurrentI
                 and $Next->textEnd() === $Current->textEnd()
                 and $Next->end() === $Current->end()
             )
