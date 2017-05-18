@@ -139,3 +139,5 @@ www.google.com http://www.google.com <http://www.google.com>
 > bar \
 baz      
 >    foo
+
+[example](example.com) ![example](example.com)
