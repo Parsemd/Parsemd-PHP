@@ -1,5 +1,5 @@
 # Parsemd [![Build Status](https://travis-ci.org/Parsemd/Parsemd.svg?branch=master)](https://travis-ci.org/Parsemd/Parsemd) [![Build Status](https://ci.appveyor.com/api/projects/status/github/parsemd/parsemd?branch=master&svg=true&retina=true)](https://ci.appveyor.com/project/aidantwoods/parsemd)
-A markdown parser, lovingly crafted in PHP 7.1
+A modular parser for CommonMark, GitHub-Flavoured-Markdown, and beyond. Lovingly crafted in PHP 7.1.
 
 ## Aims
 * Be CommonMark compliant by default
