@@ -33,8 +33,8 @@ class Image extends AbstractInline implements Inline
         $this->width     = $Link->getWidth()     + 1;
         $this->textStart = $Link->getTextStart() + 1;
 
-        $Element         = $Link->getElement();
-        $attributes      = array_change_key_case($Element->getAttributes());
+        $Element    = $Link->getElement();
+        $attributes = array_change_key_case($Element->getAttributes());
 
         $this->Element = new InlineElement('img');
 
