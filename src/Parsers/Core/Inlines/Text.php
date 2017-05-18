@@ -27,6 +27,8 @@ class Text extends AbstractInline implements Inline
 
         $this->width = strlen($text);
 
+        $text = preg_replace('/[ ]*+\n[ ]*+/', "\n", $text);
+
         $this->Element->appendContent($text);
     }
 }

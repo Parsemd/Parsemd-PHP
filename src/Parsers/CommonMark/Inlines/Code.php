@@ -62,6 +62,8 @@ class Code extends AbstractInline implements Inline
         $this->Element->setNotUnescapeContent();
         $this->Element->setNonNestables(['code']);
 
+        $text = preg_replace('/\s+/', ' ', $text);
+
         $this->Element->appendContent($text);
     }
 }
