@@ -59,6 +59,7 @@ class AutoLink extends AbstractInline implements Inline
 
         $this->Element->setNonNestables(['a']);
         $this->Element->appendContent($text);
+        $this->Element->setNonInlinable();
         $this->Element->setAttribute('href', $text);
     }
 }
