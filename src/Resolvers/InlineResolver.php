@@ -129,22 +129,15 @@ abstract class InlineResolver
             $Interrupts = [];
             $Next       = null;
 
-            foreach (self::intersecting($Current, $Inlines) as $i => $Inline)
+            if ($Interrupts = self::resolve($Inlines))
             {
-                if (self::canInterrupt($Current, $Inline))
+                if ( ! self::canInterrupt($Current, reset($Interrupts)))
                 {
-                    $Interrupts = self::resolve(array_slice($Inlines, $i));
-
-                    break;
+                    $Interrupts = [];
                 }
 
-                if ($Inline->start() >= $Current->textStart())
-                {
-                    $Next = $Next ?? $Inline;
-                }
+                $Interrupts = self::filterIntersecting($Current, $Interrupts);
             }
-
-            $Interrupts = self::filterIntersecting($Current, $Interrupts);
 
             if (empty($Interrupts))
             {
@@ -154,7 +147,7 @@ abstract class InlineResolver
             }
             else
             {
-                $Next = $Next ?? reset($Interrupts);
+                $Next = $Next ?? reset($Inlines);
 
                 if (
                     ! $Current->getInline()->getElement()->canNest(
@@ -207,7 +200,7 @@ abstract class InlineResolver
         $CurrentI = $Current->getInline();
 
         return (
-            self::isInSubparseableSubsection($Current, $Next)
+            ! self::isInSubparseableSubsection($Current, $Next)
             and (
                 self::interrupts($NextI, $CurrentI)
                 # pick the shortest if Inlines of the same type end with the
@@ -226,7 +219,7 @@ abstract class InlineResolver
     {
         return (
             $Next->start() < $Current->end()
-            and ! (
+            and (
                 $Next->start() >= $Current->textStart()
                 and $Next->end() <= $Current->textEnd()
                 and $Current->getInline()->getElement()->canNest(
@@ -236,16 +229,18 @@ abstract class InlineResolver
         );
     }
 
-    private static function intersecting(InlineData $current, array $Inlines)
-    {
-        for (
-            $i = 0;
-            isset($Inlines[$i]) and self::intersects($current, $Inlines[$i]);
-            $i++
-        ) {
-            yield $i => $Inlines[$i];
-        }
-    }
+    // private static function fromIntersecting(
+    //     InlineData $current,
+    //     array $Inlines
+    // ) : array {
+    //     for (
+    //         $i = 0;
+    //         isset($Inlines[$i]) and self::intersects($current, $Inlines[$i]);
+    //         $i++
+    //     ) {
+    //         return array_slice($Inlines, $i);
+    //     }
+    // }
 
     private static function intersects(
         InlineData $Current,

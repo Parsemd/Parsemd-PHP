@@ -38,6 +38,15 @@ interface Inline extends Parser
     public function getWidth() : int;
 
     /**
+     * Return the number of characters forward from which the structure wondered
+     * from the start position relative to the line pointer when given to
+     * {@see parse}
+     *
+     * @return int
+     */
+    public function getStart() : int;
+
+    /**
      * Return the number of characters preceding the subparsable text parsed
      * by {@see parse}
      *

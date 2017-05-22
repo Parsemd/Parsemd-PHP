@@ -13,6 +13,7 @@ abstract class AbstractInline implements Inline
     protected $Element;
     protected $width;
     protected $textStart;
+    protected $start = 0;
 
     public function getElement() : Element
     {
@@ -27,6 +28,11 @@ abstract class AbstractInline implements Inline
     public function getTextStart() : int
     {
         return $this->textStart;
+    }
+
+    public function getStart() : int
+    {
+        return $this->start;
     }
 
     public static function getMarkers() : array

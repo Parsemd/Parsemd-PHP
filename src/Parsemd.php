@@ -4,6 +4,8 @@ declare(strict_types=1);
 # very much incomplete and too dense
 namespace Parsemd\Parsemd;
 
+use LogicException;
+
 use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Lines\Lines;
 
@@ -34,7 +36,8 @@ class Parsemd
     private $InlineHandlers = [
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Code',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Link',
-        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\Emphasis',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\ShortEmph',
+        'Parsemd\Parsemd\Parsers\CommonMark\Inlines\LongEmph',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\AutoLink',
         'Parsemd\Parsemd\Parsers\CommonMark\Inlines\HardBreak',
         'Parsemd\Parsemd\Parsers\GitHubFlavor\Inlines\AutoLink',
@@ -90,20 +93,22 @@ class Parsemd
         return Paragraph::begin($Lines);
     }
 
-    private function findNewInline(string $marker, Line $Line) : ?Inline
+    private function findNewInline(string $marker, Line $Line) : ?array
     {
+        $Inlines = [];
+
         if (array_key_exists($marker, $this->InlineMarkerRegister))
         {
             foreach ($this->InlineMarkerRegister[$marker] as $handler)
             {
                 if ($Inline = $handler::parse($Line))
                 {
-                    return $Inline;
+                    $Inlines[] = $Inline;
                 }
             }
         }
 
-        return null;
+        return empty($Inlines) ? null : $Inlines;
     }
 
     private function findBlockMarker(Lines $Lines) : ?string
@@ -144,24 +149,51 @@ class Parsemd
         {
             $marker = $Line->current()[0];
 
-            $Inline = $this->findNewInline($marker, $Line);
+            $NewInlines = $this->findNewInline($marker, $Line);
 
-            if ( ! isset($Inline))
+            if ( ! isset($NewInlines))
             {
                 continue;
             }
 
-            if (
-                ! InlineElement::isRestricted(
-                    $restrictions,
-                    $Inline->getElement()
-                )
-            ) {
-                $newInline = new InlineData($Line, $Inline);
+            foreach ($NewInlines as $Inline)
+            {
+                if (
+                    ! InlineElement::isRestricted(
+                        $restrictions,
+                        $Inline->getElement()
+                    )
+                ) {
+                    $newInline = new InlineData($Line, $Inline);
 
-                $Inlines[] = $newInline;
+                    $Inlines[] = $newInline;
+                }
             }
         }
+
+        $Inlines = array_reduce(
+            $Inlines,
+            function ($carry, $InlineData)
+            {
+                $key = $InlineData->start();
+
+                if (
+                    ! array_key_exists($key, $carry)
+                    or $carry[$key]->wander() > $InlineData->wander()
+                    or $carry[$key]->wander() === $InlineData->wander()
+                    and $InlineData->textStart() > $carry[$key]->textStart()
+                ) {
+                    $carry[$key] = $InlineData;
+                }
+
+                return $carry;
+            },
+            []
+        );
+
+        ksort($Inlines);
+
+        $Inlines = array_values($Inlines);
 
         # filter into coherent collection of compatible Inlines
         $Inlines = InlineResolver::resolve($Inlines);

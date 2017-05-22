@@ -19,12 +19,17 @@ class InlineData
 
     public function start() : int
     {
-        return $this->Line->key();
+        return $this->Line->key() + $this->Inline->getStart();
     }
 
     public function end() : int
     {
         return $this->start() + $this->Inline->getWidth();
+    }
+
+    public function width() : int
+    {
+        return $this->Inline->getWidth();
     }
 
     public function textStart() : int
@@ -37,6 +42,11 @@ class InlineData
         return $this->textStart() + $this->Inline->getTextWidth();
     }
 
+    public function textWidth() : int
+    {
+        return $this->Inline->getTextWidth();
+    }
+
     public function getInline() : Inline
     {
         return $this->Inline;
@@ -45,5 +55,10 @@ class InlineData
     public function getLine() : Line
     {
         return clone($this->Line);
+    }
+
+    public function wander() : int
+    {
+        return abs($this->Inline->getStart());
     }
 }
