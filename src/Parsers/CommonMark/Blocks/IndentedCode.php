@@ -21,10 +21,10 @@ class IndentedCode extends AbstractBlock implements Block
     public static function begin(Lines $Lines) : ?Block
     {
         if (
-            preg_match('/^[ ]{4}(.*+)$/', $Lines->current(), $matches)
-            and trim($matches[1]) !== ''
+            strspn($Lines->current(), ' ') >= 4
+            and trim($Lines->current()) !== ''
         ) {
-            return new static($matches[1]);
+            return new static(substr($Lines->current(), 4));
         }
 
         return null;
@@ -34,13 +34,7 @@ class IndentedCode extends AbstractBlock implements Block
     {
         if ($this->isContinuable($Lines))
         {
-            $this->Code->appendContent(
-                preg_replace(
-                    '/^[ ]{4}(.*+)$/',
-                    '$1',
-                    $Lines->current()
-                )
-            );
+            $this->Code->appendContent($Lines->currentLtrimUpto(4));
 
             return true;
         }
@@ -51,7 +45,7 @@ class IndentedCode extends AbstractBlock implements Block
     public function isContinuable(Lines $Lines) : bool
     {
         if (
-            ! preg_match('/^[ ]{4}(.*+)$/', $Lines->current())
+            strspn($Lines->current(), ' ') < 4
             and trim($Lines->current()) !== ''
         ) {
             $this->isComplete = true;

@@ -67,13 +67,9 @@ class ListBlock extends AbstractBlock implements Block
         {
             $this->unInterrupt();
 
-            $trim = preg_replace(
-                '/^[ ]{0,'.$this->requiredIndent.'}+/',
-                '',
-                $Lines->current()
+            $this->CurrentLi->appendContent(
+                $Lines->currentLtrimUpto($this->requiredIndent)
             );
-
-            $this->CurrentLi->appendContent($trim);
 
             return true;
         }
@@ -135,10 +131,10 @@ class ListBlock extends AbstractBlock implements Block
         {
             $type = 'ol';
 
-            $startNumber = preg_replace(
-                '/[0-9]++\K.*+/',
-                '',
-                $data['fullMarker']
+            $startNumber = substr(
+                $data['fullMarker'],
+                0,
+                strspn($data['fullMarker'], '1234567890')
             );
 
             if ($startNumber === '1')

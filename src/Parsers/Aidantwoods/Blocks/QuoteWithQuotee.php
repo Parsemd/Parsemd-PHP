@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd\Parsers\Aidantwoods\Blocks;
 
 use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Elements\BlockElement;
 
 use Parsemd\Parsemd\Parsers\Block;
@@ -29,15 +30,85 @@ class QuoteWithQuotee extends Quote implements Block
 
         if (parent::isPresent($NextLines))
         {
-            if (
-                preg_match(
-                    '/^[ ]{0,3}(?:\[([^]]++)\])(?:\[([^]]++)\])?:/',
-                    $Lines->current(),
-                    $matches
-                )
-            ) {
-                $data['quotee']    = $matches[1];
-                $data['timestamp'] = $matches[2] ?? null;
+            $Line = new Line($Lines->current());
+
+            $pos      = [];
+            $nextJump = '[';
+            $complete = false;
+
+            $Line->strcspnInitJump($nextJump);
+
+            for (; $Line->valid(); $Line->strcspnJump($nextJump))
+            {
+                if ( ! isset($pos['qOpen']))
+                {
+                    if ($Line->key() > 4 or $Line->isEscaped())
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        $pos['qOpen'] = $Line->key() + 1;
+                        $nextJump = ']';
+
+                        continue;
+                    }
+                }
+
+                if ($Line->isEscaped())
+                {
+                    continue;
+                }
+
+                if ( ! isset($pos['qClose']))
+                {
+                    $pos['qClose'] = $Line->key();
+
+                    if (
+                        $Line[1] === ':'
+                        and trim($Line->lookup($Line->key() + 2) ?? '') === ''
+                    ) {
+                        $complete = true;
+
+                        break;
+                    }
+                    elseif ($Line[1] === '[')
+                    {
+                        $pos['tOpen'] = $Line->key() + 2;
+
+                        continue;
+                    }
+
+                    return false;
+                }
+                elseif ( ! isset($pos['tClose']))
+                {
+                    $pos['tClose'] = $Line->key();
+
+                    if (
+                        $Line[1] === ':'
+                        and trim($Line->lookup($Line->key() + 2) ?? '') === ''
+                    ) {
+                        $complete = true;
+
+                        break;
+                    }
+
+                    return false;
+                }
+            }
+
+            if ($complete)
+            {
+                $data['quotee'] = $Line->substr($pos['qOpen'], $pos['qClose']);
+
+                $data['timestamp'] = (isset($pos['tOpen']) ?
+                    $Line->substr(
+                        $pos['tOpen'],
+                        $pos['tClose']
+                    )
+                    : null
+                );
 
                 return true;
             }

@@ -28,6 +28,11 @@ class PreCode extends AbstractBlock implements Block
                 $matches
             )
         ) {
+            if (strpos($matches[2], $matches[1][0]) !== false)
+            {
+                return null;
+            }
+
             return new static($Lines, $matches[1], $matches[2]);
         }
 
@@ -38,7 +43,7 @@ class PreCode extends AbstractBlock implements Block
     {
         if ($this->isContinuable($Lines))
         {
-            if (rtrim($Lines->current()) === $this->initialMarker)
+            if (rtrim($Lines->currentLtrimUpto(3)) === $this->initialMarker)
             {
                 $this->isComplete = true;
             }

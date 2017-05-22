@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd\Parsers\CommonMark\Blocks;
 
 use Parsemd\Parsemd\Lines\Lines;
+use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Elements\BlockElement;
 
 use Parsemd\Parsemd\Parsers\Block;
@@ -26,20 +27,32 @@ class Quote extends AbstractBlock implements Block
         ?array &$data = null
     ) : bool
     {
-        if (preg_match('/^[ ]{0,3}>(\s?+)(.*+)/', $Lines->current(), $matches))
-        {
-            $text = (empty($matches[1]) ? '' : ' ').$matches[2];
+        $Line = new Line($Lines->current());
 
-            if ($matches[1] === "\t")
+        $Line->strcspnInitJump('>');
+
+        if ($Line->isMaskFirstNonSpace('>') and $Line->key() <= 4)
+        {
+            $marker = self::SHORT;
+
+            if (ctype_space($Line[1]))
+            {
+                $marker = self::LONG;
+            }
+
+            # we shall remove any leading whitespace later when the final
+            # marker type is determined
+            $text = $Line->lookup($Line->key() + 1) ?? '';
+
+            if ($Line[1] === "\t")
             {
                 $text = "   ${text}";
             }
 
-            $data['text'] = $text;
-
-            $data['marker'] = (
-                strlen($matches[1]) === 1 ? self::LONG : self::SHORT
-            );
+            $data = [
+                'text' => $text,
+                'marker' => $marker
+            ];
 
             return true;
         }
