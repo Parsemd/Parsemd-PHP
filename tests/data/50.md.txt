@@ -1,0 +1,7 @@
+
+p:
+  text:
+    _
+  strong:
+    text:
+      foo

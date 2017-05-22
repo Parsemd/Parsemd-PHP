@@ -1,0 +1,10 @@
+
+p:
+  strong:
+    text:
+      foo
+    em:
+      text:
+        bar
+    text:
+      baz

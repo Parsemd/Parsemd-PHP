@@ -1,0 +1,10 @@
+
+p:
+  em:
+    text:
+      foo 
+    strong:
+      text:
+        bar *baz bim
+    text:
+       bam

@@ -1,0 +1,8 @@
+
+p:
+  em:
+    text:
+      foo 
+    em:
+      text:
+        bar

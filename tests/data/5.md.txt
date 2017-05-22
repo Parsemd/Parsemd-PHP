@@ -1,7 +1,7 @@
 
 p:
-  em:
-    strong:
+  strong:
+    em:
       text:
         strong emph
   text:

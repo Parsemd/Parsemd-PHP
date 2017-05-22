@@ -1,0 +1,7 @@
+
+p:
+  text:
+    a 
+  strong:
+    text:
+      abc

@@ -1,0 +1,8 @@
+
+p:
+  strong:
+    em:
+      text:
+        emph
+    text:
+       in strong

@@ -1,0 +1,10 @@
+
+p:
+  em:
+    text:
+      a 
+    a href="def":
+      text:
+        b*c
+    text:
+       c

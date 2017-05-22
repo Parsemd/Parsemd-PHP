@@ -1,0 +1,20 @@
+
+p:
+  text:
+    abc 
+  em:
+    text:
+      a 
+    code:
+      b*d
+    text:
+       c
+  text:
+     abc 
+  em:
+    text:
+      a 
+    code:
+      b*d
+    text:
+       c

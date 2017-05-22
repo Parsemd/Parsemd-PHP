@@ -141,3 +141,51 @@ baz
 >    foo
 
 [example](example.com) ![example](example.com)
+
+abc *a `b*d` c* abc *a `b*d` c*
+
+a __abc__
+
+_a `a_` a_
+
+*a [b*c](def) c*
+
+    a	a
+    ὐ	a
+
+http://elk.canda.biz/app/kibana#/discover?_g=()&_a=(columns:!(_source),index:'deve-*',interval:auto,query:(query_string:(analyze_wildcard:!t,query:'*')),sort:!('@timestamp',desc))
+
+*foo __bar *baz bim__ bam*
+
+*foo****
+
+*foo** bar
+
+*foo *bar**
+
+__foo_ bar_
+
+*foo**bar***
+
+**foo*bar*baz**
+
+****foo1234567890*
+
+___foo__
+
+***strong emph***
+
+***strong** in emph*
+
+*in emph **strong***
+
+*emph *with emph* in it*
+**strong **with strong** in it**
+
+**in strong *emph***
+
+***emph* in strong**
+
+**foo*bar*baz**
+
+*a `*` a*
