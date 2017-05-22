@@ -150,13 +150,15 @@ abstract class Emphasis extends AbstractInline implements Inline
             # when we can tighten both ends
             if (
                 $trail === 0 and $realRoot > $root
-                and $close['length'] > $realRoot - $root
-                and $close['length'] >= $close['trail'] + $root
+                and $close['length'] > $root
             ) {
                 $sft  = $realRoot - $root;
 
-                $lsft += $sft;
-                $rsft += $sft;
+                if ( ! static::canGetNearestValid($sft))
+                {
+                    $lsft += $sft;
+                    $rsft += $sft;
+                }
             }
 
             $start += $lsft;
