@@ -27,7 +27,29 @@ class Text extends AbstractInline implements Inline
 
         $this->width = strlen($text);
 
-        $text = preg_replace('/[ ]*+\n[ ]*+/', "\n", $text);
+        # chop out spaces surrounding newlines
+
+        $p = strcspn($text, "\n");
+        $n = strlen($text);
+
+        for (; $p < $n; $p += strcspn($text, "\n", $p + 1))
+        {
+            $bck = $fwd = 0;
+
+            if ($p > 0 and $text[$p -1] === ' ')
+            {
+                $bck = strspn(strrev($text), ' ', $n - $p + 1);
+            }
+
+            if ($p + 1 < $n and $text[$p + 1] === ' ')
+            {
+                $fwd = strspn($text, ' ', $p + 1);
+            }
+
+            $text = substr_replace($text, '', $p - $bck, $bck + $fwd);
+            $n    = strlen($text);
+            $p    = $p - $bck + 1;
+        }
 
         $this->Element->appendContent($text);
     }
