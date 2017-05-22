@@ -13,7 +13,8 @@ use RuntimeException;
 
 abstract class Emphasis extends AbstractInline implements Inline
 {
-    protected const STRICT_FAIL = true;
+    protected const STRICT_FAIL = false;
+    protected const INTRAWORD_MARKER_BLACKLIST = [];
 
     public static function parse(Line $Line) : ?Inline
     {
@@ -22,6 +23,7 @@ abstract class Emphasis extends AbstractInline implements Inline
             return new static(
                 $data['width'],
                 $data['textStart'],
+                $data['start'],
                 $data['text']
             );
         }
@@ -54,7 +56,7 @@ abstract class Emphasis extends AbstractInline implements Inline
             ! $root or ! static::isLeftFlanking($Line, $root)
             or (
                 ! static::isRunLengthValid($root)
-                and ! static::getNearestValid($root)
+                and ! (static::canGetNearestValid($root))
             )
         ) {
             return null;
@@ -62,7 +64,7 @@ abstract class Emphasis extends AbstractInline implements Inline
 
         $Line = clone($Line);
 
-        $openSequence = [];
+        $trail = 0;
 
         for (; $Line->valid(); $Line->strcspnJump($marker))
         {
@@ -73,26 +75,24 @@ abstract class Emphasis extends AbstractInline implements Inline
 
             if ($length = static::measureDelimiterRun($Line, $marker))
             {
-                if ( ! static::isRunLengthValid($length))
-                {
-                    if ( ! ($length = static::getNearestValid($length)))
-                    {
-                        continue;
-                    }
-                }
-
                 $isLf = static::isLeftFlanking($Line, $length);
                 $isRf = static::isRightFlanking($Line, $length);
 
-                if (static::canOpen($isLf, $isRf, $openSequence))
+                if (static::canOpen($isLf, $isRf, $length, $trail))
                 {
-                    $openSequence = static::open($length, $openSequence);
+                    $trail = static::open($length, $trail);
                 }
-                elseif (static::canClose($isLf, $isRf, $length, $root))
+                elseif (static::canClose($isLf, $isRf, $length, $trail, $root))
                 {
-                    $openSequence = static::close($length, $openSequence);
+                    $close = [
+                        'key'    => $Line->key(),
+                        'length' => $length,
+                        'trail'  => $trail,
+                    ];
+
+                    $trail = static::close($length, $trail);
                 }
-                elseif (empty($openSequence))
+                elseif ($trail === 0)
                 {
                     return null;
                 }
@@ -100,7 +100,7 @@ abstract class Emphasis extends AbstractInline implements Inline
                 $Line->jump($Line->key() + $length -1);
             }
 
-            if (empty($openSequence))
+            if ($trail === 0)
             {
                 $Line->next();
 
@@ -108,17 +108,69 @@ abstract class Emphasis extends AbstractInline implements Inline
             }
         }
 
-        if (empty($openSequence) and isset($length))
+        if (isset($close))
         {
-            $offset = ($root > $length ? $length : $root);
+            $lsft = 0;
+            $rsft = 0;
+
+            if ( ! static::isRunLengthValid($close['length']))
+            {
+                if ( ! (static::canGetNearestValid($close['length'])))
+                {
+                    return null;
+                }
+            }
+
+            $realRoot = $root;
+
+            if ( ! static::isRunLengthValid($root))
+            {
+                $root = static::getNearestValid($root);
+            }
+
+            $len = min([$root, $close['length']]);
+
+            # some cases when we do not close perfectly:
+
+            # when the root run is too long
+            if ($close['length'] < $realRoot and $trail)
+            {
+                $lsft = $realRoot - $close['length'];
+            }
+            # when the close run is too long
+            if ($close['trail'] < $close['length'])
+            {
+                $sft = $close['length'] - $close['trail'];
+
+                if (static::canGetNearestValid($close['length'] - $sft))
+                {
+                    $rsft += $sft;
+                }
+            }
+            # when we can tighten both ends
+            if (
+                $trail === 0 and $realRoot > $root
+                and $close['length'] > $realRoot - $root
+                and $close['length'] >= $close['trail'] + $root
+            ) {
+                $sft  = $realRoot - $root;
+
+                $lsft += $sft;
+                $rsft += $sft;
+            }
+
+            $start += $lsft;
+            $end = $Line->key() - $rsft;
 
             return [
                 'text'
-                    => $Line->substr($start + $offset, $Line->key() - $offset),
+                    => $Line->substr($start + $len, $end - $len),
                 'textStart'
-                    => $offset,
+                    => $len,
+                'start'
+                    => $lsft,
                 'width'
-                    => $Line->key() - $start
+                    => $end - $start
             ];
         }
 
@@ -160,10 +212,9 @@ abstract class Emphasis extends AbstractInline implements Inline
              * internal underscores.
              */
             if (
-                $marker === '_'
+                in_array($marker, static::INTRAWORD_MARKER_BLACKLIST, true)
                 and (
-                    preg_match('/^\p{L}/u', $before)
-                    or preg_match('/^\p{L}/u', $after)
+                    preg_match('/^[[:alnum:]]{2}/u', $before.$after)
                 )
             ) {
                 return null;
@@ -189,6 +240,47 @@ abstract class Emphasis extends AbstractInline implements Inline
         return true;
     }
 
+    protected static function canGetNearestValid(int $length) : bool
+    {
+        if (static::STRICT_FAIL)
+        {
+            return false;
+        }
+
+        if ( ! defined('static::MAX_RUN') and ! defined('static::MIN_RUN'))
+        {
+            return true;
+        }
+
+        if (defined('static::MAX_RUN') and $length >= static::MAX_RUN)
+        {
+            if (static::MAX_RUN > 0)
+            {
+                return true;
+            }
+        }
+        elseif (defined('static::MIN_RUN'))
+        {
+            if ($length < static::MIN_RUN)
+            {
+                return false;
+            }
+            elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
+            {
+                return true;
+            }
+        }
+        elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
+        {
+            return true;
+        }
+
+
+        throw new RuntimeException(
+            'Bad MAX_RUN defined, or length already valid.'
+        );
+    }
+
     protected static function getNearestValid(int $length) : ?int
     {
         if (static::STRICT_FAIL)
@@ -196,16 +288,32 @@ abstract class Emphasis extends AbstractInline implements Inline
             return null;
         }
 
-        if (defined('static::MAX_RUN') and $length > static::MAX_RUN)
+        if ( ! defined('static::MAX_RUN') and ! defined('static::MIN_RUN'))
+        {
+            return $length;
+        }
+
+        if (defined('static::MAX_RUN') and $length >= static::MAX_RUN)
         {
             if (static::MAX_RUN > 0)
             {
                 return static::MAX_RUN;
             }
         }
-        elseif (defined('static::MIN_RUN') and $length < static::MIN_RUN)
+        elseif (defined('static::MIN_RUN'))
         {
-            return null;
+            if ($length < static::MIN_RUN)
+            {
+                return false;
+            }
+            elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
+            {
+                return $length;
+            }
+        }
+        elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
+        {
+            return $length;
         }
 
         throw new RuntimeException(
@@ -231,9 +339,9 @@ abstract class Emphasis extends AbstractInline implements Inline
         return (
             ! ctype_space($after)
             and (
-                ! preg_match('/^\p{P}/u', $after)
+                ! preg_match('/^\p{P}/', $after)
                 or ctype_space($before)
-                or preg_match('/^\p{P}/u', $before)
+                or preg_match('/^\p{P}/', $before)
             )
         );
     }
@@ -256,40 +364,35 @@ abstract class Emphasis extends AbstractInline implements Inline
         return (
             ! ctype_space($before)
             and (
-                ! preg_match('/^\p{P}/u', $before)
+                ! preg_match('/^\p{P}/', $before)
                 or ctype_space($after)
-                or preg_match('/^\p{P}/u', $after)
+                or preg_match('/^\p{P}/', $after)
             )
         );
     }
 
     /**
-     * Determine whether the given sequence may open an emph or strong emph.
-     * Are left but not right flanking, or the left flanking on the first run?
+     * Determine whether the given sequence may open
      *
      * @param bool $isLf
      * @param bool $isRf
-     * @param array $openSequence
+     * @param int  $length
+     * @param int  $trail
      *
      * @return bool
      */
     protected static function canOpen(
-        bool  $isLf,
-        bool  $isRf,
-        array $openSequence
+        bool $isLf,
+        bool $isRf,
+        int  $length,
+        int  $trail
     ) : bool
     {
-        return ($isLf and ( ! $isRf or empty($openSequence)));
+        return ($isLf and ( ! $isRf or $length > $trail));
     }
 
     /**
-     * Determine whether the given sequence may close an emph or strong emph
-     * http://spec.commonmark.org/0.27/#can-open-emphasis
-     *
-     * If one of the delimiters can both open and close (strong)
-     * emphasis, then the sum of the lengths of the delimiter runs
-     * containing the opening and closing delimiters must not be a
-     * multiple of 3.
+     * Determine whether the given sequence may close
      *
      * @param bool $isLf
      * @param bool $isRf
@@ -302,74 +405,56 @@ abstract class Emphasis extends AbstractInline implements Inline
         bool $isLf,
         bool $isRf,
         int  $length,
+        int  $trail,
         int  $root
     ) : bool
     {
-        return $isRf;
+        return $isRf and (
+             ! $isLf or $length <= $trail
+             and abs($trail - $length) !== 1
+        );
     }
 
     /**
      * Open emph with the run length $length.
      *
      * @param int $length
-     * @param array $openSequence
+     * @param int $trial
      *
-     * @return array
+     * @return int
      */
-    protected static function open(int $length, array $openSequence) : array
+    protected static function open(int $length, int $trail) : int
     {
-        # open an emph, a strong emph, or both
-        $openSequence[] = $length;
-
-        return $openSequence;
+        return $trail + $length;
     }
 
     /**
      * Close emph with the run length $length.
      *
      * @param int $length
-     * @param array $openSequence
+     * @param int $trail
      *
-     * @param array
+     * @param int
      */
-    protected static function close(int $length, array $openSequence) : array
+    protected static function close(int $length, int $trail) : int
     {
-        for ($i = count($openSequence) -1; $i >= 0 and $length; $i--)
+        $trail -= $length;
+
+        if ($trail < 0)
         {
-            if ($length > $openSequence[$i])
-            {
-                $length -= $openSequence[$i];
-                $openSequence[$i] = 0;
-            }
-            else
-            {
-                $openSequence[$i] -= $length;
-                $length = 0;
-            }
+            $trail = 0;
         }
 
-        /**
-         * Slice off any now irrelevant openings:
-         * We want to include the last $i touched by the loop, so need at least
-         * $i + 1, but the loop will also always tick under by 1, so our $i will
-         * be 1 less than the last value in the loop. Hence $i + 2.
-        */
-        $openSequence = array_slice($openSequence, 0, $i + 2);
-
-        # clean up if last item was fully closed
-        if (end($openSequence) === 0)
-        {
-            array_pop($openSequence);
-        }
-
-        return $openSequence;
+        return $trail;
     }
 
     protected function __construct(
         int    $width,
         int    $textStart,
+        int    $start,
         string $text
     ) {
+        $this->start     = $start;
         $this->width     = $width;
         $this->textStart = $textStart;
 
