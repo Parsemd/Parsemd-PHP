@@ -85,7 +85,6 @@ abstract class Emphasis extends AbstractInline implements Inline
                 elseif (static::canClose($isLf, $isRf, $length, $trail, $root))
                 {
                     $close = [
-                        'key'    => $Line->key(),
                         'length' => $length,
                         'trail'  => $trail,
                     ];
@@ -244,83 +243,50 @@ abstract class Emphasis extends AbstractInline implements Inline
 
     protected static function canGetNearestValid(int $length) : bool
     {
-        if (static::STRICT_FAIL)
-        {
-            return false;
-        }
-
-        if ( ! defined('static::MAX_RUN') and ! defined('static::MIN_RUN'))
-        {
-            return true;
-        }
-
-        if (defined('static::MAX_RUN') and $length >= static::MAX_RUN)
-        {
-            if (static::MAX_RUN > 0)
-            {
-                return true;
-            }
-        }
-        elseif (defined('static::MIN_RUN'))
-        {
-            if ($length < static::MIN_RUN)
-            {
-                return false;
-            }
-            elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
-            {
-                return true;
-            }
-        }
-        elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
-        {
-            return true;
-        }
-
-
-        throw new RuntimeException(
-            'Bad MAX_RUN defined, or length already valid.'
-        );
+        return static::getNearestValid($length) !== null;
     }
 
     protected static function getNearestValid(int $length) : ?int
     {
-        if (static::STRICT_FAIL)
+        if (static::STRICT_FAIL or $length <= 0)
         {
             return null;
         }
 
-        if ( ! defined('static::MAX_RUN') and ! defined('static::MIN_RUN'))
+        $hasMin = defined('static::MIN_RUN');
+        $hasMax = defined('static::MAX_RUN');
+
+        if ( ! $hasMax and ! $hasMin)
         {
             return $length;
         }
 
-        if (defined('static::MAX_RUN') and $length >= static::MAX_RUN)
-        {
-            if (static::MAX_RUN > 0)
-            {
-                return static::MAX_RUN;
-            }
+        if (
+            $hasMax and static::MAX_RUN <= 0
+            or $hasMin and static::MIN_RUN <= 0
+            or $hasMin and $hasMax and static::MIN_RUN > static::MAX_RUN
+        ) {
+            throw new RuntimeException(
+                'Bad MAX_RUN/MIN_RUN defined.'
+            );
         }
-        elseif (defined('static::MIN_RUN'))
+
+        # if it's too big (or just big enough), we can shrink it to the MAX_RUN
+        # (or leave it as MAX_RUN)
+        if ($hasMax and $length >= static::MAX_RUN)
         {
-            if ($length < static::MIN_RUN)
-            {
-                return false;
-            }
-            elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
-            {
-                return $length;
-            }
+            return static::MAX_RUN;
         }
-        elseif (defined('static::MAX_RUN') and $length < static::MAX_RUN)
+        # if it's too small, we cannot expand it
+        elseif ($hasMin and $length < static::MIN_RUN)
+        {
+            return null;
+        }
+        # if it's not too small, and not too big, we can leave it as is
+        else
         {
             return $length;
         }
-
-        throw new RuntimeException(
-            'Bad MAX_RUN defined, or length already valid.'
-        );
     }
 
     /**
