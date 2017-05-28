@@ -151,13 +151,10 @@ abstract class Emphasis extends AbstractInline implements Inline
                 $trail === 0 and $realRoot > $root
                 and $close['length'] > $root
             ) {
-                $sft  = $realRoot - $root;
+                $sft  = $realRoot - static::shortenToValidModulo($realRoot);
 
-                if ( ! static::canGetNearestValid($sft))
-                {
-                    $lsft += $sft;
-                    $rsft += $sft;
-                }
+                $lsft += $sft;
+                $rsft += $sft;
             }
 
             $start += $lsft;
@@ -239,6 +236,23 @@ abstract class Emphasis extends AbstractInline implements Inline
         }
 
         return true;
+    }
+
+    protected static function shortenToValidModulo(int $length) : int
+    {
+        $mod = (defined('static::MAX_RUN') ? static::MAX_RUN : $length);
+
+        while (0 !== ($length % $mod))
+        {
+            if ( ! static::canGetNearestValid($length))
+            {
+                break;
+            }
+
+            $length--;
+        }
+
+        return $length;
     }
 
     protected static function canGetNearestValid(int $length) : bool
