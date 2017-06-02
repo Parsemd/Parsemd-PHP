@@ -242,13 +242,8 @@ abstract class Emphasis extends AbstractInline implements Inline
     {
         $mod = (defined('static::MAX_RUN') ? static::MAX_RUN : $length);
 
-        while (0 !== ($length % $mod))
+        while (0 !== ($length % $mod) and static::canGetNearestValid($length))
         {
-            if ( ! static::canGetNearestValid($length))
-            {
-                break;
-            }
-
             $length--;
         }
 
