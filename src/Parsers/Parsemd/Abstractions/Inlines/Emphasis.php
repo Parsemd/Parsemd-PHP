@@ -242,6 +242,11 @@ abstract class Emphasis extends AbstractInline implements Inline
     {
         $mod = (defined('static::MAX_RUN') ? static::MAX_RUN : $length);
 
+        if (static::STRICT_FAIL)
+        {
+            return $length;
+        }
+
         while (0 !== ($length % $mod) and static::canGetNearestValid($length))
         {
             $length--;
@@ -257,13 +262,15 @@ abstract class Emphasis extends AbstractInline implements Inline
 
     protected static function getNearestValid(int $length) : ?int
     {
-        if (static::STRICT_FAIL or $length <= 0)
-        {
-            return null;
-        }
-
         $hasMin = defined('static::MIN_RUN');
         $hasMax = defined('static::MAX_RUN');
+
+        if (
+            static::STRICT_FAIL and $hasMax and $length > static::MAX_RUN
+            or $length <= 0
+        ) {
+            return null;
+        }
 
         if ( ! $hasMax and ! $hasMin)
         {
@@ -387,8 +394,11 @@ abstract class Emphasis extends AbstractInline implements Inline
     ) : bool
     {
         return $isRf and (
-             ! $isLf or $length <= $trail
-             and abs($trail - $length) !== 1
+            (
+                ! $isLf
+                or $length <= $trail and abs($trail - $length) !== 1
+            )
+            and ( ! static::STRICT_FAIL or $root === $length)
         );
     }
 
