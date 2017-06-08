@@ -29,6 +29,16 @@ class Code extends AbstractInline implements Inline
         return null;
     }
 
+    public function interrupts(Inline $Inline) : bool
+    {
+        if ( ! $Inline instanceof Code)
+        {
+            return true;
+        }
+
+        return parent::interrupts($Inline);
+    }
+
     private static function parseText(string $text) : ?array
     {
         if (

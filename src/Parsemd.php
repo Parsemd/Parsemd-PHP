@@ -9,7 +9,6 @@ use LogicException;
 use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Lines\Lines;
 
-use Parsemd\Parsemd\Resolvers\BlockResolver;
 use Parsemd\Parsemd\Resolvers\InlineResolver;
 
 use Parsemd\Parsemd\Parsers\Block;
@@ -273,7 +272,7 @@ class Parsemd
                     $Block->isContinuable($Lines)
                     and (
                         ! isset($NewBlock)
-                        or ! BlockResolver::interrupts($NewBlock, $Block)
+                        or ! $NewBlock->interrupts($Block)
                     )
                 ) {
                     if ($Block->parse($Lines))

@@ -9,6 +9,8 @@ use Parsemd\Parsemd\Lines\Line;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
+use Parsemd\Parsemd\Parsers\Parsemd\Abstractions\Inlines\Emphasis;
+
 class Link extends AbstractInline implements Inline
 {
     protected const MARKERS = [
@@ -29,6 +31,32 @@ class Link extends AbstractInline implements Inline
         }
 
         return null;
+    }
+
+    public function interrupts(Inline $Inline) : bool
+    {
+        /**
+         * http://spec.commonmark.org/0.27/#link-text
+         * Links may not contain other links, at any level of nesting. If
+         * multiple otherwise valid link definitions appear nested inside each
+         * other, the inner-most definition is used.
+         */
+        if ($Inline instanceof Link)
+        {
+            return true;
+        }
+
+         /**
+         * http://spec.commonmark.org/0.27/#link-text
+         * The brackets in link text bind more tightly than markers for
+         * emphasis and strong emphasis.
+         */
+        if ($Inline instanceof Emphasis)
+        {
+            return true;
+        }
+
+        return parent::interrupts($Inline);
     }
 
     private static function parseText(string $text) : ?array

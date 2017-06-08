@@ -52,6 +52,21 @@ class ListBlock extends AbstractBlock implements Block
         return null;
     }
 
+    public function interrupts(Block $Block) : bool
+    {
+        if (
+            array_key_exists(
+                'start',
+                $this->getElement()->getAttributes()
+            )
+            and $Block instanceof Paragraph
+        ) {
+            return $Block->isInterrupted();
+        }
+
+        return parent::interrupts($Block);
+    }
+
     public function parse(Lines $Lines) : bool
     {
         if (trim($Lines->current()) === '')

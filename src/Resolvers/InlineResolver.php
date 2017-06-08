@@ -16,48 +16,6 @@ use Parsemd\Parsemd\Parsers\CommonMark\Inlines\Image;
 abstract class InlineResolver
 {
     /**
-     * Determine whether $NewInline may interrupt $Inline
-     *
-     * @param Inline $NewInline
-     * @param Inline $Inline
-     *
-     * @return bool
-     */
-    public static function interrupts(
-        Inline $NewInline,
-        Inline $Inline
-    ) : bool
-    {
-        if ($NewInline instanceof Code and ! $Inline instanceof Code)
-        {
-            return true;
-        }
-
-        /**
-         * http://spec.commonmark.org/0.27/#link-text
-         * Links may not contain other links, at any level of nesting. If
-         * multiple otherwise valid link definitions appear nested inside each
-         * other, the inner-most definition is used.
-         */
-        if ($NewInline instanceof Link and $Inline instanceof Link)
-        {
-            return true;
-        }
-
-        /**
-         * http://spec.commonmark.org/0.27/#link-text
-         * The brackets in link text bind more tightly than markers for
-         * emphasis and strong emphasis.
-         */
-        if ($NewInline instanceof Link and $Inline instanceof Emphasis)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * The following describes a recursive algorithm which takes an ordered
      * collection of parsed Inlines (coupled with positional metadata), and
      * returns a compatible collection of non-intersecting Inlines (coupled
@@ -202,7 +160,7 @@ abstract class InlineResolver
         return (
             ! self::isInSubparseableSubsection($Current, $Next)
             and (
-                self::interrupts($NextI, $CurrentI)
+                $NextI->interrupts($CurrentI)
                 # pick the shortest if Inlines of the same type end with the
                 # same delimiter
                 or $NextI instanceof $CurrentI

@@ -28,6 +28,17 @@ interface Block extends Parser
     public static function begin(Lines $Lines) : ?Block;
 
     /**
+     * Whether the current instance may interrupt $Block when the
+     * current instance starts after or at the same position as
+     * $Block.
+     *
+     * @param Block $Block
+     *
+     * @return bool
+     */
+    public function interrupts(Block $Block) : bool;
+
+    /**
      * Lines:current() MUST be used as the begining of the structure.
      *
      * {@see parse} MAY use the pointer to estabilish how to parse the item in

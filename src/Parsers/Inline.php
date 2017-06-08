@@ -31,6 +31,17 @@ interface Inline extends Parser
     public static function parse(Line $Line) : ?Inline;
 
     /**
+     * Whether the current instance may interrupt $Inline when the
+     * current instance starts after or at the same position as
+     * $Inline.
+     *
+     * @param Inline $Inline
+     *
+     * @return bool
+     */
+    public function interrupts(Inline $Inline) : bool;
+
+    /**
      * Return the width of the (raw) text parsed by {@see parse}
      *
      * @return int

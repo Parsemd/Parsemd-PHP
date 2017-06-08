@@ -7,6 +7,9 @@ use Parsemd\Parsemd\Parsers\Block;
 use Parsemd\Parsemd\Element;
 use Parsemd\Parsemd\Lines\Lines;
 
+use Parsemd\Parsemd\Parsers\CommonMark\Blocks\Quote;
+use Parsemd\Parsemd\Parsers\CommonMark\Blocks\IndentedCode;
+
 use RuntimeException;
 
 abstract class AbstractBlock implements Block
@@ -54,5 +57,33 @@ abstract class AbstractBlock implements Block
     public function complete() : void
     {
         return;
+    }
+
+    public function interrupts(Block $Block) : bool
+    {
+        if (
+            $Block instanceof Quote
+            and ! $this instanceof Paragraph
+            and ! $this instanceof IndentedCode
+            and ! $this instanceof Quote
+        ) {
+            return true;
+        }
+
+        if (
+            ! $this instanceof Paragraph
+            and ! $this instanceof IndentedCode
+        ) {
+            if ($Block instanceof Paragraph)
+            {
+                return true;
+            }
+            elseif ( ! $this instanceof $Block)
+            {
+                return $Block->isInterrupted();
+            }
+        }
+
+        return false;
     }
 }

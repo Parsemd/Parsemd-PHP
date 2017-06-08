@@ -56,4 +56,9 @@ abstract class AbstractInline implements Inline
     {
         $this->Element = clone($this->Element);
     }
+
+    public function interrupts(Inline $Inline) : bool
+    {
+        return false;
+    }
 }
