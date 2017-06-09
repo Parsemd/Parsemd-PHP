@@ -38,6 +38,8 @@ abstract class AbstractElement implements Element
 
     public function setAttribute(string $attribute, $value) : void
     {
+        unset($this->attributes[strtolower($attribute)]);
+
         $this->attributes[strtolower($attribute)] = [
             'value' => $value,
             'name' => $attribute,

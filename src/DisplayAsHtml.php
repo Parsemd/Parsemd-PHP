@@ -35,15 +35,34 @@ abstract class DisplayAsHtml
         return $StringSet;
     }
 
+    public static function reduceInlinesToText(array $Elements) : string
+    {
+        $text = '';
+
+        foreach ($Elements as $Element)
+        {
+            if ($Element->getContent()->count() > 0)
+            {
+                $text .= (string) $Element->getContent();
+            }
+
+            $text .= self::reduceInlinesToText($Element->getElements());
+        }
+
+        return $text;
+    }
+
     public static function elements(array $Elements) : string
     {
         $string = '';
 
-        foreach ($Elements as $Element)
+        $n = count($Elements);
+
+        foreach ($Elements as $i => $Element)
         {
-            if ($Element->getType() === 'hr')
+            if ($Element->getType() === 'hr' or $Element->getType() === 'br')
             {
-                $string .= '<hr />';
+                $string .= '<'.$Element->getType().' />'.($i < $n -1 ? "\n" : '');
                 continue;
             }
 
@@ -55,6 +74,9 @@ abstract class DisplayAsHtml
             if ($Element->getType() === 'img')
             {
                 self::safeSchemeSanitise($Element, 'src');
+                $Element->setAttribute('alt', self::reduceInlinesToText($Element->getElements()));
+                $Element->dumpElements();
+                $Element->setAttribute('title', $Element->getAttribute('title'));
             }
 
             if ($Element->getType() !== 'text')
@@ -69,6 +91,11 @@ abstract class DisplayAsHtml
 
                         foreach ($Element->getAttributes() as $key => $value)
                         {
+                            if ( ! isset($value))
+                            {
+                                continue;
+                            }
+
                             $texts[] = "$key=\"".self::escape($value).'"';
                         }
 
@@ -76,27 +103,24 @@ abstract class DisplayAsHtml
                     })();
                 }
 
-                $string .= '>';
+                $string .= ($Element->getType() === 'img' ? ' /' : '').'>';
             }
 
             if ( ! $Element instanceof InlineElement)
             {
-                foreach ($Element->getContent() as $Line)
-                {
-                    $string .= self::escape($Line, true);
-                }
+                $string .= self::escape((string) $Element->getContent(), true);
             }
             elseif ($Element->getContent()->count() > 0)
             {
                 $string .= self::escape(
-                    $Element->getContent()->current(),
+                    (string) $Element->getContent(),
                     true
                 );
             }
 
             $string .= self::elements($Element->getElements());
 
-            if ($Element->getType() !== 'text')
+            if ( ! in_array($Element->getType(), ['text', 'img'], true))
             {
                 $string .= '</'.$Element->getType().">";
             }
@@ -145,6 +169,11 @@ abstract class DisplayAsHtml
                     $Element->getAttribute($attribute)
                 )
             );
+
+            if ($Element->getAttribute('title') !== null)
+            {
+                $Element->setAttribute('title', $Element->getAttribute('title'));
+            }
         }
     }
 
