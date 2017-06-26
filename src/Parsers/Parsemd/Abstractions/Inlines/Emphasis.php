@@ -52,6 +52,14 @@ abstract class Emphasis extends AbstractInline implements Inline
             }
 
             if (
+                $Next->start() >= $Current->textStart()
+                and $Current->end() >= $Next->end()
+                and $Next->textStart() - $Next->start() >= $Current->textStart() - $Current->start()
+            ) {
+                return true;
+            }
+
+            if (
                 $Next->end() >= $Current->textEnd()
                 and $Next->textEnd() < $Current->textEnd()
                 and $Next->start() > $Current->start()
