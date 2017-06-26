@@ -249,8 +249,12 @@ abstract class Emphasis extends AbstractInline implements Inline
     {
         if ($length = strspn($Line->current(), $marker))
         {
-            if ($Line[-1] === $marker and ! $Line->isEscapedAt($Line->key() -1))
-            {
+            if (
+                defined('static::MIN_RUN') and defined('static::MAX_RUN')
+                and static::MIN_RUN !== static::MAX_RUN
+                and $Line[-1] === $marker
+                and ! $Line->isEscapedAt($Line->key() -1)
+            ) {
                 return null;
             }
 
