@@ -5,7 +5,6 @@ namespace Parsemd\Parsemd\Resolvers;
 
 use Parsemd\Parsemd\InlineData;
 use Parsemd\Parsemd\InlineExtender;
-use Parsemd\Parsemd\Resolver;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Elements\InlineElement;
 
