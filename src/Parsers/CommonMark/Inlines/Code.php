@@ -8,6 +8,7 @@ use Parsemd\Parsemd\Lines\Line;
 
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
+use Parsemd\Parsemd\InlineData;
 
 class Code extends AbstractInline implements Inline
 {
@@ -29,14 +30,14 @@ class Code extends AbstractInline implements Inline
         return null;
     }
 
-    public function interrupts(Inline $Inline) : bool
+    public function interrupts(InlineData $Current, InlineData $Next) : bool
     {
-        if ( ! $Inline instanceof Code)
+        if ( ! $Current->getInline() instanceof Code)
         {
             return true;
         }
 
-        return parent::interrupts($Inline);
+        return parent::interrupts($Current, $Next);
     }
 
     private static function parseText(string $text) : ?array

@@ -5,6 +5,7 @@ namespace Parsemd\Parsemd\Parsers\Core\Inlines;
 
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Element;
+use Parsemd\Parsemd\InlineData;
 
 use RuntimeException;
 
@@ -57,7 +58,12 @@ abstract class AbstractInline implements Inline
         $this->Element = clone($this->Element);
     }
 
-    public function interrupts(Inline $Inline) : bool
+    public function interrupts(InlineData $Current, InlineData $Next) : bool
+    {
+        return false;
+    }
+
+    public function ignores(InlineData $Current, InlineData $Next) : bool
     {
         return false;
     }

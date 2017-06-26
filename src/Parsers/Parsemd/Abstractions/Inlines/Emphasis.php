@@ -7,6 +7,7 @@ use Parsemd\Parsemd\Elements\InlineElement;
 use Parsemd\Parsemd\Lines\Line;
 
 use Parsemd\Parsemd\Parsers\Inline;
+use Parsemd\Parsemd\InlineData;
 use Parsemd\Parsemd\Parsers\Core\Inlines\AbstractInline;
 
 use RuntimeException;
@@ -29,6 +30,60 @@ abstract class Emphasis extends AbstractInline implements Inline
         }
 
         return null;
+    }
+
+    public function interrupts(InlineData $Current, InlineData $Next) : bool
+    {
+        if ($Current->getInline() instanceof Emphasis)
+        {
+            /**
+             * When there are two potential emphasis or strong emphasis spans
+             * with the same closing delimiter, the shorter one (the one that
+             * opens later) takes precedence.
+             *
+             * http://spec.commonmark.org/0.27/#emphasis-and-strong-emphasis
+             */
+            if (
+                $Next->end() === $Current->end()
+                and $Next->textEnd() === $Current->textEnd()
+                and $Next->start() > $Current->textStart()
+            ) {
+                return true;
+            }
+
+            if (
+                $Next->end() >= $Current->textEnd()
+                and $Next->textEnd() < $Current->textEnd()
+                and $Next->start() > $Current->start()
+                and $Next->end() - $Next->textEnd() > $Current->end() - $Current->textEnd()
+            ) {
+                return true;
+            }
+        }
+
+        return parent::ignores($Current, $Next);
+    }
+
+    public function ignores(InlineData $Current, InlineData $Next) : bool
+    {
+        if ($Next->getInline() instanceof Emphasis)
+        {
+            /**
+             * When two potential emphasis or strong emphasis spans overlap, so
+             * that the second begins before the first ends and ends after the
+             * first ends, the first takes precedence.
+             *
+             * http://spec.commonmark.org/0.27/#emphasis-and-strong-emphasis
+             */
+            if (
+                $Next->start() < $Current->end()
+                and $Next->end() > $Current->end()
+            ) {
+                return true;
+            }
+        }
+
+        return parent::ignores($Current, $Next);
     }
 
     /**

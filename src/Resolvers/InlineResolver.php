@@ -5,6 +5,7 @@ namespace Parsemd\Parsemd\Resolvers;
 
 use Parsemd\Parsemd\InlineData;
 use Parsemd\Parsemd\InlineExtender;
+use Parsemd\Parsemd\Resolver;
 use Parsemd\Parsemd\Parsers\Inline;
 use Parsemd\Parsemd\Elements\InlineElement;
 
@@ -89,9 +90,11 @@ abstract class InlineResolver
 
             if ($Interrupts = self::resolve($Inlines))
             {
-                if ( ! self::canInterrupt($Current, reset($Interrupts)))
-                {
-                    $Interrupts = [];
+                while (
+                    ! empty($Interrupts)
+                    and ! self::canInterrupt($Current, reset($Interrupts))
+                ) {
+                    array_shift($Interrupts);
                 }
 
                 $Interrupts = self::filterIntersecting($Current, $Interrupts);
@@ -142,7 +145,21 @@ abstract class InlineResolver
 
     /**
      * Determine extensively whether $Next may interrupt $Current, (based on
-     * positional critera as well as precedence rules)
+     * positional critera as well as precedence rules).
+     *
+     * When two Inlines intersect in a non-nestable way, their Resolver will be
+     * used to determine which takes priority.
+     *
+     * First, $Current will be asked if it ignores $Next (i.e. should $Current
+     * be picked in favour of $Next without asking $Next's opinion?).
+     * If $Current wishes to ignore $Next, $Current will take priority.
+     *
+     * Otherwise, if $Current does not invoke its right to oppress, $Next will
+     * be asked if it interrupts $Current (i.e. should $Next be picked in favour
+     * of $Current?).
+     * If $Next wishes to interrupt $Current then $Next will take priority.
+     *
+     * Otherwise, $Current will take priority.
      *
      * @param InlineData $Current
      * @param InlineData $Next
@@ -154,19 +171,10 @@ abstract class InlineResolver
         InlineData $Next
     ) : bool
     {
-        $NextI    = $Next->getInline();
-        $CurrentI = $Current->getInline();
-
         return (
             ! self::isInSubparseableSubsection($Current, $Next)
-            and (
-                $NextI->interrupts($CurrentI)
-                # pick the shortest if Inlines of the same type end with the
-                # same delimiter
-                or $NextI instanceof $CurrentI
-                and $Next->textEnd() === $Current->textEnd()
-                and $Next->end() === $Current->end()
-            )
+            and ! $Current->getInline()->ignores($Current, $Next)
+            and $Next->getInline()->interrupts($Current, $Next)
         );
     }
 

@@ -4,9 +4,17 @@ declare(strict_types=1);
 namespace Parsemd\Parsemd\Parsers;
 
 use Parsemd\Parsemd\Parser;
+use Parsemd\Parsemd\Resolvable;
 use Parsemd\Parsemd\Lines\Line;
 
 /**
+ * The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+ * "SHOULD", "SHOULD NOT", "RECOMMENDED",  "MAY", and "OPTIONAL" in
+ * this document are to be interpreted as described in RFC 2119.
+ * https://tools.ietf.org/html/rfc2119
+ *
+ * ---
+ *
  * An Inline MUST treat the null character ("\0") as if it were a consumable
  * text character if the Inline allows containment of subparsable structures.
  *
@@ -15,7 +23,7 @@ use Parsemd\Parsemd\Lines\Line;
  * text start is 1, and text width is 10. The Inline returned by Parse also
  * contains a Line element with text content "foo\0\0\0bar\0".
  */
-interface Inline extends Parser
+interface Inline extends Parser, Resolvable
 {
     /**
      * MUST return either `null` (in case of failure), or a new
@@ -29,17 +37,6 @@ interface Inline extends Parser
      * @return ?static of type matching the current implementation
      */
     public static function parse(Line $Line) : ?Inline;
-
-    /**
-     * Whether the current instance may interrupt $Inline when the
-     * current instance starts after or at the same position as
-     * $Inline.
-     *
-     * @param Inline $Inline
-     *
-     * @return bool
-     */
-    public function interrupts(Inline $Inline) : bool;
 
     /**
      * Return the width of the (raw) text parsed by {@see parse}
