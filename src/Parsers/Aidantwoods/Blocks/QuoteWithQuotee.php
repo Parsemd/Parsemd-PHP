@@ -102,7 +102,8 @@ class QuoteWithQuotee extends Quote implements Block
             {
                 $data['quotee'] = $Line->substr($pos['qOpen'], $pos['qClose']);
 
-                $data['timestamp'] = (isset($pos['tOpen']) ?
+                $data['timestamp'] = (
+                    isset($pos['tOpen']) ?
                     $Line->substr(
                         $pos['tOpen'],
                         $pos['tClose']
